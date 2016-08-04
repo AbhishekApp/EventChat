@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "866557244649",
+    "firebase_url": "https://wazznow-cd155.firebaseio.com",
+    "project_id": "wazznow-cd155",
+    "storage_bucket": "wazznow-cd155.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866557244649:android:82500e4e8f87f37f",
+        "android_client_info": {
+          "package_name": "appy.com.wazznowapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "866557244649-0rist97q22beqo645pq2k81kqv7nd5rj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "appy.com.wazznowapp",
+            "certificate_hash": "7E25BA0C63264EDF8ECA3FB8B732143CDD289B20"
+          }
+        },
+        {
+          "client_id": "866557244649-kjaot0eq6aut6gcb8e9c3q695oq0tdto.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAj6g7L2CVtsUM1pTaQHb6eJW_qIXvoiRs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "866557244649-kjaot0eq6aut6gcb8e9c3q695oq0tdto.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

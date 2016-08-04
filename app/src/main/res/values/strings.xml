@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">WazzNow</string>
+    <string name="setting">setting</string>
+    <string name="logout">logout</string>
+    <string name="info">Information</string>
+    <string name="mute">Mute</string>
+    <string name="signup">Signup</string>
+    <string name="more">More</string>
+    <string name="name">Name</string>
+    <string name="lastname">Last Name</string>
+    <string name="phone">Phone</string>
+    <string name="signupheading">Captain Please Fill up your Details Below:</string>
+    <string name="phonemsg">We will call to verify your number</string>
+    <string name="email">Email</string>
+    <string name="signupbtn">Sign up</string>
+    <string name="nosignupmsg">Nah! I will use Predefined Messages</string>
+    <string name="inviteMsg">Hi..! This is Rohan Sharma lets watch Mumbai vs Pune match on June 21 on Pune together</string>
+    <string name="sharewhatsapp">Share via Whatsapp</string>
+</resources>

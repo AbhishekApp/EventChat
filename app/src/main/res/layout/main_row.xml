@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1"
+    android:background="@color/colorAccent">
+
+
+    <ImageView
+        android:id="@+id/imgRowMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:layout_weight="0.6"
+        android:background="@color/white"
+        android:layout_marginLeft="4dp"
+        android:src="@mipmap/cricket_ipl"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:paddingLeft="7dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/tvCatRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLength="15"
+                android:text="IPL"
+                android:padding="3dp"
+                android:layout_alignParentLeft="true"/>
+
+            <TextView
+                android:id="@+id/tvTimeRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 Hours to go"
+                android:padding="3dp"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:id="@+id/linearDt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvEventNameRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MI Vs KKR"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:padding="1dp"
+                    android:layout_alignParentRight="true"/>
+
+                <TextView
+                    android:id="@+id/tvEventTunedRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You +20 Tuned In"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:layout_alignParentRight="true"
+                    android:drawableLeft="@mipmap/group_icon"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imgChatRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:layout_weight="0.7"
+                android:src="@mipmap/chat_icon"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvEventLocRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Match 25, MC Stadium, Bengaluru"
+            android:padding="3dp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
