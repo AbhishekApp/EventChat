@@ -1,6 +1,7 @@
 package appy.com.wazznowapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,13 +9,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 /**
  * Created by admin on 8/2/2016.
  */
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity implements View.OnClickListener{
 
-   ActionBar actionBar;
+    ActionBar actionBar;
+    Button btnSign;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +30,17 @@ public class SignUpActivity extends AppCompatActivity {
     private void init(){
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-
+        btnSign = (Button) findViewById(R.id.btnSignup);
+        btnSign.setOnClickListener(this);
     }
+
+
+    @Override
+    public void onClick(View v) {
+        Intent iChat = new Intent(this, EventChatFragment.class);
+        startActivity(iChat);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,4 +57,5 @@ public class SignUpActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
