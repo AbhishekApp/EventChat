@@ -2,6 +2,7 @@ package appy.com.wazznowapp;
 
 import android.app.Application;
 
+import com.app.model.ConnectDetector;
 import com.firebase.client.Firebase;
 
 /**
@@ -9,9 +10,13 @@ import com.firebase.client.Firebase;
  */
 public class MyApp extends Application {
 
+    ConnectDetector connectDetector;
     @Override
     public void onCreate() {
         super.onCreate();
-        Firebase.setAndroidContext(this);
+        connectDetector = new ConnectDetector(this);
+        if(connectDetector.getConnection()) {
+            Firebase.setAndroidContext(this);
+        }
     }
 }
