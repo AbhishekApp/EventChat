@@ -85,10 +85,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         viewLay = (View) v.findViewById(R.id.viewLay);
         al = new ArrayList<String>();
-
-//        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.activity_list_item, android.R.id.text1, al);
-//        listView.setAdapter(adapter);
-
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
@@ -102,7 +98,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean connected = (Boolean) dataSnapshot.getValue();
                 if (connected) {
-                    Toast.makeText(getActivity(), "Connected to Firebase", Toast.LENGTH_SHORT).show();
+                 //   Toast.makeText(getActivity(), "Connected to Firebase", Toast.LENGTH_SHORT).show();
+                    System.out.println("Firebase connected");
                 } else {
                     Toast.makeText(getActivity(), "Disconnected from Firebase", Toast.LENGTH_SHORT).show();
                 }
@@ -110,7 +107,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                Toast.makeText(getActivity(), "error: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getActivity(), "error: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                System.out.println("Firebase not connect ERROR : "+firebaseError.getMessage());
             }
         });
 
@@ -118,7 +116,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    Class mModelClass;
 
     @Override
     public void onResume() {
@@ -127,45 +124,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }catch (Exception e){}
-        mDataRetrieveListener = alanRef.getRoot().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot.getValue());
-
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        try {
-                            System.out.println("dataSnapshot : "+dataSnapshot.toString());
-                            Object cls = dataSnapshot.getValue();
-                            System.out.println("Class : " + cls.toString());
-
-                            System.out.println("postSnapshot Class : " + postSnapshot.toString());
-                            System.out.println("postSnapshot getKey : " + postSnapshot.getKey());
-                            System.out.println("postSnapshot getValue : " + postSnapshot.getValue());
-                            Object obj = postSnapshot.getValue();
-                            mModelClass = obj.getClass();
-                            mModelClass.getConstructor(MyUser.class);
-                            System.out.println("postSnapshot Class : " + mModelClass.getConstructor(MyUser.class));
-
-                        }catch (Exception ex){
-                            System.out.println("Exception : "+ex.toString());
-                        }
-                    }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Toast.makeText(getActivity(), "error: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-
-
-        });
     }
 
     @Override
     public void onStop() {
         super.onStop();
         alanRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
-        alanRef.getRoot().removeEventListener(mDataRetrieveListener);
     }
 
     @Override
