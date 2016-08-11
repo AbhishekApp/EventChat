@@ -3,7 +3,6 @@ package appy.com.wazznowapp;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -13,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +19,7 @@ import java.util.List;
 /**
  * Created by admin on 8/2/2016.
  */
-public class EventChatFragment extends AppCompatActivity {
+public class EventChatFragment extends AppCompatActivity  {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -50,8 +48,17 @@ public class EventChatFragment extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-
+      /*  FragmentManager fm = getSupportFragmentManager();
+        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (getFragmentManager().getBackStackEntryCount() == 0)
+                    finish();
+            }
+        });*/
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,10 +79,11 @@ public class EventChatFragment extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new StadiumFragment(), "Stadium ");
+        adapter.addFragment(new StadiumFragment(), "Stadium");
         adapter.addFragment(new HousePartyFragment(), "House Party");
         viewPager.setAdapter(adapter);
     }
+
 
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

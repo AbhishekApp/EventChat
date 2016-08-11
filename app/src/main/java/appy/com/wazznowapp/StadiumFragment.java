@@ -1,13 +1,15 @@
 package appy.com.wazznowapp;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -15,11 +17,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.app.model.MyUser;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.mylist.adapters.StadiumChatListAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Created by admin on 8/2/2016.
@@ -30,24 +37,32 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     ImageView imgEmoji;
     ImageView send;
     ArrayList<String> al;
-    ArrayAdapter<String> adapter;
+//    ArrayAdapter<String> adapter;
+    StadiumChatListAdapter adapter;
     EditText etMsg;
+    View viewLay;
 
-    String mUsername;
+
     String mPhotoUrl;
+    Firebase myFirebaseRef;
+    Firebase alanRef;
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
+    FragmentActivity activity;
+    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
+    private ValueEventListener mConnectedListener;
+    private ValueEventListener mDataRetrieveListener;
 
-
-    public StadiumFragment(){
+    public StadiumFragment() {
 
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        myFirebaseRef = new Firebase(firebaseURL);
+        alanRef = myFirebaseRef.child("users");
 
     }
 
@@ -56,60 +71,135 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
-        try{
-            mFirebaseAuth = FirebaseAuth.getInstance();
-            mFirebaseUser = mFirebaseAuth.getCurrentUser();
-
-            if (mFirebaseUser == null) {
-                // Not signed in, launch the Sign In activity
-                startActivity(new Intent(getActivity(), SignUpActivity.class));
-                getActivity().finish();
-//                return;
-            } else {
-                mUsername = mFirebaseUser.getDisplayName();
-                if (mFirebaseUser.getPhotoUrl() != null) {
-                    mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-                }
-            }
-
-        }catch (Exception ex){}
-
         init(view);
 
         return view;
 
     }
 
-    private void init(View v){
+    private void init(View v) {
         listView = (ListView) v.findViewById(R.id.listMain);
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-
+        viewLay = (View) v.findViewById(R.id.viewLay);
         al = new ArrayList<String>();
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.activity_list_item, android.R.id.text1, al);
-        listView.setAdapter(adapter);
+//        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.activity_list_item, android.R.id.text1, al);
+//        listView.setAdapter(adapter);
+
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
+        etMsg.setOnClickListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mConnectedListener = alanRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean connected = (Boolean) dataSnapshot.getValue();
+                if (connected) {
+                    Toast.makeText(getActivity(), "Connected to Firebase", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "Disconnected from Firebase", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Toast.makeText(getActivity(), "error: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        adapter = new StadiumChatListAdapter(alanRef.limit(50), getActivity(), R.layout.chat_layout, "ABHI");
+
+    }
+
+    Class mModelClass;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            listView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }catch (Exception e){}
+        mDataRetrieveListener = alanRef.getRoot().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot.getValue());
+
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        try {
+                            System.out.println("dataSnapshot : "+dataSnapshot.toString());
+                            Object cls = dataSnapshot.getValue();
+                            System.out.println("Class : " + cls.toString());
+
+                            System.out.println("postSnapshot Class : " + postSnapshot.toString());
+                            System.out.println("postSnapshot getKey : " + postSnapshot.getKey());
+                            System.out.println("postSnapshot getValue : " + postSnapshot.getValue());
+                            Object obj = postSnapshot.getValue();
+                            mModelClass = obj.getClass();
+                            mModelClass.getConstructor(MyUser.class);
+                            System.out.println("postSnapshot Class : " + mModelClass.getConstructor(MyUser.class));
+
+                        }catch (Exception ex){
+                            System.out.println("Exception : "+ex.toString());
+                        }
+                    }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Toast.makeText(getActivity(), "error: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+
+        });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        alanRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
+        alanRef.getRoot().removeEventListener(mDataRetrieveListener);
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if(id == R.id.imgEmoji){
+        if (id == R.id.imgEmoji) {
 
-        }
-        else if(id == R.id.imgSendChat){
+        } else if (id == R.id.etChatMsg) {
+            viewLay.setVisibility(View.GONE);
+        } else if (id == R.id.imgSendChat) {
             String msg = etMsg.getText().toString();
-            if(!TextUtils.isEmpty(msg)) {
+            if (!TextUtils.isEmpty(msg)) {
                 al.add(msg);
                 adapter.notifyDataSetChanged();
                 etMsg.setText("");
-            }else{
-                Toast.makeText(getActivity(), "There is not any message.", Toast.LENGTH_SHORT).show();
+                MyUser alan = new MyUser("Abhi", msg);
+             //   alanRef.setValue(alan);
+                alanRef.push().setValue(alan);
+
+            } else {
+                View view = getActivity().getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+
+                if (viewLay.getVisibility() == View.VISIBLE) {
+                    viewLay.setVisibility(View.GONE);
+                } else {
+                    viewLay.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
+
 }
+
