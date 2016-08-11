@@ -11,12 +11,15 @@ import com.firebase.client.Firebase;
 public class MyApp extends Application {
 
     ConnectDetector connectDetector;
+    public static boolean firebaseFlag = false;
+
     @Override
     public void onCreate() {
         super.onCreate();
         connectDetector = new ConnectDetector(this);
         if(connectDetector.getConnection()) {
             Firebase.setAndroidContext(this);
+            firebaseFlag = true;
         }
     }
 }
