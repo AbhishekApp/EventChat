@@ -136,7 +136,11 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.imgEmoji) {
-
+            if (viewLay.getVisibility() == View.VISIBLE) {
+                viewLay.setVisibility(View.GONE);
+            } else {
+                viewLay.setVisibility(View.VISIBLE);
+            }
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
@@ -146,7 +150,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
                 adapter.notifyDataSetChanged();
                 etMsg.setText("");
                 MyUser alan = new MyUser("Abhi", msg);
-             //   alanRef.setValue(alan);
                 alanRef.push().setValue(alan);
 
             } else {
