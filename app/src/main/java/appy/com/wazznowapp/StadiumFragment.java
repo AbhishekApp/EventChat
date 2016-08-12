@@ -141,6 +141,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
                 viewLay.setVisibility(View.GONE);
             } else {
                 viewLay.setVisibility(View.VISIBLE);
+                Toast.makeText(getActivity(),"Emoji will be shown soon", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
@@ -193,7 +194,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
             if(result.equals("Login")){
                 cannedFlag = false;
                 MyApp.USER_LOGIN = true;
-            }else {
+            }else if(result.equals("Guest User")){
                 cannedFlag = true;
                 MyApp.USER_LOGIN = false;
             }
