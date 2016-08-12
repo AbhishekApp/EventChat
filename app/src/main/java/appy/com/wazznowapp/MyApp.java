@@ -12,6 +12,7 @@ public class MyApp extends Application {
 
     ConnectDetector connectDetector;
     public static boolean firebaseFlag = false;
+    public static boolean USER_LOGIN = false;
 
     @Override
     public void onCreate() {

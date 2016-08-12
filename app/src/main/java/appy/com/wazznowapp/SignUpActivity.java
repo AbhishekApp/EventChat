@@ -11,6 +11,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.app.model.UserProfile;
 
 /**
  * Created by admin on 8/2/2016.
@@ -19,26 +23,44 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     ActionBar actionBar;
     Button btnSign;
+    UserProfile userProfile;
+    EditText etName, etLastName, etPhone, etEmail, etPassword;
+    TextView tvNahGuestUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_activity);
         init();
-
+        userProfile = new UserProfile();
     }
     private void init(){
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        tvNahGuestUser = (TextView) findViewById(R.id.tvNahGuestUser);
         btnSign = (Button) findViewById(R.id.btnSignup);
+
         btnSign.setOnClickListener(this);
+        tvNahGuestUser.setOnClickListener(this);
     }
 
 
     @Override
     public void onClick(View v) {
-        Intent iChat = new Intent(this, EventChatFragment.class);
-        startActivity(iChat);
+        int id = v.getId();
+        if(id == R.id.btnSignup){
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("result", "Login");
+            setResult(Activity.RESULT_OK, returnIntent);
+            finish();
+        }
+        else if(id == R.id.tvNahGuestUser){
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("result","Guest User");
+            setResult(Activity.RESULT_OK,returnIntent);
+            finish();
+        }
+
     }
 
 

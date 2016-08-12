@@ -84,12 +84,13 @@
         android:text="@string/signupbtn"/>
 
     <TextView
+        android:id="@+id/tvNahGuestUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:text="@string/nosignupmsg"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
-        android:padding="5dp"/>
+        android:padding="10dp"/>
 
 </LinearLayout>

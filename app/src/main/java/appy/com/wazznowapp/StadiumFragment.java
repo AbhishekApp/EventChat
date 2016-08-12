@@ -1,23 +1,25 @@
 package appy.com.wazznowapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.app.model.MyUser;
+import com.app.model.ChatData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -25,8 +27,6 @@ import com.firebase.client.ValueEventListener;
 import com.mylist.adapters.StadiumChatListAdapter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Objects;
 
 /**
  * Created by admin on 8/2/2016.
@@ -51,6 +51,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
     private ValueEventListener mConnectedListener;
     private ValueEventListener mDataRetrieveListener;
+    boolean cannedFlag = false;
 
     public StadiumFragment() {
 
@@ -144,29 +145,61 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
-            String msg = etMsg.getText().toString();
-            if (!TextUtils.isEmpty(msg)) {
-                al.add(msg);
-                adapter.notifyDataSetChanged();
-                etMsg.setText("");
-                MyUser alan = new MyUser("Abhi", msg);
-                alanRef.push().setValue(alan);
 
-            } else {
-                View view = getActivity().getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if(MyApp.USER_LOGIN || cannedFlag) {
+                if(cannedFlag){
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+
+                    if (viewLay.getVisibility() == View.VISIBLE) {
+                        viewLay.setVisibility(View.GONE);
+                    } else {
+                        viewLay.setVisibility(View.VISIBLE);
+                        Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
+                    }
+                }else if(MyApp.USER_LOGIN){
+                    String msg = etMsg.getText().toString();
+                    if (!TextUtils.isEmpty(msg)) {
+                        al.add(msg);
+                        adapter.notifyDataSetChanged();
+                        etMsg.setText("");
+                        ChatData alan = new ChatData("Abhi", msg);
+                        alanRef.push().setValue(alan);
+
+                    }else{
+                        Toast.makeText(getActivity(),"Blank message not send", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
-                if (viewLay.getVisibility() == View.VISIBLE) {
-                    viewLay.setVisibility(View.GONE);
-                } else {
-                    viewLay.setVisibility(View.VISIBLE);
-                }
+            }else{
+                Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                startActivityForResult(ii, 111);
             }
         }
     }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK){
+            String result = data.getStringExtra("result");
+            Log.e("StadiumFragment", "Result : "+result);
+            if(result.equals("Login")){
+                cannedFlag = false;
+                MyApp.USER_LOGIN = true;
+            }else {
+                cannedFlag = true;
+                MyApp.USER_LOGIN = false;
+            }
+        }
+    }
+
 
 }
 

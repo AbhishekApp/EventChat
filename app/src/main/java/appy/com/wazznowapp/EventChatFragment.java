@@ -12,6 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.app.model.ConnectDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,7 @@ public class EventChatFragment extends AppCompatActivity  {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-
+    ConnectDetector connectDetector;
 
 
     @Override
@@ -32,7 +35,12 @@ public class EventChatFragment extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_chat_fragment);
 
-        init();
+        connectDetector = new ConnectDetector(this);
+        if(MyApp.firebaseFlag && connectDetector.getConnection()) {
+            init();
+        }else{
+            Toast.makeText(this, "Please check internet connection. Server Error.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void init(){
@@ -41,21 +49,13 @@ public class EventChatFragment extends AppCompatActivity  {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Group Name");
-//      getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-      /*  FragmentManager fm = getSupportFragmentManager();
-        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                if (getFragmentManager().getBackStackEntryCount() == 0)
-                    finish();
-            }
-        });*/
+
     }
 
 
