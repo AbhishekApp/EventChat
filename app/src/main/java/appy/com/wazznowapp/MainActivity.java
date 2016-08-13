@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void init(){
-         listMain = (ListView) findViewById(R.id.listMain);
+         listMain = (ListView) findViewById(R.id.listMainEvent);
 
     }
 
