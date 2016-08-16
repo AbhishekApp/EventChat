@@ -36,7 +36,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
-    ArrayList<String> al;
+//    ArrayList<String> al;
 //    ArrayAdapter<String> adapter;
     StadiumChatListAdapter adapter;
     EditText etMsg;
@@ -52,6 +52,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     private ValueEventListener mConnectedListener;
     private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;
+
+    String userName="Abhi";
 
     public StadiumFragment() {
 
@@ -85,7 +87,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         viewLay = (View) v.findViewById(R.id.viewLay);
-        al = new ArrayList<String>();
+//        al = new ArrayList<String>();
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
@@ -102,14 +104,14 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
                  //   Toast.makeText(getActivity(), "Connected to Firebase", Toast.LENGTH_SHORT).show();
                     System.out.println("Firebase connected");
                 } else {
-                    Toast.makeText(getActivity(), "Disconnected from Firebase", Toast.LENGTH_SHORT).show();
+                    System.out.println("Firebase not connected");
                 }
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
              //   Toast.makeText(getActivity(), "error: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                System.out.println("Firebase not connect ERROR : "+firebaseError.getMessage());
+                System.out.println("Server not connect ERROR : "+firebaseError.getMessage());
             }
         });
 
@@ -164,10 +166,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
                 }else if(MyApp.USER_LOGIN){
                     String msg = etMsg.getText().toString();
                     if (!TextUtils.isEmpty(msg)) {
-                        al.add(msg);
+                   //     al.add(msg);
                         adapter.notifyDataSetChanged();
                         etMsg.setText("");
-                        ChatData alan = new ChatData("Abhi", msg);
+                        ChatData alan = new ChatData(userName, msg);
                         alanRef.push().setValue(alan);
 
                     }else{
@@ -193,6 +195,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
             Log.e("StadiumFragment", "Result : "+result);
             if(result.equals("Login")){
                 cannedFlag = false;
+                userName = data.getStringExtra("user");
                 MyApp.USER_LOGIN = true;
             }else if(result.equals("Guest User")){
                 cannedFlag = true;

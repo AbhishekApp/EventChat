@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         android:drawSelectorOnTop="true"
         android:listSelector="@drawable/ripple_effect"
-        android:divider="@null"></ListView>
+        android:dividerHeight="3dp"
+        android:divider="@color/white"></ListView>
 
 </LinearLayout>
