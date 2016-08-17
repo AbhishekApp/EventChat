@@ -2,6 +2,7 @@ package appy.com.wazznowapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     UserProfile userProfile;
     EditText etName, etLastName, etPhone, etEmail, etPassword;
     TextView tvNahGuestUser;
+    SharedPreferences.Editor editor;
+    public static String USER_NAME = "UserName";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,22 +54,22 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         int id = v.getId();
+
         if(id == R.id.btnSignup){
             String uName = etName.getText().toString();
             if(!TextUtils.isEmpty(uName)) {
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("result", "Login");
-                returnIntent.putExtra("user", uName);
-                setResult(Activity.RESULT_OK, returnIntent);
+                MyApp.USER_LOGIN = true;
+                editor = MyApp.preferences.edit();
+                editor.putString(USER_NAME, uName);
                 finish();
             }else{
                 Toast.makeText(this, "Please Fill Name", Toast.LENGTH_LONG).show();
             }
         }
         else if(id == R.id.tvNahGuestUser){
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("result","Guest User");
-            setResult(Activity.RESULT_OK,returnIntent);
+            MyApp.USER_LOGIN = false;
+            editor = MyApp.preferences.edit();
+            editor.putString(USER_NAME, "Guest User");
             finish();
         }
 

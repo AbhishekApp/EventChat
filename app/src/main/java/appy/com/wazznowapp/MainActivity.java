@@ -63,6 +63,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.menu_signup){
+            Intent ii = new Intent(this, SignUpActivity.class);
+            startActivity(ii);
+        }else if(id == R.id.menu_more){
+            Intent ii = new Intent(this, MoreInfoActivity.class);
+            startActivity(ii);
+        }
         return super.onOptionsItemSelected(item);
     }
 

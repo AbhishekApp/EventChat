@@ -37,6 +37,9 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"></activity>
 
+        <activity android:name=".MoreInfoActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"></activity>
 
 
     </application>

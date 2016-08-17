@@ -148,7 +148,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
-
+            userName = MyApp.preferences.getString(SignUpActivity.USER_NAME,"");
             if(MyApp.USER_LOGIN || cannedFlag) {
                 if(cannedFlag){
                     View view = getActivity().getCurrentFocus();

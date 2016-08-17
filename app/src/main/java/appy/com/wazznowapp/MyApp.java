@@ -1,6 +1,8 @@
 package appy.com.wazznowapp;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.app.model.ConnectDetector;
 import com.firebase.client.Firebase;
@@ -13,6 +15,8 @@ public class MyApp extends Application {
     ConnectDetector connectDetector;
     public static boolean firebaseFlag = false;
     public static boolean USER_LOGIN = false;
+    public static SharedPreferences preferences;
+    public static String MyPREFERENCES = "UserName";
 
     @Override
     public void onCreate() {
@@ -22,5 +26,7 @@ public class MyApp extends Application {
             Firebase.setAndroidContext(this);
             firebaseFlag = true;
         }
+        preferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
     }
 }
