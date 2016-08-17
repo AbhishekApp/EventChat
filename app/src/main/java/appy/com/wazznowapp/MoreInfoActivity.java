@@ -16,12 +16,10 @@ public class MoreInfoActivity extends AppCompatActivity {
     ActionBar actionBar;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         setContentView(R.layout.more_info_activity);
-
-
         init();
     }
 
@@ -29,7 +27,7 @@ public class MoreInfoActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 //        actionBar.setDisplayShowHomeEnabled(true);
-       // actionBar.setTitle("More Info");
+        actionBar.setTitle("More Info");
     }
 
     @Override

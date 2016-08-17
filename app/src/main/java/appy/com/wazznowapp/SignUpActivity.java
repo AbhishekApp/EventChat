@@ -42,6 +42,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private void init(){
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("Sign Up");
         etName = (EditText) findViewById(R.id.input_name);
         tvNahGuestUser = (TextView) findViewById(R.id.tvNahGuestUser);
         btnSign = (Button) findViewById(R.id.btnSignup);
@@ -78,8 +79,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_menu, menu);
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
