@@ -3,7 +3,6 @@ package appy.com.wazznowapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mylist.adapters.AdapterMainFirst;
 import com.mylist.adapters.MainData;
@@ -67,9 +67,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if(id == R.id.menu_signup){
             Intent ii = new Intent(this, SignUpActivity.class);
             startActivity(ii);
-        }else if(id == R.id.menu_more){
-            Intent ii = new Intent(this, MoreInfoActivity.class);
+        }else if(id == R.id.menu_info){
+            Intent ii = new Intent(this, InfoActivity.class);
             startActivity(ii);
+        }else if(id == R.id.menu_more){
+            Toast.makeText(this,"More is coming soon", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }

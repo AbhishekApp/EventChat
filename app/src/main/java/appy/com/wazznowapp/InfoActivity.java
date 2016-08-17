@@ -11,7 +11,7 @@ import android.view.MenuItem;
 /**
  * Created by admin on 8/17/2016.
  */
-public class MoreInfoActivity extends AppCompatActivity {
+public class InfoActivity extends AppCompatActivity {
 
     ActionBar actionBar;
 
