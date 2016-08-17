@@ -36,8 +36,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
-//    ArrayList<String> al;
-//    ArrayAdapter<String> adapter;
     StadiumChatListAdapter adapter;
     EditText etMsg;
     View viewLay;
