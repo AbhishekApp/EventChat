@@ -41,6 +41,38 @@
         android:layout_gravity="center"
         android:layout_marginBottom="15dp"/>
 
+        <LinearLayout
+            android:id="@+id/linearBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+
+            android:background="@color/chat_btn_back"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/btnYesTuneOrInvite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_small_size"
+                android:text="Yes I want to tune"
+                android:layout_margin="3dp"
+                android:padding="2dp"/>
+
+            <TextView
+                android:id="@+id/btnNoThanks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_small_size"
+                android:text="No Thanks"
+                android:layout_margin="3dp"
+                android:padding="2dp"/>
+
+
+        </LinearLayout>
+
     </LinearLayout>
+
+
 
 </RelativeLayout>

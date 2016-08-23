@@ -40,7 +40,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     EditText etMsg;
     View viewLay;
 
-
     String mPhotoUrl;
     Firebase myFirebaseRef;
     Firebase alanRef;
@@ -51,7 +50,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;
 
-    String userName="Abhi";
+    String userName="";
+    int msgLimit = 50;
 
     public StadiumFragment() {
 
@@ -73,9 +73,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
-
         return view;
-
     }
 
     private void init(View v) {
@@ -85,7 +83,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         viewLay = (View) v.findViewById(R.id.viewLay);
-//        al = new ArrayList<String>();
+ //     al = new ArrayList<String>();
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
@@ -113,7 +111,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        adapter = new StadiumChatListAdapter(alanRef.limit(50), getActivity(), R.layout.chat_layout, "ABHI");
+        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
 
     }
 
@@ -146,7 +144,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
-            userName = MyApp.preferences.getString(SignUpActivity.USER_NAME,"");
+            userName = MyApp.preferences.getString(SignUpActivity.USER_NAME,"Abhi");
             if(MyApp.USER_LOGIN || cannedFlag) {
                 if(cannedFlag){
                     View view = getActivity().getCurrentFocus();
@@ -177,30 +175,15 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
 
             }else{
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
-                startActivityForResult(ii, 111);
+                startActivity(ii);
+//                startActivityForResult(ii, 111);
             }
         }
     }
 
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == Activity.RESULT_OK){
-            String result = data.getStringExtra("result");
-            Log.e("StadiumFragment", "Result : "+result);
-            if(result.equals("Login")){
-                cannedFlag = false;
-                userName = data.getStringExtra("user");
-                MyApp.USER_LOGIN = true;
-            }else if(result.equals("Guest User")){
-                cannedFlag = true;
-                MyApp.USER_LOGIN = false;
-            }
-        }
-    }
 
 
 }
