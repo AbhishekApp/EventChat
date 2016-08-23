@@ -62,15 +62,17 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 MyApp.USER_LOGIN = true;
                 editor = MyApp.preferences.edit();
                 editor.putString(USER_NAME, uName);
+                editor.commit();
                 finish();
             }else{
                 Toast.makeText(this, "Please Fill Name", Toast.LENGTH_LONG).show();
             }
         }
         else if(id == R.id.tvNahGuestUser){
-            MyApp.USER_LOGIN = false;
+            MyApp.USER_LOGIN = true;
             editor = MyApp.preferences.edit();
             editor.putString(USER_NAME, "Guest User");
+            editor.commit();
             finish();
         }
 
