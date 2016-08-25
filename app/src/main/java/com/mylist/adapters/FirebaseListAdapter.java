@@ -36,6 +36,7 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
     private List<T> mModels;
     private List<String> mKeys;
     private ChildEventListener mListener;
+    private int limit=10;
 
 
     /**
@@ -138,6 +139,8 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
 
         });
     }
+
+
 
     public void cleanup() {
         // We're being destroyed, let go of our mListener and forget about all of the mModels

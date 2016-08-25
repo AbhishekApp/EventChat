@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 /**
  * Created by admin on 8/2/2016.
  */
-public class StadiumFragment extends Fragment implements View.OnClickListener {
+public class StadiumFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener  {
 
     ListView listView;
     ImageView imgEmoji;
@@ -43,6 +44,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     String mPhotoUrl;
     Firebase myFirebaseRef;
     Firebase alanRef;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     FragmentActivity activity;
     final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
@@ -51,7 +53,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     boolean cannedFlag = false;
 
     String userName="";
-    int msgLimit = 50;
+    int msgLimit = 10;
 
     public StadiumFragment() {
 
@@ -77,6 +79,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     }
 
     private void init(View v) {
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         listView = (ListView) v.findViewById(R.id.listMain);
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
@@ -84,9 +87,14 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         viewLay = (View) v.findViewById(R.id.viewLay);
  //     al = new ArrayList<String>();
+
+
+        swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -182,9 +190,16 @@ public class StadiumFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    @Override
+    public void onRefresh() {
+        msgLimit+=10;
+        alanRef.limit(msgLimit);
+//        alanRef.
+        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
+        listView.setAdapter(adapter);
 
-
-
-
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+    }
 }
 
