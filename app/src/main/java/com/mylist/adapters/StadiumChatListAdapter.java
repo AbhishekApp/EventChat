@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,7 +22,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
  //   (Query mRef, Class<T> mModelClass, int mLayout, Activity activity)
 
     Activity activity;
-    TextView tvUser, tvMsg;
+    TextView tvUser;
+    TextView tvMsg;
     LinearLayout linear, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
 
@@ -37,6 +39,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         linear = (LinearLayout) v.findViewById(R.id.linearMsgChat);
         linearBtn = (LinearLayout) v.findViewById(R.id.linearBtn);
 
+//        tvMsg.loadData(model.getTitle(), "text/utf-8", "iso-8");
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
         linearBtn.setVisibility(View.GONE);
@@ -44,7 +47,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
 
         tvMsg.setPadding(2, 2, 2, 2);
         tvUser.setPadding(2, 2, 2, 2);
-        relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         if(model.getAuthor().contains("Abhi")) {
             tvMsg.setGravity(Gravity.RIGHT);
             tvUser.setGravity(Gravity.RIGHT);
@@ -56,8 +59,11 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             linear.setLayoutParams(relativeParam);
             linearBtn.setVisibility(View.GONE);
         }else if(model.getAuthor().equalsIgnoreCase("Admin")) {
-            linearBtn.setVisibility(View.VISIBLE);
 
+            tvMsg.setGravity(Gravity.LEFT);
+            tvUser.setGravity(Gravity.LEFT);
+            linear.setGravity(Gravity.LEFT);
+            linearBtn.setVisibility(View.VISIBLE);
             //v.setBackgroundColor(activity.getResources().getColor(R.color.chat_btn_back));
         }
         else{

@@ -27,7 +27,8 @@
             android:screenOrientation="portrait"></activity>
 
         <activity android:name=".EventChatFragment"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
 
         <activity android:name=".SignUpActivity"
             android:theme="@style/AppTheme"
