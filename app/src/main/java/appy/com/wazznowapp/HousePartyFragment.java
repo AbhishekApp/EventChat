@@ -50,6 +50,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
 
     String userName="";
     int msgLimit = 10;
+    InputMethodManager imm;
 
     public HousePartyFragment() {
 
@@ -138,7 +139,12 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        View view = getActivity().getCurrentFocus();
         if (id == R.id.imgEmoji) {
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
             if (viewLay.getVisibility() == View.VISIBLE) {
                 viewLay.setVisibility(View.GONE);
             } else {
@@ -151,9 +157,9 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             userName = MyApp.preferences.getString(SignUpActivity.USER_NAME,"Abhi");
             if(MyApp.USER_LOGIN || cannedFlag) {
                 if(cannedFlag){
-                    View view = getActivity().getCurrentFocus();
+
                     if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
 

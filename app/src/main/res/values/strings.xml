@@ -16,4 +16,9 @@
     <string name="nosignupmsg">Nah! I will use Predefined Messages</string>
     <string name="inviteMsg">Hi..! This is Rohan Sharma lets watch Mumbai vs Pune match on June 21 on Pune together</string>
     <string name="sharewhatsapp">Share via Whatsapp</string>
+    <string name="invitation_title">WazzNow</string>
+    <string name="invitation_message">Install wazznow app and get updated on our events.</string>
+    <string name="invitation_deep_link">appypie.com</string>
+    <string name="invitation_custom_image">http://media.appypie.com/appypie-slider-video/images/logo_new.png</string>
+    <string name="invitation_cta">Call to Action</string>
 </resources>

@@ -54,6 +54,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     String userName="";
     int msgLimit = 10;
+    InputMethodManager imm;
 
     public StadiumFragment() {
 
@@ -100,7 +101,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     @Override
     public void onStart() {
         super.onStart();
-        mConnectedListener = alanRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
+      /*  mConnectedListener = alanRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean connected = (Boolean) dataSnapshot.getValue();
@@ -118,7 +119,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 System.out.println("Server not connect ERROR : "+firebaseError.getMessage());
             }
         });
-
+*/
         adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
 
     }
@@ -136,13 +137,18 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     @Override
     public void onStop() {
         super.onStop();
-        alanRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
+     //   alanRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        View view = getActivity().getCurrentFocus();
         if (id == R.id.imgEmoji) {
+            if (view != null) {
+                imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
             if (viewLay.getVisibility() == View.VISIBLE) {
                 viewLay.setVisibility(View.GONE);
             } else {
@@ -155,9 +161,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             userName = MyApp.preferences.getString(SignUpActivity.USER_NAME,"Abhi");
             if(MyApp.USER_LOGIN || cannedFlag) {
                 if(cannedFlag){
-                    View view = getActivity().getCurrentFocus();
+
                     if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
 

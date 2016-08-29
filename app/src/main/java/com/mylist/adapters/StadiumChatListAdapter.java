@@ -2,6 +2,7 @@ package com.mylist.adapters;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.app.model.ChatData;
 import com.firebase.client.Query;
 
+import appy.com.wazznowapp.InviteFriendActivity;
 import appy.com.wazznowapp.R;
 
 /**
@@ -24,6 +26,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
     Activity activity;
     TextView tvUser;
     TextView tvMsg;
+    TextView btnYes, btnNo;
     LinearLayout linear, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
 
@@ -45,10 +48,11 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         linearBtn.setVisibility(View.GONE);
 
 
+
         tvMsg.setPadding(2, 2, 2, 2);
         tvUser.setPadding(2, 2, 2, 2);
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        if(model.getAuthor().contains("Abhi")) {
+        if(model.getAuthor().equalsIgnoreCase("Abhi")) {
             tvMsg.setGravity(Gravity.RIGHT);
             tvUser.setGravity(Gravity.RIGHT);
             tvUser.setVisibility(View.GONE);
@@ -57,26 +61,40 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             relativeParam.addRule(Gravity.CENTER);
             relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             linear.setLayoutParams(relativeParam);
+            linear.setBackgroundResource(R.drawable.outgoing_message_bg);
             linearBtn.setVisibility(View.GONE);
-        }else if(model.getAuthor().equalsIgnoreCase("Admin")) {
+        }/*else if(model.getAuthor().equalsIgnoreCase("Admin")) {
 
             tvMsg.setGravity(Gravity.LEFT);
             tvUser.setGravity(Gravity.LEFT);
             linear.setGravity(Gravity.LEFT);
-            linearBtn.setVisibility(View.VISIBLE);
+
+            relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            linear.setLayoutParams(relativeParam);
+            linear.setBackgroundResource(R.drawable.incoming_message_bg);
             //v.setBackgroundColor(activity.getResources().getColor(R.color.chat_btn_back));
-        }
+        }*/
         else{
             tvMsg.setGravity(Gravity.LEFT);
             tvUser.setGravity(Gravity.LEFT);
             tvUser.setVisibility(View.VISIBLE);
 
-            relativeParam.addRule(Gravity.CENTER);
+            relativeParam.addRule(Gravity.LEFT);
             linear.setGravity(Gravity.LEFT);
+            linear.setBackgroundResource(R.drawable.incoming_message_bg);
             relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             linear.setLayoutParams(relativeParam);
             linearBtn.setVisibility(View.GONE);
         }
-
+        if(model.getAuthor().equalsIgnoreCase("Admin")) {
+            linearBtn.setVisibility(View.VISIBLE);
+            linearBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent ii = new Intent(activity, InviteFriendActivity.class);
+                    activity.startActivity(ii);
+                }
+            });
+        }
     }
 }
