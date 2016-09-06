@@ -5,12 +5,12 @@ package com.app.model;
  */
 public class UserProfile {
 
-    String userName;
-    String userLastName;
-    String userEmail;
-    String userPassword;
-    String userPhone;
-    String userID;
+    private String userName;
+    private String userLastName;
+    private String userEmail;
+    private String userPassword;
+    private String userPhone;
+    private String userID;
 
     public String getUserName(){
         return this.userName;

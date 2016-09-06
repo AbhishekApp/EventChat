@@ -47,8 +47,6 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvUser.setText(model.getAuthor());
         linearBtn.setVisibility(View.GONE);
 
-
-
         tvMsg.setPadding(2, 2, 2, 2);
         tvUser.setPadding(2, 2, 2, 2);
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

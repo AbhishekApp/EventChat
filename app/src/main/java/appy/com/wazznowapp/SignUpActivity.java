@@ -17,7 +17,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.model.UserLoginSignupAction;
 import com.app.model.UserProfile;
+import com.firebase.client.Firebase;
 
 /**
  * Created by admin on 8/2/2016.
@@ -31,12 +33,18 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     TextView tvNahGuestUser;
     SharedPreferences.Editor editor;
     public static String USER_NAME = "UserName";
+    UserLoginSignupAction userSignup;
+
+    Firebase myFirebaseSignup;
+    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_activity);
         init();
+        myFirebaseSignup = new Firebase(firebaseURL);
+        myFirebaseSignup.child("UserList");
         userProfile = new UserProfile();
     }
     private void init(){
@@ -44,6 +52,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Sign Up");
         etName = (EditText) findViewById(R.id.input_name);
+        etEmail = (EditText) findViewById(R.id.input_email);
+        etPassword = (EditText) findViewById(R.id.input_password);
         tvNahGuestUser = (TextView) findViewById(R.id.tvNahGuestUser);
         btnSign = (Button) findViewById(R.id.btnSignup);
 
@@ -58,7 +68,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         if(id == R.id.btnSignup){
             String uName = etName.getText().toString();
+            String uEmail = etEmail.getText().toString();
+            String uPass = etPassword.getText().toString();
             if(!TextUtils.isEmpty(uName)) {
+                userSignup = new UserLoginSignupAction();
+                userSignup.userSignup(myFirebaseSignup, SignUpActivity.this, uEmail, uPass);
                 MyApp.USER_LOGIN = true;
                 editor = MyApp.preferences.edit();
                 editor.putString(USER_NAME, uName);

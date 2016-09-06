@@ -1,6 +1,8 @@
 package appy.com.wazznowapp;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -66,6 +68,16 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 .setCallToActionText(getString(R.string.invitation_cta))
                 .build();
         startActivityForResult(intent, REQUEST_INVITE);
+        PackageManager pm=getPackageManager();
+        try {
+            PackageInfo info=pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
+            Intent waIntent = new Intent(Intent.ACTION_SEND);
+            waIntent.setPackage("com.whatsapp");
+            startActivity(Intent.createChooser(intent, "Choose an email client from..."));
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 

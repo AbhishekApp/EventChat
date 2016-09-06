@@ -47,7 +47,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     private SwipeRefreshLayout swipeRefreshLayout;
 
     FragmentActivity activity;
-    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
+//    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
+    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/2/Stadium/";
     private ValueEventListener mConnectedListener;
     private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;
@@ -66,7 +67,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child("users");
+        alanRef = myFirebaseRef.child("Chat");
 
     }
 
@@ -88,14 +89,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         viewLay = (View) v.findViewById(R.id.viewLay);
  //     al = new ArrayList<String>();
-
-
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
-
-
     }
 
     @Override
