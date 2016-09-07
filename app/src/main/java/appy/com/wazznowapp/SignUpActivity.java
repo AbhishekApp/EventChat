@@ -75,10 +75,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             if(!TextUtils.isEmpty(uEmail)) {
                 userSignup = new UserLoginSignupAction();
                 userSignup.userSignup(SignUpActivity.this, uName, uEmail, uPass);
-
-                editor = MyApp.preferences.edit();
-                editor.putString(USER_NAME, uName);
-                editor.commit();
                // finish();
             }else{
                 Toast.makeText(this, "Please Fill Name", Toast.LENGTH_LONG).show();
