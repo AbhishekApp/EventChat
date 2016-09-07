@@ -33,10 +33,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     TextView tvNahGuestUser;
     SharedPreferences.Editor editor;
     public static String USER_NAME = "UserName";
+    public static String USER_EMAIL = "UserEmail";
+    public static String USER_PASSWORD = "UserPassword";
     UserLoginSignupAction userSignup;
 
     Firebase myFirebaseSignup;
-    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
+    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.signup_activity);
         init();
         myFirebaseSignup = new Firebase(firebaseURL);
-        myFirebaseSignup.child("UserList");
+       // myFirebaseSignup.child("UserList");
         userProfile = new UserProfile();
     }
     private void init(){
@@ -70,14 +72,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             String uName = etName.getText().toString();
             String uEmail = etEmail.getText().toString();
             String uPass = etPassword.getText().toString();
-            if(!TextUtils.isEmpty(uName)) {
+            if(!TextUtils.isEmpty(uEmail)) {
                 userSignup = new UserLoginSignupAction();
-                userSignup.userSignup(myFirebaseSignup, SignUpActivity.this, uEmail, uPass);
-                MyApp.USER_LOGIN = true;
+                userSignup.userSignup(SignUpActivity.this, uName, uEmail, uPass);
+
                 editor = MyApp.preferences.edit();
                 editor.putString(USER_NAME, uName);
                 editor.commit();
-                finish();
+               // finish();
             }else{
                 Toast.makeText(this, "Please Fill Name", Toast.LENGTH_LONG).show();
             }
