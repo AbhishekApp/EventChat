@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.app.model.ChatData;
 import com.app.model.EventData;
 import com.firebase.client.Query;
 

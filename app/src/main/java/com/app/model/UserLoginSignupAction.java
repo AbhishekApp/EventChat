@@ -9,11 +9,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.firebase.simplelogin.FirebaseSimpleLoginError;
-import com.firebase.simplelogin.FirebaseSimpleLoginUser;
 import com.firebase.simplelogin.SimpleLogin;
-import com.firebase.simplelogin.SimpleLoginAuthenticatedHandler;
 import com.firebase.simplelogin.SimpleLoginCompletionHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,12 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.w3c.dom.Text;
-
-import java.util.Map;
-
 import appy.com.wazznowapp.MyApp;
-import appy.com.wazznowapp.R;
 import appy.com.wazznowapp.SignUpActivity;
 
 /**

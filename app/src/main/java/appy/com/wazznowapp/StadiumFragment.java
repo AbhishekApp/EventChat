@@ -1,6 +1,5 @@
 package appy.com.wazznowapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +19,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.app.model.ChatData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.mylist.adapters.StadiumChatListAdapter;
-
-import java.util.ArrayList;
 
 /**
  * Created by admin on 8/2/2016.
