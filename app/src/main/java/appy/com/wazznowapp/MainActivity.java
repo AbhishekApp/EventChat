@@ -103,9 +103,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             startActivity(ii);
         }
         init();
-
-
-
     }
 
     @Override
@@ -129,8 +126,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     System.out.println("There are KEY : " + postSnapshot.getKey() + " ");
                     System.out.println("There are KEY : " + postSnapshot.getValue() + " ");
-
-
                   //  EventData post = postSnapshot.getValue(EventData.class);
                    /* System.out.println(post.getEvent_Super_Cate_Name() + " - " + post.getEvent_Cate_Name());*/
                 }
@@ -150,8 +145,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onCreateOptionsMenu(menu);
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -166,8 +159,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
     @Override
     protected void onDestroy() {
