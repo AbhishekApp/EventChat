@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<MainData> al;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
-    Menu menu;
     AdapterMainFirst adapter;
     Firebase firebase;
 
@@ -146,51 +145,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
-     //   setMenu(menu);
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void setMenu(Menu menu){
-        MenuInflater menuInflater = getMenuInflater();
-        menu.clear();
-        if(TextUtils.isEmpty(MyApp.preferences.getString(SignUpActivity.USER_NAME, null))) {
-            menuInflater.inflate(R.menu.main_menu, menu);
-        }else{
-            menuInflater.inflate(R.menu.login_menu, menu);
-        }
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.menu_signup){
-            Intent ii = new Intent(this, LoginActiviy.class);
+            Intent ii = new Intent(this, SignUpActivity.class);
             startActivity(ii);
         }else if(id == R.id.menu_info){
             Intent ii = new Intent(this, InfoActivity.class);
             startActivity(ii);
         }else if(id == R.id.menu_more){
             Toast.makeText(this,"More is coming soon", Toast.LENGTH_SHORT).show();
-        }else if(id == R.id.menu_logout){
-            SharedPreferences.Editor editor = MyApp.preferences.edit();
-            editor.remove(SignUpActivity.USER_EMAIL);
-            editor.remove(SignUpActivity.USER_NAME);
-            editor.remove(SignUpActivity.USER_PASSWORD);
-            editor.commit();
-
-            setMenu(menu);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(menu != null){
-            setMenu(menu);
-        }
-    }
+
 
     @Override
     protected void onDestroy() {

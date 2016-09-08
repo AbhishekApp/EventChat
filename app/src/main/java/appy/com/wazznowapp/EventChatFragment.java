@@ -29,7 +29,7 @@ public class EventChatFragment extends AppCompatActivity  {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     ConnectDetector connectDetector;
-    Menu menu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,20 +63,12 @@ public class EventChatFragment extends AppCompatActivity  {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
-     //   setMenu(menu);
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void setMenu(Menu menu){
-        MenuInflater menuInflater = getMenuInflater();
-        menu.clear();
-        if(TextUtils.isEmpty(MyApp.preferences.getString(SignUpActivity.USER_NAME, null))) {
-            menuInflater.inflate(R.menu.main_menu, menu);
-        }else{
-            menuInflater.inflate(R.menu.login_menu, menu);
-        }
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -95,13 +87,7 @@ public class EventChatFragment extends AppCompatActivity  {
         viewPager.setAdapter(adapter);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(menu != null){
-            setMenu(menu);
-        }
-    }
+
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
