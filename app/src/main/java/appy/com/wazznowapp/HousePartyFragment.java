@@ -44,7 +44,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
 
     FragmentActivity activity;
 //    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
-    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/2/HouseParty";
+    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/1/Event_Category/2/HouseParty";
     private ValueEventListener mConnectedListener;
     private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;

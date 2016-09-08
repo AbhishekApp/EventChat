@@ -22,4 +22,6 @@
     <string name="invitation_custom_image">http://media.appypie.com/appypie-slider-video/images/logo_new.png</string>
     <string name="invitation_cta">Call to Action</string>
     <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="notuser_signup">Not a user signup</string>
 </resources>

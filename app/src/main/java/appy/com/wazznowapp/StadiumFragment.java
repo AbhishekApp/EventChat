@@ -48,7 +48,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     FragmentActivity activity;
 //    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
-    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/2/Stadium/";
+    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/0/Event_Category/2/Stadium";
     private ValueEventListener mConnectedListener;
     private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;

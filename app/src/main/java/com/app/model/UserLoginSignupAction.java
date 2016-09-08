@@ -50,11 +50,13 @@ public class UserLoginSignupAction {
                                 Toast.makeText(con, "User creation failed", Toast.LENGTH_SHORT).show();
                             }else if(task.isSuccessful()){
                                 Toast.makeText(con, "User created successfully", Toast.LENGTH_SHORT).show();
+                                task.getResult();
                                 editor = MyApp.preferences.edit();
                                 editor.putString(SignUpActivity.USER_NAME, uName);
                                 editor.putString(SignUpActivity.USER_EMAIL, email);
                                 editor.putString(SignUpActivity.USER_PASSWORD, email);
                                 editor.commit();
+                                MyApp.USER_LOGIN = true;
                             }
 
 
@@ -111,6 +113,8 @@ public class UserLoginSignupAction {
                         if (!task.isSuccessful()) {
                             Log.w("Login", "signInWithEmail:failed", task.getException());
                             Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
                         }
 
                     }

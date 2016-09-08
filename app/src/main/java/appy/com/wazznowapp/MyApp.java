@@ -17,6 +17,7 @@ public class MyApp extends Application {
     public static boolean USER_LOGIN = false;
     public static SharedPreferences preferences;
     public static String MyPREFERENCES = "UserName";
+    public static String FIREBASE_BASE_URL =  "https://wazznow-cd155.firebaseio.com";
 
     @Override
     public void onCreate() {

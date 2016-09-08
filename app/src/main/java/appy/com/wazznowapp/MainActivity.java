@@ -1,8 +1,13 @@
 package appy.com.wazznowapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.app.model.EventData;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
@@ -20,8 +30,21 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.mylist.adapters.AdapterMainFirst;
+import com.mylist.adapters.EventAdapter;
 import com.mylist.adapters.MainData;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -32,6 +55,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<MainData> al;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
+    Menu menu;
+    AdapterMainFirst adapter;
+    Firebase firebase;
+
+    private String firebaseURL = MyApp.FIREBASE_BASE_URL+"/EventList";
+    String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +104,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             startActivity(ii);
         }
         init();
-        al = new ArrayList<MainData>();
-        AdapterMainFirst adapter = new AdapterMainFirst(this, al);
-        listMain.setAdapter(adapter);
 
-        listMain.setOnItemClickListener(this);
+
+
     }
 
     @Override
@@ -88,30 +116,80 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void init(){
+         firebase = new Firebase(firebaseURL);
          listMain = (ListView) findViewById(R.id.listMainEvent);
+         al = new ArrayList<MainData>();
+         adapter = new AdapterMainFirst(this, al);
+         listMain.setAdapter(adapter);
+         listMain.setOnItemClickListener(this);
 
+        firebase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    System.out.println("There are KEY : " + postSnapshot.getKey() + " ");
+                    System.out.println("There are KEY : " + postSnapshot.getValue() + " ");
+
+
+                  //  EventData post = postSnapshot.getValue(EventData.class);
+                   /* System.out.println(post.getEvent_Super_Cate_Name() + " - " + post.getEvent_Cate_Name());*/
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_menu, menu);
+        this.menu = menu;
+     //   setMenu(menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setMenu(Menu menu){
+        MenuInflater menuInflater = getMenuInflater();
+        menu.clear();
+        if(TextUtils.isEmpty(MyApp.preferences.getString(SignUpActivity.USER_NAME, null))) {
+            menuInflater.inflate(R.menu.main_menu, menu);
+        }else{
+            menuInflater.inflate(R.menu.login_menu, menu);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.menu_signup){
-            Intent ii = new Intent(this, SignUpActivity.class);
+            Intent ii = new Intent(this, LoginActiviy.class);
             startActivity(ii);
         }else if(id == R.id.menu_info){
             Intent ii = new Intent(this, InfoActivity.class);
             startActivity(ii);
         }else if(id == R.id.menu_more){
             Toast.makeText(this,"More is coming soon", Toast.LENGTH_SHORT).show();
+        }else if(id == R.id.menu_logout){
+            SharedPreferences.Editor editor = MyApp.preferences.edit();
+            editor.remove(SignUpActivity.USER_EMAIL);
+            editor.remove(SignUpActivity.USER_NAME);
+            editor.remove(SignUpActivity.USER_PASSWORD);
+            editor.commit();
+
+            setMenu(menu);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(menu != null){
+            setMenu(menu);
+        }
     }
 
     @Override
@@ -125,4 +203,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onBackPressed();
         firstFlag = false;
     }
+
+
 }

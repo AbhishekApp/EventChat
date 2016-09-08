@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,7 +29,7 @@ public class EventChatFragment extends AppCompatActivity  {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     ConnectDetector connectDetector;
-
+    Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +63,19 @@ public class EventChatFragment extends AppCompatActivity  {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_menu, menu);
+        this.menu = menu;
+     //   setMenu(menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setMenu(Menu menu){
+        MenuInflater menuInflater = getMenuInflater();
+        menu.clear();
+        if(TextUtils.isEmpty(MyApp.preferences.getString(SignUpActivity.USER_NAME, null))) {
+            menuInflater.inflate(R.menu.main_menu, menu);
+        }else{
+            menuInflater.inflate(R.menu.login_menu, menu);
+        }
     }
 
     @Override
@@ -84,7 +95,13 @@ public class EventChatFragment extends AppCompatActivity  {
         viewPager.setAdapter(adapter);
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(menu != null){
+            setMenu(menu);
+        }
+    }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
