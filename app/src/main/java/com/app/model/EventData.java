@@ -18,10 +18,18 @@ public class EventData {
     }
 
     public String getevent_super_cate_name(){
-        return getevent_super_cate_name();
+        return this.event_super_cate_name;
+    }
+
+    public void setEvent_super_cate_name(String event_super_cate_name){
+        this.event_super_cate_name = event_super_cate_name;
     }
 
     public String getevent_cate_name() {
         return event_cate_name;
+    }
+
+    public void setEvent_cate_name(String event_cate_name){
+        this.event_cate_name = event_cate_name;
     }
 }

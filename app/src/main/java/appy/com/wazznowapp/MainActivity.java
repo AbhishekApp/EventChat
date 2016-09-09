@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.app.model.EventData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -24,7 +25,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.mylist.adapters.AdapterMainFirst;
+import com.mylist.adapters.EventAdapter;
 import com.mylist.adapters.MainData;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -33,14 +39,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     ListView listMain;
     LinearLayout linearMain;
-    ArrayList<MainData> al;
+    ArrayList<EventData> al;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
     AdapterMainFirst adapter;
     Firebase firebase;
 
-    private String firebaseURL = MyApp.FIREBASE_BASE_URL+"/EventList";
-    String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
+    private String firebaseURL = MyApp.FIREBASE_BASE_URL;
+//    String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
 
 
     @Override
@@ -94,21 +100,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void init(){
          firebase = new Firebase(firebaseURL);
+         firebase.child("event");
          listMain = (ListView) findViewById(R.id.listMainEvent);
-         al = new ArrayList<MainData>();
+         al = new ArrayList<EventData>();
          adapter = new AdapterMainFirst(this, al);
          listMain.setAdapter(adapter);
          listMain.setOnItemClickListener(this);
+
+
 
         firebase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
+                JSONArray jsonArray = new JSONArray();
+                int k = 0;
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    System.out.println("There are KEY : " + postSnapshot.getKey() + " ");
-                    System.out.println("There are KEY : " + postSnapshot.getValue() + " ");
-                  //  EventData post = postSnapshot.getValue(EventData.class);
-                   /* System.out.println(post.getEvent_Super_Cate_Name() + " - " + post.getEvent_Cate_Name());*/
+                    System.out.println("There are KEY : " + postSnapshot.getKey() + " K= "+k);
+                    System.out.println("There are Value : " + postSnapshot.getValue() + " ");
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put(postSnapshot.getKey(), postSnapshot.getValue());
+                        jsonArray.put(jsonObject);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    k++;
+                }
+                for(int i=0; i < jsonArray.length() ; i++){
+                    try {
+                        EventData post = new EventData();
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        post.setEvent_super_cate_name(jsonObject.optString("event_super_cate_name"));
+                        post.setEvent_cate_name(jsonObject.optString("event_cate_name"));
+                        al.add(post);
+                        adapter.notifyDataSetChanged();
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+
                 }
             }
 

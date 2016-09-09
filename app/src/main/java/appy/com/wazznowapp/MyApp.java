@@ -3,6 +3,8 @@ package appy.com.wazznowapp;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.Settings;
+import android.util.Log;
 
 import com.app.model.ConnectDetector;
 import com.firebase.client.Firebase;
@@ -18,6 +20,7 @@ public class MyApp extends Application {
     public static SharedPreferences preferences;
     public static String MyPREFERENCES = "UserName";
     public static String FIREBASE_BASE_URL =  "https://wazznow-cd155.firebaseio.com";
+    SharedPreferences.Editor editor;
 
     @Override
     public void onCreate() {
@@ -28,6 +31,16 @@ public class MyApp extends Application {
             firebaseFlag = true;
         }
         preferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        getDeviveID();
+    }
 
+    public String getDeviveID(){
+        String android_id = Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        Log.d("Android", "Android ID : " + android_id);
+        editor = preferences.edit();
+        editor.putString("Android_ID", android_id);
+        editor.commit();
+        return android_id;
     }
 }

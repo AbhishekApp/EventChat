@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.model.EventData;
+
 import java.util.ArrayList;
 
 import appy.com.wazznowapp.R;
@@ -18,17 +20,17 @@ import appy.com.wazznowapp.R;
 public class AdapterMainFirst extends BaseAdapter {
 
     Context con;
-    ArrayList<MainData> alList;
+    ArrayList<EventData> alList;
     ViewHolder viewHolder;
 
-    public AdapterMainFirst(Context context, ArrayList<MainData> aList){
+    public AdapterMainFirst(Context context, ArrayList<EventData> aList){
         con = context;
-        alList = aList;
+        this.alList = aList;
     }
 
     @Override
     public int getCount() {
-        return 10;
+        return alList.size();
     }
 
     @Override
@@ -60,6 +62,11 @@ public class AdapterMainFirst extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
+        EventData data = alList.get(position);
+        System.out.println("data.getevent_super_cate_name() "+data.getevent_super_cate_name());
+        System.out.println("data.getevent_cate_name() "+data.getevent_cate_name());
+        viewHolder.tvCateName.setText(data.getevent_super_cate_name());
+        viewHolder.tvEventName.setText(data.getevent_cate_name());
 
         return view;
     }
