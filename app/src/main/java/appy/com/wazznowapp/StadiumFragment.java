@@ -2,7 +2,9 @@ package appy.com.wazznowapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -41,11 +43,14 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     private SwipeRefreshLayout swipeRefreshLayout;
 
     FragmentActivity activity;
-//    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
-    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/0/Event_Category/2/Stadium";
+    final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
+//    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/0/Event_Category/2/Stadium";
     private ValueEventListener mConnectedListener;
     private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;
+    SharedPreferences.Editor editor;
+    boolean flagAdminMsg;
+    Handler handler;
 
     String userName="";
     int msgLimit = 10;
@@ -61,7 +66,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child("Chat");
+        alanRef = myFirebaseRef.child(EventChatFragment.CateName).child("StadiumChat");
 
     }
 
@@ -71,6 +76,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
+
+
+
         return view;
     }
 
@@ -123,7 +131,27 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }catch (Exception e){}
+        if(MyApp.USER_LOGIN){
+            flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.CateName, false);
+            if(!flagAdminMsg){
+                ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match");
+                alanRef.push().setValue(alan);
+                editor = MyApp.preferences.edit();
+                editor.putBoolean(EventChatFragment.CateName, true);
+                editor.commit();
+                handler = new Handler();
+                handler.postDelayed(runn, 15 * 1000);
+            }
+        }
     }
+
+    Runnable runn = new Runnable() {
+        @Override
+        public void run() {
+            ChatData alan = new ChatData("Admin", "Start a house party.");
+            alanRef.push().setValue(alan);
+        }
+    };
 
     @Override
     public void onStop() {

@@ -40,6 +40,7 @@ public class UserLoginSignupAction {
                             Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
                             if (!task.isSuccessful()) {
                                 Toast.makeText(con, "User creation failed", Toast.LENGTH_SHORT).show();
+                                MyApp.USER_LOGIN = false;
                             }else if(task.isSuccessful()){
                                 Toast.makeText(con, "User created successfully", Toast.LENGTH_SHORT).show();
                                 task.getResult();

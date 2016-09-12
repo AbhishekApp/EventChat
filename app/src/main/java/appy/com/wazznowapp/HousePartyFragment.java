@@ -43,8 +43,8 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     private SwipeRefreshLayout swipeRefreshLayout;
 
     FragmentActivity activity;
-//    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/";
-    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/1/Event_Category/2/HouseParty";
+    final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
+//    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/1/Event_Category/2/HouseParty";
     private ValueEventListener mConnectedListener;
     private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;
@@ -63,7 +63,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child("Chat");
+        alanRef = myFirebaseRef.child(EventChatFragment.CateName).child("HousePartyChat");
 
     }
 

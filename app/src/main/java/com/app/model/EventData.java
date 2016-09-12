@@ -10,14 +10,14 @@ public class EventData {
 
 
     public EventData(){}
-
+    public EventData(String event_super_cate_name){ this.event_super_cate_name = event_super_cate_name;}
     public EventData(String event_super_cate_name, String event_cate_name){
         this.event_super_cate_name = event_super_cate_name;
         this.event_cate_name = event_cate_name;
 
     }
 
-    public String getevent_super_cate_name(){
+    public String getEvent_super_cate_name(){
         return this.event_super_cate_name;
     }
 
@@ -25,7 +25,7 @@ public class EventData {
         this.event_super_cate_name = event_super_cate_name;
     }
 
-    public String getevent_cate_name() {
+    public String getEvent_cate_name() {
         return event_cate_name;
     }
 

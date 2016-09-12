@@ -9,28 +9,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.model.EventData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.mylist.adapters.AdapterMainFirst;
 import com.mylist.adapters.EventAdapter;
-import com.mylist.adapters.MainData;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -38,12 +29,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     ListView listMain;
-    LinearLayout linearMain;
     ArrayList<EventData> al;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
-    AdapterMainFirst adapter;
+    EventAdapter adapter;
     Firebase firebase;
+    Firebase alanRef;
 
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
 //    String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
@@ -88,28 +79,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             firstFlag = true;
             Intent ii = new Intent(this, MySplashActivity.class);
             startActivity(ii);
+            init();
         }
-        init();
+
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent iChat = new Intent(this, EventChatFragment.class);
+        TextView eventName = (TextView) view.findViewById(R.id.tvCatRow);
+        iChat.putExtra("CateName", eventName.getText().toString());
         startActivity(iChat);
     }
 
     private void init(){
          firebase = new Firebase(firebaseURL);
-         firebase.child("event");
+         alanRef = firebase.child("EventList");
          listMain = (ListView) findViewById(R.id.listMainEvent);
          al = new ArrayList<EventData>();
-         adapter = new AdapterMainFirst(this, al);
-         listMain.setAdapter(adapter);
-         listMain.setOnItemClickListener(this);
+        // adapter = new AdapterMainFirst(this, al);
+
+        EventData data = new EventData("Cricket", "IPL");
+        alanRef.push().setValue(data);
+        data = new EventData("Tennis", "Wimblondon");
+        alanRef.push().setValue(data);
+        data = new EventData("Football", "DLADSFJ");
+        alanRef.push().setValue(data);
 
 
-
-        firebase.addValueEventListener(new ValueEventListener() {
+      /*  firebase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
@@ -147,7 +145,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onCancelled(FirebaseError firebaseError) {
                 System.out.println("The read failed: " + firebaseError.getMessage());
             }
-        });
+        });*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter = new EventAdapter(alanRef.limit(50), this, R.layout.main_row, "ABHI");
+        listMain.setAdapter(adapter);
+        listMain.setOnItemClickListener(this);
     }
 
     @Override

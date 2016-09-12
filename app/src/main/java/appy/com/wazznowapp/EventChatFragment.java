@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,10 +23,10 @@ import java.util.List;
  */
 public class EventChatFragment extends AppCompatActivity  {
 
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     ConnectDetector connectDetector;
+    static String CateName;
 
 
     @Override
@@ -36,6 +35,7 @@ public class EventChatFragment extends AppCompatActivity  {
         setContentView(R.layout.event_chat_fragment);
 
         connectDetector = new ConnectDetector(this);
+        CateName = getIntent().getStringExtra("CateName");
         if(MyApp.firebaseFlag && connectDetector.getConnection()) {
             init();
         }else{

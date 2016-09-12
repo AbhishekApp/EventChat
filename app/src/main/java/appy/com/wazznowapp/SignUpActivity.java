@@ -42,6 +42,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.signup_activity);
         init();
         myFirebaseSignup = new Firebase(firebaseURL);
+        myFirebaseSignup.child("UserDetail");
        // myFirebaseSignup.child("UserList");
         userProfile = new UserProfile();
     }
