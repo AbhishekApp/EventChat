@@ -1,6 +1,7 @@
 package appy.com.wazznowapp;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.model.EventData;
+import com.app.model.EventDetail;
+import com.app.model.EventModel;
 import com.firebase.client.Firebase;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
@@ -23,6 +26,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.mylist.adapters.EventAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -35,9 +48,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     EventAdapter adapter;
     Firebase firebase;
     Firebase alanRef;
+    ArrayList<EventModel> alModel;
 
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
-//    String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
+    String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
 
 
     @Override
@@ -94,18 +108,57 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void init(){
          firebase = new Firebase(firebaseURL);
-         alanRef = firebase.child("EventList");
+         alanRef = firebase.child("EventList/Cricket");
          listMain = (ListView) findViewById(R.id.listMainEvent);
          al = new ArrayList<EventData>();
+         alModel = new ArrayList<EventModel>();
         // adapter = new AdapterMainFirst(this, al);
+        EventTask task = new EventTask();
+        task.execute();
 
-        EventData data = new EventData("Cricket", "IPL");
-        alanRef.push().setValue(data);
+      /*  EventData data = new EventData("Cricket", "IPL");
+        alanRef.setValue(data);
         data = new EventData("Tennis", "Wimblondon");
-        alanRef.push().setValue(data);
+        alanRef.setValue(data);
         data = new EventData("Football", "DLADSFJ");
-        alanRef.push().setValue(data);
+        alanRef.setValue(data);*/
 
+      /*  Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("event_category", "IPL");
+        alanisawesomeMap.put("event_title", "MI vs XXR");
+        alanisawesomeMap.put("event_meta", "Match 25, MC stadium, Bangalore");
+        Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+        users.put("IPL", alanisawesomeMap);
+        alanRef.setValue(users);
+
+        alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("event_category", "Ranji");
+        alanisawesomeMap.put("event_title", "Delhi vs Punjab");
+        alanisawesomeMap.put("event_meta", "Match 21, MC stadium, Bangalore");
+        users.put("RANJI", alanisawesomeMap);
+        alanRef.setValue(users);*/
+
+       /* Firebase usersRef = firebase.child("users");
+        Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("birthYear", "1912");
+        alanisawesomeMap.put("fullName", "Alan Turing");
+        Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+        users.put("alanisawesome0", alanisawesomeMap);
+        usersRef.setValue(users);
+
+        alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("birthYear", "1888");
+        alanisawesomeMap.put("fullName", "Alan Mishra");
+
+        users.put("alanisawesome1", alanisawesomeMap);
+        usersRef.setValue(users);
+
+        alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("birthYear", "1975");
+        alanisawesomeMap.put("fullName", "Amitabh");
+
+        users.put("alanisawesome2", alanisawesomeMap);
+        usersRef.setValue(users);*/
 
       /*  firebase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -151,9 +204,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
-        adapter = new EventAdapter(alanRef.limit(50), this, R.layout.main_row, "ABHI");
-        listMain.setAdapter(adapter);
-        listMain.setOnItemClickListener(this);
+       // adapter = new EventAdapter(alanRef.limit(50), this, R.layout.main_row, "ABHI");
+       // listMain.setAdapter(adapter);
+       // listMain.setOnItemClickListener(this);
     }
 
     @Override
@@ -190,5 +243,68 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         firstFlag = false;
     }
 
+    class EventTask extends AsyncTask<Void, Void, Void>{
+
+        HttpURLConnection urlConnection;
+        JSONArray jsonArray;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            URL url = null;
+            try {
+                url = new URL(eventURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+
+                JSONObject jsonObject = new JSONObject(sb.toString());
+                System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+                int length =  jsonObject.length();
+                System.out.println("EVENT DATA length : " + length);
+                for(int i = 0 ; i < length; i++){
+                    JSONObject jSon = jsonObject.getJSONObject("0");
+                    EventModel model = new EventModel();
+                    model.setEvent_super_category(jSon.optString("event_superCategory"));
+                    model.alEvent = new ArrayList<EventDetail>();
+                    JSONArray jArray = jSon.getJSONArray("Cate");
+                    for(int j = 0; j <jArray.length() ; j++){
+                        EventDetail detail = new EventDetail();
+                        JSONObject jsonDetail = jArray.getJSONObject(j);
+                        detail.setCategory_name(jsonDetail.optString("event_category"));
+                        detail.setEvent_meta(jsonDetail.optString("event_meta"));
+                        detail.setEvent_title(jsonDetail.optString("event_title"));
+                        model.alEvent.add(detail);
+                    }
+                    alModel.add(model);
+                }
+
+                System.out.println("EVENT DETAIL : "+alModel.toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                urlConnection.disconnect();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+    }
 
 }
