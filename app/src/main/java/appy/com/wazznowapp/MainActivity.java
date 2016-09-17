@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.mylist.adapters.EventAdapter;
+import com.mylist.adapters.EventModelAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +39,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -47,8 +52,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     GoogleApiClient mGoogleApiClient;
     EventAdapter adapter;
     Firebase firebase;
-    Firebase alanRef;
+   // Firebase alanRef;
     ArrayList<EventModel> alModel;
+    ArrayList<EventDetail> arrayListEvent;
+    EventModelAdapter eventAdapter;
+    Map<String, String> alanisawesomeMap;
 
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
@@ -107,14 +115,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void init(){
-         firebase = new Firebase(firebaseURL);
-         alanRef = firebase.child("EventList/Cricket");
-         listMain = (ListView) findViewById(R.id.listMainEvent);
-         al = new ArrayList<EventData>();
-         alModel = new ArrayList<EventModel>();
+        firebase = new Firebase(firebaseURL);
+        // alanRef = firebase.child("EventList/Cricket");
+        listMain = (ListView) findViewById(R.id.listMainEvent);
+        al = new ArrayList<EventData>();
+        alModel = new ArrayList<EventModel>();
+        arrayListEvent = new ArrayList<EventDetail>();
+        eventAdapter = new EventModelAdapter(this, arrayListEvent);
+        listMain.setAdapter(eventAdapter);
         // adapter = new AdapterMainFirst(this, al);
+        //   addUserDetail();
+
         EventTask task = new EventTask();
         task.execute();
+       /* Firebase usersRef = firebase.child("users");//.child(""+length);
+        final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+      //  length++;
+        System.out.println("USER List length : " + 80);
+        users.put(" "+ 10, alanisawesomeMap);
+
+        usersRef.setValue(users);*/
 
       /*  EventData data = new EventData("Cricket", "IPL");
         alanRef.setValue(data);
@@ -123,15 +143,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         data = new EventData("Football", "DLADSFJ");
         alanRef.setValue(data);*/
 
-      /*  Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+     /*  Map<String, String> alanisawesomeMap = new HashMap<String, String>();
         alanisawesomeMap.put("event_category", "IPL");
         alanisawesomeMap.put("event_title", "MI vs XXR");
         alanisawesomeMap.put("event_meta", "Match 25, MC stadium, Bangalore");
         Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-        users.put("IPL", alanisawesomeMap);
-        alanRef.setValue(users);
+        users.put("User1 "+MyApp.getDeviveID(this), alanisawesomeMap);*/
+    /*    final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+        //  length++;
+        System.out.println("USER List length : " + 80);
+        users.put(" "+ 10, alanisawesomeMap);
+        firebase.child("users").setValue(users);*/
 
-        alanisawesomeMap = new HashMap<String, String>();
+     /*    alanisawesomeMap = new HashMap<String, String>();
         alanisawesomeMap.put("event_category", "Ranji");
         alanisawesomeMap.put("event_title", "Delhi vs Punjab");
         alanisawesomeMap.put("event_meta", "Match 21, MC stadium, Bangalore");
@@ -206,7 +230,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onResume();
        // adapter = new EventAdapter(alanRef.limit(50), this, R.layout.main_row, "ABHI");
        // listMain.setAdapter(adapter);
-       // listMain.setOnItemClickListener(this);
+        listMain.setOnItemClickListener(this);
+        addUserDetail();
     }
 
     @Override
@@ -267,23 +292,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 br.close();
 
-                JSONObject jsonObject = new JSONObject(sb.toString());
+                JSONArray jsonObject = new JSONArray(sb.toString());
                 System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
                 int length =  jsonObject.length();
                 System.out.println("EVENT DATA length : " + length);
                 for(int i = 0 ; i < length; i++){
-                    JSONObject jSon = jsonObject.getJSONObject("0");
+                    JSONObject jSon = jsonObject.getJSONObject(i);
                     EventModel model = new EventModel();
-                    model.setEvent_super_category(jSon.optString("event_superCategory"));
+                    String superCateName = jSon.optString("event_superCategory");
+                    model.setEvent_super_category(superCateName);
                     model.alEvent = new ArrayList<EventDetail>();
                     JSONArray jArray = jSon.getJSONArray("Cate");
                     for(int j = 0; j <jArray.length() ; j++){
                         EventDetail detail = new EventDetail();
                         JSONObject jsonDetail = jArray.getJSONObject(j);
+                        detail.setSuper_category_name(superCateName);
                         detail.setCategory_name(jsonDetail.optString("event_category"));
                         detail.setEvent_meta(jsonDetail.optString("event_meta"));
                         detail.setEvent_title(jsonDetail.optString("event_title"));
                         model.alEvent.add(detail);
+                        arrayListEvent.add(detail);
                     }
                     alModel.add(model);
                 }
@@ -304,6 +332,96 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            eventAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void addUserDetail(){
+
+        alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("name", MyApp.preferences.getString(SignUpActivity.USER_NAME, null));
+        alanisawesomeMap.put("lastName", MyApp.preferences.getString(SignUpActivity.USER_LAST_NAME, null));
+        alanisawesomeMap.put("passKey", MyApp.preferences.getString(SignUpActivity.USER_PASSWORD, null));
+        alanisawesomeMap.put("phone", MyApp.preferences.getString(SignUpActivity.USER_PHONE, null));
+        alanisawesomeMap.put("email", MyApp.preferences.getString(SignUpActivity.USER_EMAIL, null));
+        System.out.println("User Name " + MyApp.preferences.getString(SignUpActivity.USER_NAME, null));
+        UserDetailTask task = new UserDetailTask();
+        task.execute();
+    }
+
+    class UserDetailTask extends AsyncTask<Void, Void, Void> {
+
+        HttpURLConnection urlConnection;
+        JSONArray jsonArray;
+        int length = -1;
+        boolean flagExist = false;
+        String deviceID;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            deviceID =  MyApp.getDeviveID(MainActivity.this);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            URL url = null;
+            try {
+                url = new URL(firebaseURL+"/users.json");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+             //   System.out.println("GetUSER jsonObject : " + sb.toString());
+                JSONObject jsonObject = new JSONObject(sb.toString());
+                System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+                length =  jsonObject.length();
+                System.out.println("EVENT DATA length : " + length);
+                JSONObject jUser = jsonObject.getJSONObject(deviceID);
+                flagExist = jsonObject.has(deviceID);
+            } catch (MalformedURLException e) {
+                System.out.println("MalfomedURL Exception : " + e.toString());
+            } catch (IOException e) {
+                System.out.println("IO Exception : " + e.toString());
+            } catch (JSONException e) {
+               System.out.println("JSON Exception : " + e.toString());
+            } catch (Exception e){
+                System.out.println("Exception : "+e.toString());
+            }finally {
+                urlConnection.disconnect();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Firebase usersRef = firebase.child("users");//.child(""+length);
+          /*  final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+            length++;
+            System.out.println("USER List length : " + length);
+            users.put("" + length, alanisawesomeMap);
+
+            usersRef.setValue(users);*/
+            if(flagExist){
+                System.out.println("User Already Registered");
+            }else {
+                System.out.println("USER List length : " + length);
+                String email = MyApp.preferences.getString(SignUpActivity.USER_EMAIL, null);
+                if (!TextUtils.isEmpty(email)) {
+
+                    final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+                    length++;
+                    System.out.println("USER List new length : " + length);
+                    System.out.println("USER List new deviceID : " + deviceID);
+                    users.put("0", alanisawesomeMap);
+                    firebase.child("users/" + deviceID).setValue(users);
+                }
+            }
         }
     }
 

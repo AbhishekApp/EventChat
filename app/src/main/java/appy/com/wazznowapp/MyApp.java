@@ -16,11 +16,11 @@ public class MyApp extends Application {
 
     ConnectDetector connectDetector;
     public static boolean firebaseFlag = false;
-    public static boolean USER_LOGIN = false;
+  //  public static boolean USER_LOGIN = false;
     public static SharedPreferences preferences;
     public static String MyPREFERENCES = "UserName";
     public static String FIREBASE_BASE_URL =  "https://wazznow-cd155.firebaseio.com";
-    SharedPreferences.Editor editor;
+
 
     @Override
     public void onCreate() {
@@ -31,14 +31,14 @@ public class MyApp extends Application {
             firebaseFlag = true;
         }
         preferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        getDeviveID();
+        getDeviveID(getApplicationContext());
     }
 
-    public String getDeviveID(){
-        String android_id = Settings.Secure.getString(this.getContentResolver(),
+    public static String getDeviveID(Context con){
+        String android_id = Settings.Secure.getString(con.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         Log.d("Android", "Android ID : " + android_id);
-        editor = preferences.edit();
+        SharedPreferences.Editor editor = preferences.edit();
         editor.putString("Android_ID", android_id);
         editor.commit();
         return android_id;

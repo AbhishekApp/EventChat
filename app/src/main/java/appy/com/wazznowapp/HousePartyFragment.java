@@ -155,8 +155,8 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
-            userName = MyApp.preferences.getString(SignUpActivity.USER_NAME,"Abhi");
-            if(MyApp.USER_LOGIN || cannedFlag) {
+            userName = MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
+            if(!TextUtils.isEmpty(userName) || cannedFlag) {
                 if(cannedFlag){
 
                     if (view != null) {
@@ -170,7 +170,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                         viewLay.setVisibility(View.VISIBLE);
                         Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
-                }else if(MyApp.USER_LOGIN){
+                }else if(!TextUtils.isEmpty(userName)){
                     String msg = etMsg.getText().toString();
                     if (!TextUtils.isEmpty(msg)) {
                         //     al.add(msg);

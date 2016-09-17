@@ -44,34 +44,42 @@
 
         <LinearLayout
             android:id="@+id/linearBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@color/colorAccent"
+
+            android:weightSum="1"
             android:gravity="center">
 
             <TextView
                 android:id="@+id/btnYesTuneOrInvite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:textSize="@dimen/text_small_size"
                 android:text="Yes I want to tune"
-                android:layout_margin="3dp"
-                android:padding="2dp"/>
+                android:minHeight="15dp"
+                android:maxHeight="15dp"
+                android:layout_marginRight="1dp"
+                android:padding="2dp"
+                android:layout_weight="0.5"
+                android:background="@color/colorAccent"/>
 
-            <View
+       <!--     <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/white"/>
+                android:background="@color/white"/>-->
 
             <TextView
                 android:id="@+id/btnNoThanks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:textSize="@dimen/text_small_size"
                 android:text="No Thanks"
-                android:layout_margin="3dp"
-                android:padding="2dp"/>
+
+                android:layout_marginLeft="1dp"
+                android:padding="2dp"
+                android:layout_weight="0.5"
+                android:background="@color/colorAccent"/>
 
 
         </LinearLayout>

@@ -3,6 +3,7 @@ package com.app.model;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +19,20 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.SignUpActivity;
 
@@ -27,8 +42,9 @@ import appy.com.wazznowapp.SignUpActivity;
 public class UserLoginSignupAction {
 
     SharedPreferences.Editor editor;
+    String firebaseUserURL = MyApp.FIREBASE_BASE_URL;
 
-    public void userSignup(final Activity con, final String uName, final String email, final String password){
+    public void userSignup(final Activity con, final String uName, final String uLastName,final String uPhone, final String email, final String password){
         if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.addAuthStateListener(mAuthListener);
@@ -40,16 +56,22 @@ public class UserLoginSignupAction {
                             Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
                             if (!task.isSuccessful()) {
                                 Toast.makeText(con, "User creation failed", Toast.LENGTH_SHORT).show();
-                                MyApp.USER_LOGIN = false;
+                                editor = MyApp.preferences.edit();
+                                editor.putString(SignUpActivity.USER_NAME, "");
+                                editor.putString(SignUpActivity.USER_EMAIL, "");
+                                editor.putString(SignUpActivity.USER_PASSWORD, "");
+                                editor.commit();
                             }else if(task.isSuccessful()){
                                 Toast.makeText(con, "User created successfully", Toast.LENGTH_SHORT).show();
                                 task.getResult();
                                 editor = MyApp.preferences.edit();
                                 editor.putString(SignUpActivity.USER_NAME, uName);
+                                editor.putString(SignUpActivity.USER_LAST_NAME, uLastName);
+                                editor.putString(SignUpActivity.USER_PHONE, uPhone);
                                 editor.putString(SignUpActivity.USER_EMAIL, email);
-                                editor.putString(SignUpActivity.USER_PASSWORD, email);
+                                editor.putString(SignUpActivity.USER_PASSWORD, password);
                                 editor.commit();
-                                MyApp.USER_LOGIN = true;
+
                             }
 
 
@@ -106,7 +128,7 @@ public class UserLoginSignupAction {
                         if (!task.isSuccessful()) {
                             Log.w("Login", "signInWithEmail:failed", task.getException());
                             Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
                         }
 
@@ -134,5 +156,72 @@ public class UserLoginSignupAction {
         FirebaseAuth.getInstance().signOut();
     }
 
+    Map<String, String> alanisawesomeMap;
+    private void addUserDetail(String name, String lastName, String passKey, String phone, String email){
 
+        Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+        alanisawesomeMap.put("name", name);
+        alanisawesomeMap.put("lastName", lastName);
+        alanisawesomeMap.put("passKey", passKey);
+        alanisawesomeMap.put("phone", phone);
+        alanisawesomeMap.put("email", email);
+        UserDetailTask task = new UserDetailTask();
+        task.execute();
+    }
+
+
+    class UserDetailTask extends AsyncTask<Void, Void, Void> {
+
+        HttpURLConnection urlConnection;
+        JSONArray jsonArray;
+        int length = -1;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            URL url = null;
+            try {
+                url = new URL(firebaseUserURL+"/users.json");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+                System.out.println("GetUSER jsonObject : " + sb.toString());
+                JSONObject jsonObject = new JSONObject(sb.toString());
+                System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+                length =  jsonObject.length();
+                System.out.println("EVENT DATA length : " + length);
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                urlConnection.disconnect();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+            length++;
+            System.out.println("USER List length : " + length);
+            users.put(""+length, alanisawesomeMap);
+            Firebase usersRef = new Firebase(firebaseUserURL).child("users");//.child(""+length);
+            usersRef.setValue(users);
+        }
+    }
 }

@@ -5,10 +5,15 @@ package com.app.model;
  */
 public class EventDetail {
 
+    String super_category_name;
     String category_name;
     String event_meta;
     String event_title;
     String event_image_url;
+
+    public void setSuper_category_name(String super_category_name) {
+        this.super_category_name = super_category_name;
+    }
 
     public void setCategory_name(String category_name) {
         this.category_name = category_name;
@@ -24,6 +29,10 @@ public class EventDetail {
 
     public void setEvent_title(String event_title) {
         this.event_title = event_title;
+    }
+
+    public String getSuper_category_name() {
+        return super_category_name;
     }
 
     public String getCategory_name() {

@@ -15,7 +15,9 @@ import com.app.model.ChatData;
 import com.firebase.client.Query;
 
 import appy.com.wazznowapp.InviteFriendActivity;
+import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
+import appy.com.wazznowapp.SignUpActivity;
 
 /**
  * Created by admin on 8/11/2016.
@@ -42,7 +44,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         linear = (LinearLayout) v.findViewById(R.id.linearMsgChat);
         linearBtn = (LinearLayout) v.findViewById(R.id.linearBtn);
 
-//        tvMsg.loadData(model.getTitle(), "text/utf-8", "iso-8");
+//      tvMsg.loadData(model.getTitle(), "text/utf-8", "iso-8");
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
         linearBtn.setVisibility(View.GONE);
@@ -50,7 +52,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvMsg.setPadding(2, 2, 2, 2);
         tvUser.setPadding(2, 2, 2, 2);
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        if(model.getAuthor().equalsIgnoreCase("Abhi")) {
+        if(model.getAuthor().equalsIgnoreCase(MyApp.preferences.getString(SignUpActivity.USER_NAME,null))) {
             tvMsg.setGravity(Gravity.RIGHT);
             tvUser.setGravity(Gravity.RIGHT);
             tvUser.setVisibility(View.GONE);
@@ -61,17 +63,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             linear.setLayoutParams(relativeParam);
             linear.setBackgroundResource(R.drawable.outgoing_message_bg);
             linearBtn.setVisibility(View.GONE);
-        }/*else if(model.getAuthor().equalsIgnoreCase("Admin")) {
-
-            tvMsg.setGravity(Gravity.LEFT);
-            tvUser.setGravity(Gravity.LEFT);
-            linear.setGravity(Gravity.LEFT);
-
-            relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            linear.setLayoutParams(relativeParam);
-            linear.setBackgroundResource(R.drawable.incoming_message_bg);
-            //v.setBackgroundColor(activity.getResources().getColor(R.color.chat_btn_back));
-        }*/
+        }
         else{
             tvMsg.setGravity(Gravity.LEFT);
             tvUser.setGravity(Gravity.LEFT);
@@ -84,6 +76,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             linear.setLayoutParams(relativeParam);
             linearBtn.setVisibility(View.GONE);
         }
+
         if(model.getAuthor().equalsIgnoreCase("Admin")) {
             linearBtn.setVisibility(View.VISIBLE);
             linearBtn.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +86,9 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                     activity.startActivity(ii);
                 }
             });
+        }
+        if(model.getAuthor().equalsIgnoreCase("Guest User")) {
+            tvUser.setVisibility(View.GONE);
         }
     }
 

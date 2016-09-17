@@ -42,7 +42,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     Firebase alanRef;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    FragmentActivity activity;
+
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
 //    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/0/Event_Category/2/Stadium";
     private ValueEventListener mConnectedListener;
@@ -131,7 +131,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }catch (Exception e){}
-        if(MyApp.USER_LOGIN){
+        userName = MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
+        if(!TextUtils.isEmpty(userName)){
             flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.CateName, false);
             if(!flagAdminMsg){
                 ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match");
@@ -140,7 +141,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 editor.putBoolean(EventChatFragment.CateName, true);
                 editor.commit();
                 handler = new Handler();
-                handler.postDelayed(runn, 15 * 1000);
+                handler.postDelayed(runn, 15 * 10000);
             }
         }
     }
@@ -177,8 +178,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
-            userName = MyApp.preferences.getString(SignUpActivity.USER_NAME,"Abhi");
-            if(MyApp.USER_LOGIN || cannedFlag) {
+
+            if(!TextUtils.isEmpty(userName) || cannedFlag) {
                 if(cannedFlag){
 
                     if (view != null) {
@@ -192,7 +193,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         viewLay.setVisibility(View.VISIBLE);
                         Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
-                }else if(MyApp.USER_LOGIN){
+                }else if(!TextUtils.isEmpty(userName)){
                     String msg = etMsg.getText().toString();
                     if (!TextUtils.isEmpty(msg)) {
                    //     al.add(msg);
