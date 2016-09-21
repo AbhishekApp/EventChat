@@ -23,12 +23,14 @@ import com.firebase.client.Firebase;
  */
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener{
 
+
     ActionBar actionBar;
     Button btnSign;
     UserProfile userProfile;
     EditText etName, etLastName, etPhone, etEmail;
     TextView tvNahGuestUser;
     SharedPreferences.Editor editor;
+    public static String USER_JOINED_GROUP = "UserJoinedGroup";
     public static String USER_NAME = "UserName";
     public static String USER_LAST_NAME = "UserLastName";
     public static String USER_PHONE = "UserPhone";
@@ -133,7 +135,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(this, "Email cannot be blank", Toast.LENGTH_SHORT).show();
                 return valid;
             }
-            if(!email.contains("@") || !email.contains(".")){
+            if(!email.contains("@") || !email.contains(".") || email.length() < 6){
                 Toast.makeText(this, "Please enter valid Email id", Toast.LENGTH_SHORT).show();
                 return valid;
             }

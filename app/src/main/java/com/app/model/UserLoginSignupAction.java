@@ -72,6 +72,20 @@ public class UserLoginSignupAction {
                                 editor.putString(SignUpActivity.USER_PASSWORD, password);
                                 editor.commit();
 
+                                Firebase firebase = new Firebase(firebaseUserURL);
+                                Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+                                alanisawesomeMap.put("name", uName);
+                                alanisawesomeMap.put("lastName", uLastName);
+                                alanisawesomeMap.put("passKey", password);
+                                alanisawesomeMap.put("phone", uPhone);
+                                alanisawesomeMap.put("email", email);
+
+                                final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+
+                                System.out.println("USER List new length : " );
+                                System.out.println("USER List new deviceID : " );
+                                users.put("0", alanisawesomeMap);
+                                firebase.child("users/" + password).setValue(users);
                             }
 
 
@@ -156,7 +170,7 @@ public class UserLoginSignupAction {
         FirebaseAuth.getInstance().signOut();
     }
 
-    Map<String, String> alanisawesomeMap;
+   /* Map<String, String> alanisawesomeMap;
     private void addUserDetail(String name, String lastName, String passKey, String phone, String email){
 
         Map<String, String> alanisawesomeMap = new HashMap<String, String>();
@@ -167,10 +181,10 @@ public class UserLoginSignupAction {
         alanisawesomeMap.put("email", email);
         UserDetailTask task = new UserDetailTask();
         task.execute();
-    }
+    }*/
 
 
-    class UserDetailTask extends AsyncTask<Void, Void, Void> {
+    /*class UserDetailTask extends AsyncTask<Void, Void, Void> {
 
         HttpURLConnection urlConnection;
         JSONArray jsonArray;
@@ -223,5 +237,5 @@ public class UserLoginSignupAction {
             Firebase usersRef = new Firebase(firebaseUserURL).child("users");//.child(""+length);
             usersRef.setValue(users);
         }
-    }
+    }*/
 }

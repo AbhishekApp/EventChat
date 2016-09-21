@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="5dp"
+        android:paddingTop="1dp"
         android:gravity="center"
         android:layout_gravity="center"
         android:background="@drawable/incoming_message_bg">
@@ -34,13 +34,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxWidth="300dp"
-        android:text="USER NAME"
+        android:text="CHAT MESSAGE"
         android:textSize="@dimen/text_small_size"
         android:textColor="@color/white"
-        android:padding="4dp"
+        android:padding="8dp"
         android:layout_gravity="center"
-        android:ellipsize="end"
-        android:layout_marginBottom="10dp"/>
+        android:ellipsize="end"/>
 
         <LinearLayout
             android:id="@+id/linearBtn"
@@ -61,8 +60,7 @@
                 android:maxHeight="15dp"
                 android:layout_marginRight="1dp"
                 android:padding="2dp"
-                android:layout_weight="0.5"
-                android:background="@color/colorAccent"/>
+                android:layout_weight="0.5"/>
 
        <!--     <View
                 android:layout_width="1dp"
@@ -78,8 +76,7 @@
 
                 android:layout_marginLeft="1dp"
                 android:padding="2dp"
-                android:layout_weight="0.5"
-                android:background="@color/colorAccent"/>
+                android:layout_weight="0.5"/>
 
 
         </LinearLayout>

@@ -1,6 +1,8 @@
 package appy.com.wazznowapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<EventDetail> arrayListEvent;
     EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
+    ProgressDialog progressDialog;
 
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
@@ -96,12 +99,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 }
                             }
                         });
-
+        init();
         if(!firstFlag) {
             firstFlag = true;
+            String email = MyApp.preferences.getString(SignUpActivity.USER_EMAIL,null);
+            if(TextUtils.isEmpty(email)) {
+                UserDetailTask task = new UserDetailTask();
+                task.execute();
+            }else{
+                EventTask task = new EventTask();
+                task.execute();
+            }
             Intent ii = new Intent(this, MySplashActivity.class);
             startActivity(ii);
-            init();
+
         }
 
     }
@@ -109,7 +120,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent iChat = new Intent(this, EventChatFragment.class);
-        TextView eventName = (TextView) view.findViewById(R.id.tvCatRow);
+        TextView superEventName = (TextView) view.findViewById(R.id.tvCatRow);
+        TextView eventName = (TextView) view.findViewById(R.id.tvEventNameRow);
+        iChat.putExtra("SuperCateName", superEventName.getText().toString());
         iChat.putExtra("CateName", eventName.getText().toString());
         startActivity(iChat);
     }
@@ -117,17 +130,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void init(){
         firebase = new Firebase(firebaseURL);
         // alanRef = firebase.child("EventList/Cricket");
+        progressDialog = new ProgressDialog(this);
         listMain = (ListView) findViewById(R.id.listMainEvent);
         al = new ArrayList<EventData>();
         alModel = new ArrayList<EventModel>();
         arrayListEvent = new ArrayList<EventDetail>();
         eventAdapter = new EventModelAdapter(this, arrayListEvent);
         listMain.setAdapter(eventAdapter);
+        listMain.setOnItemClickListener(this);
         // adapter = new AdapterMainFirst(this, al);
         //   addUserDetail();
 
-        EventTask task = new EventTask();
-        task.execute();
+//        EventTask task = new EventTask();
+//        task.execute();
+
        /* Firebase usersRef = firebase.child("users");//.child(""+length);
         final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
       //  length++;
@@ -228,10 +244,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
-       // adapter = new EventAdapter(alanRef.limit(50), this, R.layout.main_row, "ABHI");
-       // listMain.setAdapter(adapter);
-        listMain.setOnItemClickListener(this);
-        addUserDetail();
     }
 
     @Override
@@ -276,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressDialog.setMessage("Event Detail Loading...");
         }
 
         @Override
@@ -308,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         JSONObject jsonDetail = jArray.getJSONObject(j);
                         detail.setSuper_category_name(superCateName);
                         detail.setCategory_name(jsonDetail.optString("event_category"));
+                        detail.setCatergory_id(jsonDetail.optString("event_id"));
                         detail.setEvent_meta(jsonDetail.optString("event_meta"));
                         detail.setEvent_title(jsonDetail.optString("event_title"));
                         model.alEvent.add(detail);
@@ -333,6 +347,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             eventAdapter.notifyDataSetChanged();
+            progressDialog.hide();
+
         }
     }
 
@@ -345,15 +361,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alanisawesomeMap.put("phone", MyApp.preferences.getString(SignUpActivity.USER_PHONE, null));
         alanisawesomeMap.put("email", MyApp.preferences.getString(SignUpActivity.USER_EMAIL, null));
         System.out.println("User Name " + MyApp.preferences.getString(SignUpActivity.USER_NAME, null));
-        UserDetailTask task = new UserDetailTask();
-        task.execute();
+//        UserDetailTask task = new UserDetailTask();
+//        task.execute();
     }
 
     class UserDetailTask extends AsyncTask<Void, Void, Void> {
 
         HttpURLConnection urlConnection;
         JSONArray jsonArray;
-        int length = -1;
+        JSONObject jUser;
         boolean flagExist = false;
         String deviceID;
 
@@ -361,6 +377,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected void onPreExecute() {
             super.onPreExecute();
             deviceID =  MyApp.getDeviveID(MainActivity.this);
+            addUserDetail();
+            System.out.println("EVENT DATA deviceID : "+deviceID);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
         }
 
         @Override
@@ -378,19 +398,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 br.close();
              //   System.out.println("GetUSER jsonObject : " + sb.toString());
                 JSONObject jsonObject = new JSONObject(sb.toString());
-                System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
-                length =  jsonObject.length();
-                System.out.println("EVENT DATA length : " + length);
-                JSONObject jUser = jsonObject.getJSONObject(deviceID);
+                System.out.println("EVENT DATA JSONOBJECT : " + jsonObject.toString());
                 flagExist = jsonObject.has(deviceID);
+                System.out.println("EVENT DATA  Found : "+flagExist);
+            //    jUser = jsonObject.getJSONObject(deviceID);
+                jsonArray = jsonObject.getJSONArray(deviceID);
+                jUser = jsonArray.getJSONObject(0);
+                String devID = jUser.optString(deviceID);
+                if(devID.equalsIgnoreCase(deviceID)){
+                    System.out.println("EVENT DATA Device Id found : " + devID.toString());
+                    flagExist = true;
+                }
+
             } catch (MalformedURLException e) {
-                System.out.println("MalfomedURL Exception : " + e.toString());
+                System.out.println("EVENT DATA MalfomedURL Exception : " + e.toString());
             } catch (IOException e) {
-                System.out.println("IO Exception : " + e.toString());
+                System.out.println("EVENT DATA IO Exception : " + e.toString());
             } catch (JSONException e) {
-               System.out.println("JSON Exception : " + e.toString());
+               System.out.println("EVENT DATA JSON Exception : " + e.toString());
             } catch (Exception e){
-                System.out.println("Exception : "+e.toString());
+                System.out.println("EVENT DATA Exception : "+e.toString());
             }finally {
                 urlConnection.disconnect();
             }
@@ -401,27 +428,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Firebase usersRef = firebase.child("users");//.child(""+length);
-          /*  final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-            length++;
-            System.out.println("USER List length : " + length);
-            users.put("" + length, alanisawesomeMap);
+           try {
+               if (flagExist) {
+                   Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
+                   progressDialog.setMessage("User Found");
+                   System.out.println("EVENT DATA User Already Registered");
+                   MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
+                   String uName = jUser.optString("name");
+                   String uLastName = jUser.optString("lastName");
+                   String uEmail = jUser.optString("email");
+                   String uPhone = jUser.optString("phone");
+                   String uJoinedGroup = jUser.optString("joined_group");
+                   SharedPreferences.Editor editor = MyApp.preferences.edit();
+                   editor.putString(SignUpActivity.USER_NAME, uName);
+                   editor.putString(SignUpActivity.USER_LAST_NAME, uLastName);
+                   editor.putString(SignUpActivity.USER_PHONE, uPhone);
+                   editor.putString(SignUpActivity.USER_EMAIL, uEmail);
+                   editor.putString(SignUpActivity.USER_PASSWORD, deviceID);
+                   editor.putString(SignUpActivity.USER_JOINED_GROUP, uJoinedGroup);
+                   editor.commit();
+               } else {
+                   String email = MyApp.preferences.getString(SignUpActivity.USER_EMAIL, null);
+                   if (!TextUtils.isEmpty(email)) {
 
-            usersRef.setValue(users);*/
-            if(flagExist){
-                System.out.println("User Already Registered");
-            }else {
-                System.out.println("USER List length : " + length);
-                String email = MyApp.preferences.getString(SignUpActivity.USER_EMAIL, null);
-                if (!TextUtils.isEmpty(email)) {
+                       final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+                       System.out.println("USER List new deviceID : " + deviceID);
+                       users.put("0", alanisawesomeMap);
+                       firebase.child("users/" + deviceID).setValue(users);
+                   }
+               }
+           }catch (Exception ex){
+               System.out.println("EVENT DATA onPostExecute Exception : "+ex.toString());
+           }finally {
+               EventTask task = new EventTask();
+               task.execute();
+           }
 
-                    final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-                    length++;
-                    System.out.println("USER List new length : " + length);
-                    System.out.println("USER List new deviceID : " + deviceID);
-                    users.put("0", alanisawesomeMap);
-                    firebase.child("users/" + deviceID).setValue(users);
-                }
-            }
         }
     }
 

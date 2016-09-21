@@ -27,6 +27,7 @@ public class EventChatFragment extends AppCompatActivity  {
     private ViewPager viewPager;
     ConnectDetector connectDetector;
     static String CateName;
+    static String SuperCateName;
 
 
     @Override
@@ -35,7 +36,9 @@ public class EventChatFragment extends AppCompatActivity  {
         setContentView(R.layout.event_chat_fragment);
 
         connectDetector = new ConnectDetector(this);
+        SuperCateName = getIntent().getStringExtra("SuperCateName");
         CateName = getIntent().getStringExtra("CateName");
+
         if(MyApp.firebaseFlag && connectDetector.getConnection()) {
             init();
         }else{

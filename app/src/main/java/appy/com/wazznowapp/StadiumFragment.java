@@ -66,7 +66,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatFragment.CateName).child("StadiumChat");
+        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.CateName).child("StadiumChat");
 
     }
 
@@ -76,9 +76,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
-
-
-
         return view;
     }
 
@@ -149,7 +146,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     Runnable runn = new Runnable() {
         @Override
         public void run() {
-            ChatData alan = new ChatData("Admin", "Start a house party.");
+            ChatData alan = new ChatData("Admin", "Start a house party, there are most fun.");
             alanRef.push().setValue(alan);
         }
     };

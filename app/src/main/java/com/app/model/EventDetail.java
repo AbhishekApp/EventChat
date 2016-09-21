@@ -6,6 +6,7 @@ package com.app.model;
 public class EventDetail {
 
     String super_category_name;
+    String catergory_id;
     String category_name;
     String event_meta;
     String event_title;
@@ -14,7 +15,9 @@ public class EventDetail {
     public void setSuper_category_name(String super_category_name) {
         this.super_category_name = super_category_name;
     }
-
+    public void setCatergory_id(String catergory_id){
+        this.catergory_id = catergory_id;
+    }
     public void setCategory_name(String category_name) {
         this.category_name = category_name;
     }
@@ -33,6 +36,10 @@ public class EventDetail {
 
     public String getSuper_category_name() {
         return super_category_name;
+    }
+
+    public String getCatergory_id(){
+        return this.catergory_id;
     }
 
     public String getCategory_name() {

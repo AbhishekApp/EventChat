@@ -3,6 +3,7 @@ package com.mylist.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,7 +79,9 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         }
 
         if(model.getAuthor().equalsIgnoreCase("Admin")) {
+            tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
             linearBtn.setVisibility(View.VISIBLE);
+            tvUser.setVisibility(View.GONE);
             linearBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -86,6 +89,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                     activity.startActivity(ii);
                 }
             });
+        }else{
+            tvMsg.setBackgroundColor(Color.TRANSPARENT);
         }
         if(model.getAuthor().equalsIgnoreCase("Guest User")) {
             tvUser.setVisibility(View.GONE);
