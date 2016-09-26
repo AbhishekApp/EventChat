@@ -1,5 +1,18 @@
 package com.app.model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
+import android.widget.Toast;
+
+import com.firebase.client.Firebase;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import appy.com.wazznowapp.MyApp;
+import appy.com.wazznowapp.SignUpActivity;
+
 /**
  * Created by admin on 8/12/2016.
  */
@@ -52,6 +65,27 @@ public class UserProfile {
     }
     public void setUserID(String userID){
         this.userID = userID;
+    }
+
+    public void updateUserGroup(Context con, String newGroup) {
+
+        String userGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, null);
+        if(userGroup != null && !TextUtils.isEmpty(userGroup)){
+            userGroup = userGroup +", "+ newGroup;
+        }else
+        {
+            userGroup = newGroup;
+        }
+        Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
+        String deviceID = MyApp.getDeviveID(con);
+        Firebase alanRef = usersRef.child("users/"+deviceID+"/0");
+        Map<String, Object> nickname = new HashMap<String, Object>();
+        nickname.put("joined_group", userGroup);
+        alanRef.updateChildren(nickname);
+        Toast.makeText(con, "User group update successfully "+newGroup, Toast.LENGTH_SHORT).show();
+        SharedPreferences.Editor editor = MyApp.preferences.edit();
+        editor.putString(SignUpActivity.USER_JOINED_GROUP, userGroup);
+        editor.commit();
     }
 
 }

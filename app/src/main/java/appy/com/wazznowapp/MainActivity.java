@@ -102,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         init();
         if(!firstFlag) {
             firstFlag = true;
+            UserDetailTask task = new UserDetailTask();
+            task.execute();/*
             String email = MyApp.preferences.getString(SignUpActivity.USER_EMAIL,null);
             if(TextUtils.isEmpty(email)) {
                 UserDetailTask task = new UserDetailTask();
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }else{
                 EventTask task = new EventTask();
                 task.execute();
-            }
+            }*/
             Intent ii = new Intent(this, MySplashActivity.class);
             startActivity(ii);
 
@@ -124,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         TextView eventName = (TextView) view.findViewById(R.id.tvEventNameRow);
         iChat.putExtra("SuperCateName", superEventName.getText().toString());
         iChat.putExtra("CateName", eventName.getText().toString());
+        String eventID = arrayListEvent.get(position).getCatergory_id();
+        iChat.putExtra("EventID", eventID);
         startActivity(iChat);
     }
 
@@ -200,50 +204,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         users.put("alanisawesome2", alanisawesomeMap);
         usersRef.setValue(users);*/
 
-      /*  firebase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
-                JSONArray jsonArray = new JSONArray();
-                int k = 0;
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    System.out.println("There are KEY : " + postSnapshot.getKey() + " K= "+k);
-                    System.out.println("There are Value : " + postSnapshot.getValue() + " ");
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put(postSnapshot.getKey(), postSnapshot.getValue());
-                        jsonArray.put(jsonObject);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    k++;
-                }
-                for(int i=0; i < jsonArray.length() ; i++){
-                    try {
-                        EventData post = new EventData();
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        post.setEvent_super_cate_name(jsonObject.optString("event_super_cate_name"));
-                        post.setEvent_cate_name(jsonObject.optString("event_cate_name"));
-                        al.add(post);
-                        adapter.notifyDataSetChanged();
-                    }catch (Exception ex){
-                        ex.printStackTrace();
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        eventAdapter.notifyDataSetChanged();
     }
 
     @Override

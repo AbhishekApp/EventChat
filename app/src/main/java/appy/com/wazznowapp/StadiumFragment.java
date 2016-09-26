@@ -55,6 +55,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     String userName="";
     int msgLimit = 10;
     InputMethodManager imm;
+    String subscribedGroup;
 
     public StadiumFragment() {
 
@@ -66,7 +67,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.CateName).child("StadiumChat");
+        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.eventID+"/ "+EventChatFragment.CateName).child("StadiumChat");
 
     }
 
@@ -131,6 +132,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         userName = MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
         if(!TextUtils.isEmpty(userName)){
             flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.CateName, false);
+            subscribedGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, "");
+            if (subscribedGroup.contains(EventChatFragment.eventID)) {}
             if(!flagAdminMsg){
                 ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match");
                 alanRef.push().setValue(alan);
@@ -190,17 +193,20 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         viewLay.setVisibility(View.VISIBLE);
                         Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
-                }else if(!TextUtils.isEmpty(userName)){
+                }else if(!TextUtils.isEmpty(userName)) {
                     String msg = etMsg.getText().toString();
-                    if (!TextUtils.isEmpty(msg)) {
-                   //     al.add(msg);
-                        adapter.notifyDataSetChanged();
-                        etMsg.setText("");
-                        ChatData alan = new ChatData(userName, msg);
-                        alanRef.push().setValue(alan);
+                    subscribedGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, "");
+                    if (subscribedGroup.contains(EventChatFragment.eventID)) {
+                        if (!TextUtils.isEmpty(msg)) {
+                            //     al.add(msg);
+                            adapter.notifyDataSetChanged();
+                            etMsg.setText("");
+                            ChatData alan = new ChatData(userName, msg);
+                            alanRef.push().setValue(alan);
 
-                    }else{
-                        Toast.makeText(getActivity(),"Blank message not send", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
 
@@ -212,6 +218,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         }
     }
 
+    public void updateUserGroup(){
+
+    }
 
     @Override
     public void onRefresh() {

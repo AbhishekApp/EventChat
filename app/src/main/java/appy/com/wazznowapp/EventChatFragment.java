@@ -28,6 +28,7 @@ public class EventChatFragment extends AppCompatActivity  {
     ConnectDetector connectDetector;
     static String CateName;
     static String SuperCateName;
+    public static String eventID;
 
 
     @Override
@@ -38,6 +39,7 @@ public class EventChatFragment extends AppCompatActivity  {
         connectDetector = new ConnectDetector(this);
         SuperCateName = getIntent().getStringExtra("SuperCateName");
         CateName = getIntent().getStringExtra("CateName");
+        eventID = getIntent().getStringExtra("EventID");
 
         if(MyApp.firebaseFlag && connectDetector.getConnection()) {
             init();

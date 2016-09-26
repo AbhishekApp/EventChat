@@ -8,13 +8,16 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.model.ChatData;
+import com.app.model.UserProfile;
 import com.firebase.client.Query;
 
+import appy.com.wazznowapp.EventChatFragment;
 import appy.com.wazznowapp.InviteFriendActivity;
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
@@ -33,17 +36,20 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
     LinearLayout linear, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
 
+
     public StadiumChatListAdapter(Query ref, Activity activity, int layout, String mUsername){
         super(ref, ChatData.class, layout, activity);
         this.activity = activity;
     }
 
     @Override
-    protected void populateView(View v, ChatData model) {
+    protected void populateView(final View v, ChatData model) {
         tvUser = (TextView) v.findViewById(R.id.tvChatUser);
         tvMsg = (TextView) v.findViewById(R.id.tvChat);
         linear = (LinearLayout) v.findViewById(R.id.linearMsgChat);
         linearBtn = (LinearLayout) v.findViewById(R.id.linearBtn);
+        btnYes = (TextView) v.findViewById(R.id.btnYesTuneOrInvite);
+        btnNo = (TextView) v.findViewById(R.id.btnNoThanks);
 
 //      tvMsg.loadData(model.getTitle(), "text/utf-8", "iso-8");
         tvMsg.setText(model.getTitle());
@@ -82,11 +88,20 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
             linearBtn.setVisibility(View.VISIBLE);
             tvUser.setVisibility(View.GONE);
-            linearBtn.setOnClickListener(new View.OnClickListener() {
+            btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    Intent ii = new Intent(activity, InviteFriendActivity.class);
-                    activity.startActivity(ii);
+                public void onClick(View view) {
+
+                    TextView tvTT = (TextView) v.findViewById(R.id.tvChat);
+                    String adminMsg = tvTT.getText().toString();
+                    if (adminMsg.contains("Start a house party")) {
+                        Intent ii = new Intent(activity, InviteFriendActivity.class);
+                        activity.startActivity(ii);
+                    } else {
+                        UserProfile profile = new UserProfile();
+                        profile.updateUserGroup(activity, EventChatFragment.eventID);
+
+                    }
                 }
             });
         }else{
