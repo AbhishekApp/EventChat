@@ -69,8 +69,8 @@ public class EventModelAdapter extends BaseAdapter {
         }
 
         EventDetail detail = alList.get(position);
-        viewHolder.tvCateName.setText(detail.getSuper_category_name());
-        viewHolder.tvEventName.setText(detail.getCategory_name());
+        viewHolder.tvCateName.setText(detail.getCategory_name());
+        viewHolder.tvEventName.setText(detail.getEvent_title());
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
         String groupRec = preferences.getString(SignUpActivity.USER_JOINED_GROUP, null);
 

@@ -50,7 +50,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         linearBtn = (LinearLayout) v.findViewById(R.id.linearBtn);
         btnYes = (TextView) v.findViewById(R.id.btnYesTuneOrInvite);
         btnNo = (TextView) v.findViewById(R.id.btnNoThanks);
-
+        final String adminMsg = tvMsg.getText().toString();
 //      tvMsg.loadData(model.getTitle(), "text/utf-8", "iso-8");
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
@@ -83,7 +83,9 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             linear.setLayoutParams(relativeParam);
             linearBtn.setVisibility(View.GONE);
         }
+        if (adminMsg.contains("Start a house party")){
 
+        }
         if(model.getAuthor().equalsIgnoreCase("Admin")) {
             tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
             linearBtn.setVisibility(View.VISIBLE);
@@ -91,16 +93,23 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    TextView tvTT = (TextView) v.findViewById(R.id.tvChat);
-                    String adminMsg = tvTT.getText().toString();
                     if (adminMsg.contains("Start a house party")) {
                         Intent ii = new Intent(activity, InviteFriendActivity.class);
                         activity.startActivity(ii);
                     } else {
                         UserProfile profile = new UserProfile();
                         profile.updateUserGroup(activity, EventChatFragment.eventID);
+                    }
+                }
+            });
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TextView tvTT = (TextView) v.findViewById(R.id.tvChat);
+                    if (adminMsg.contains("Start a house party")) {
 
+                    } else {
+                      activity.finish();
                     }
                 }
             });

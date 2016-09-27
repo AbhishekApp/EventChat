@@ -130,20 +130,21 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             adapter.notifyDataSetChanged();
         }catch (Exception e){}
         userName = MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
-        if(!TextUtils.isEmpty(userName)){
-            flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.CateName, false);
+        if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")){
+            flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.eventID, false);
             subscribedGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, "");
             if (subscribedGroup.contains(EventChatFragment.eventID)) {}
             if(!flagAdminMsg){
                 ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match");
                 alanRef.push().setValue(alan);
                 editor = MyApp.preferences.edit();
-                editor.putBoolean(EventChatFragment.CateName, true);
+                editor.putBoolean(EventChatFragment.eventID, true);
                 editor.commit();
                 handler = new Handler();
                 handler.postDelayed(runn, 15 * 10000);
             }
         }
+
     }
 
     Runnable runn = new Runnable() {
@@ -193,7 +194,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         viewLay.setVisibility(View.VISIBLE);
                         Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
-                }else if(!TextUtils.isEmpty(userName)) {
+                }else if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")) {
                     String msg = etMsg.getText().toString();
                     subscribedGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, "");
                     if (subscribedGroup.contains(EventChatFragment.eventID)) {
@@ -208,6 +209,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                             Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
                     }
+                }
+                if(userName.equalsIgnoreCase("Guest User")){
+                    Toast.makeText(getActivity(), "Canned messages coming soon for guest users", Toast.LENGTH_SHORT).show();
                 }
 
             }else{

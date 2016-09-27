@@ -71,7 +71,9 @@ public class UserProfile {
 
         String userGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, null);
         if(userGroup != null && !TextUtils.isEmpty(userGroup)){
-            userGroup = userGroup +", "+ newGroup;
+            if(!userGroup.contains(newGroup)){
+                userGroup = userGroup +", "+ newGroup;
+            }
         }else
         {
             userGroup = newGroup;
@@ -82,7 +84,7 @@ public class UserProfile {
         Map<String, Object> nickname = new HashMap<String, Object>();
         nickname.put("joined_group", userGroup);
         alanRef.updateChildren(nickname);
-        Toast.makeText(con, "User group update successfully "+newGroup, Toast.LENGTH_SHORT).show();
+     // Toast.makeText(con, "User group update successfully "+newGroup, Toast.LENGTH_SHORT).show();
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString(SignUpActivity.USER_JOINED_GROUP, userGroup);
         editor.commit();

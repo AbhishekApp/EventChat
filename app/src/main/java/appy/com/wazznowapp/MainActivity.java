@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Firebase usersRef = firebase.child("users");//.child(""+length);
            try {
                if (flagExist) {
-                   Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
+//                   Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                    progressDialog.setMessage("User Found");
                    System.out.println("EVENT DATA User Already Registered");
                    MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
