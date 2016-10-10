@@ -20,7 +20,12 @@ public class MyApp extends Application {
     public static SharedPreferences preferences;
     public static String MyPREFERENCES = "UserName";
     public static String FIREBASE_BASE_URL =  "https://wazznow-cd155.firebaseio.com";
-
+    public static String USER_JOINED_GROUP = "UserJoinedGroup";
+    public static String USER_NAME = "UserName";
+    public static String USER_LAST_NAME = "UserLastName";
+    public static String USER_PHONE = "UserPhone";
+    public static String USER_EMAIL = "UserEmail";
+    public static String USER_PASSWORD = "UserPassword";
 
     @Override
     public void onCreate() {

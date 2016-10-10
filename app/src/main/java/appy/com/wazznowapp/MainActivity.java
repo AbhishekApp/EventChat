@@ -101,17 +101,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         });
         init();
         if(!firstFlag) {
+            /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
             firstFlag = true;
             UserDetailTask task = new UserDetailTask();
-            task.execute();/*
-            String email = MyApp.preferences.getString(SignUpActivity.USER_EMAIL,null);
-            if(TextUtils.isEmpty(email)) {
-                UserDetailTask task = new UserDetailTask();
-                task.execute();
-            }else{
-                EventTask task = new EventTask();
-                task.execute();
-            }*/
+            task.execute();
             Intent ii = new Intent(this, MySplashActivity.class);
             startActivity(ii);
 
@@ -122,18 +115,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent iChat = new Intent(this, EventChatFragment.class);
-        TextView superEventName = (TextView) view.findViewById(R.id.tvCatRow);
-        TextView eventName = (TextView) view.findViewById(R.id.tvEventNameRow);
-        iChat.putExtra("SuperCateName", superEventName.getText().toString());
-        iChat.putExtra("CateName", eventName.getText().toString());
-        String eventID = arrayListEvent.get(position).getCatergory_id();
-        iChat.putExtra("EventID", eventID);
+        iChat.putExtra("EventDetail", arrayListEvent.get(position));
         startActivity(iChat);
     }
 
     private void init(){
         firebase = new Firebase(firebaseURL);
-        // alanRef = firebase.child("EventList/Cricket");
+
         progressDialog = new ProgressDialog(this);
         listMain = (ListView) findViewById(R.id.listMainEvent);
         al = new ArrayList<EventData>();
@@ -291,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         detail.setCatergory_id(jsonDetail.optString("event_id"));
                         detail.setEvent_meta(jsonDetail.optString("event_meta"));
                         detail.setEvent_title(jsonDetail.optString("event_title"));
+                        detail.setEvent_time(Long.parseLong(jsonDetail.optString("event_time")));
                         model.alEvent.add(detail);
                         arrayListEvent.add(detail);
                     }
@@ -322,12 +311,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void addUserDetail(){
 
         alanisawesomeMap = new HashMap<String, String>();
-        alanisawesomeMap.put("name", MyApp.preferences.getString(SignUpActivity.USER_NAME, null));
-        alanisawesomeMap.put("lastName", MyApp.preferences.getString(SignUpActivity.USER_LAST_NAME, null));
-        alanisawesomeMap.put("passKey", MyApp.preferences.getString(SignUpActivity.USER_PASSWORD, null));
-        alanisawesomeMap.put("phone", MyApp.preferences.getString(SignUpActivity.USER_PHONE, null));
-        alanisawesomeMap.put("email", MyApp.preferences.getString(SignUpActivity.USER_EMAIL, null));
-        System.out.println("User Name " + MyApp.preferences.getString(SignUpActivity.USER_NAME, null));
+        alanisawesomeMap.put("name", MyApp.preferences.getString(MyApp.USER_NAME, null));
+        alanisawesomeMap.put("lastName", MyApp.preferences.getString(MyApp.USER_LAST_NAME, null));
+        alanisawesomeMap.put("passKey", MyApp.preferences.getString(MyApp.USER_PASSWORD, null));
+        alanisawesomeMap.put("phone", MyApp.preferences.getString(MyApp.USER_PHONE, null));
+        alanisawesomeMap.put("email", MyApp.preferences.getString(MyApp.USER_EMAIL, null));
+        System.out.println("User Name " + MyApp.preferences.getString(MyApp.USER_NAME, null));
 //        UserDetailTask task = new UserDetailTask();
 //        task.execute();
     }
@@ -363,12 +352,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     sb.append(line + "\n");
                 }
                 br.close();
-             //   System.out.println("GetUSER jsonObject : " + sb.toString());
+
                 JSONObject jsonObject = new JSONObject(sb.toString());
                 System.out.println("EVENT DATA JSONOBJECT : " + jsonObject.toString());
                 flagExist = jsonObject.has(deviceID);
                 System.out.println("EVENT DATA  Found : "+flagExist);
-            //    jUser = jsonObject.getJSONObject(deviceID);
+          //    jUser = jsonObject.getJSONObject(deviceID);
                 jsonArray = jsonObject.getJSONArray(deviceID);
                 jUser = jsonArray.getJSONObject(0);
                 String devID = jUser.optString(deviceID);
@@ -400,22 +389,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //                   Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                    progressDialog.setMessage("User Found");
                    System.out.println("EVENT DATA User Already Registered");
-                   MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
+                   MyApp.preferences.getString(MyApp.USER_NAME, null);
                    String uName = jUser.optString("name");
                    String uLastName = jUser.optString("lastName");
                    String uEmail = jUser.optString("email");
                    String uPhone = jUser.optString("phone");
                    String uJoinedGroup = jUser.optString("joined_group");
                    SharedPreferences.Editor editor = MyApp.preferences.edit();
-                   editor.putString(SignUpActivity.USER_NAME, uName);
-                   editor.putString(SignUpActivity.USER_LAST_NAME, uLastName);
-                   editor.putString(SignUpActivity.USER_PHONE, uPhone);
-                   editor.putString(SignUpActivity.USER_EMAIL, uEmail);
-                   editor.putString(SignUpActivity.USER_PASSWORD, deviceID);
-                   editor.putString(SignUpActivity.USER_JOINED_GROUP, uJoinedGroup);
+                   editor.putString(MyApp.USER_NAME, uName);
+                   editor.putString(MyApp.USER_LAST_NAME, uLastName);
+                   editor.putString(MyApp.USER_PHONE, uPhone);
+                   editor.putString(MyApp.USER_EMAIL, uEmail);
+                   editor.putString(MyApp.USER_PASSWORD, deviceID);
+                   editor.putString(MyApp.USER_JOINED_GROUP, uJoinedGroup);
                    editor.commit();
                } else {
-                   String email = MyApp.preferences.getString(SignUpActivity.USER_EMAIL, null);
+                   String email = MyApp.preferences.getString(MyApp.USER_EMAIL, null);
                    if (!TextUtils.isEmpty(email)) {
 
                        final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();

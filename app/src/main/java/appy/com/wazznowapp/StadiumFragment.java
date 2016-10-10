@@ -37,16 +37,13 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     EditText etMsg;
     View viewLay;
 
-    String mPhotoUrl;
     Firebase myFirebaseRef;
     Firebase alanRef;
     private SwipeRefreshLayout swipeRefreshLayout;
 
 
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
-//    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/0/Event_Category/2/Stadium";
-    private ValueEventListener mConnectedListener;
-    private ValueEventListener mDataRetrieveListener;
+
     boolean cannedFlag = false;
     SharedPreferences.Editor editor;
     boolean flagAdminMsg;
@@ -68,7 +65,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
         myFirebaseRef = new Firebase(firebaseURL);
         alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.eventID+"/ "+EventChatFragment.CateName).child("StadiumChat");
-
+        userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
     }
 
     @Override
@@ -98,26 +95,18 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     @Override
     public void onStart() {
         super.onStart();
-      /*  mConnectedListener = alanRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean connected = (Boolean) dataSnapshot.getValue();
-                if (connected) {
-                 //   Toast.makeText(getActivity(), "Connected to Firebase", Toast.LENGTH_SHORT).show();
-                    System.out.println("Firebase connected");
-                } else {
-                    System.out.println("Firebase not connected");
-                }
+        try {
+            if (!MyApp.preferences.getBoolean(EventChatFragment.eventID, false)) {
+                adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
+                ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match", MyApp.preferences.getString("Android_ID", null));
+                alanRef.push().setValue(alan);
+                editor = MyApp.preferences.edit();
+                editor.putBoolean(EventChatFragment.eventID, true);
+                editor.commit();
             }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-             //   Toast.makeText(getActivity(), "error: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                System.out.println("Server not connect ERROR : "+firebaseError.getMessage());
-            }
-        });
-*/
-        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
 
     }
 
@@ -129,19 +118,15 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }catch (Exception e){}
-        userName = MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
+
         if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")){
             flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.eventID, false);
-            subscribedGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, "");
+            subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
             if (subscribedGroup.contains(EventChatFragment.eventID)) {}
             if(!flagAdminMsg){
-                ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match");
-                alanRef.push().setValue(alan);
-                editor = MyApp.preferences.edit();
-                editor.putBoolean(EventChatFragment.eventID, true);
-                editor.commit();
+
                 handler = new Handler();
-                handler.postDelayed(runn, 15 * 10000);
+                handler.postDelayed(runn, 20 * 1000);
             }
         }
 
@@ -150,16 +135,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     Runnable runn = new Runnable() {
         @Override
         public void run() {
-            ChatData alan = new ChatData("Admin", "Start a house party, there are most fun.");
+            ChatData alan = new ChatData("Admin", "Start a house party, there are most fun.",  MyApp.preferences.getString("Android_ID", null));
             alanRef.push().setValue(alan);
         }
     };
 
-    @Override
-    public void onStop() {
-        super.onStop();
-     //   alanRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
-    }
+
 
     @Override
     public void onClick(View v) {
@@ -196,7 +177,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     }
                 }else if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")) {
                     String msg = etMsg.getText().toString();
-                    subscribedGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, "");
+                    subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
                     if (subscribedGroup.contains(EventChatFragment.eventID)) {
                         if (!TextUtils.isEmpty(msg)) {
                             //     al.add(msg);
@@ -215,8 +196,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 }
 
             }else{
-                Intent ii = new Intent(getActivity(), SignUpActivity.class);
-                startActivity(ii);
+//                Intent ii = new Intent(getActivity(), SignUpActivity.class);
+//                startActivity(ii);
 //                startActivityForResult(ii, 111);
             }
         }

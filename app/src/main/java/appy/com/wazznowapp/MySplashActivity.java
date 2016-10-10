@@ -17,7 +17,7 @@ public class MySplashActivity extends Activity{
         setContentView(R.layout.my_splash_activity);
 
         handler = new Handler();
-        handler.postDelayed(runn, 3 * 1000);
+        handler.postDelayed(runn, 4 * 1000);
     }
 
     Runnable runn = new Runnable() {
@@ -26,4 +26,9 @@ public class MySplashActivity extends Activity{
             finish();
         }
     };
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
 }

@@ -3,6 +3,7 @@ package com.mylist.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -59,7 +60,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvMsg.setPadding(2, 2, 2, 2);
         tvUser.setPadding(2, 2, 2, 2);
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        if(model.getAuthor().equalsIgnoreCase(MyApp.preferences.getString(SignUpActivity.USER_NAME,null))) {
+        if(model.getAuthor().equalsIgnoreCase(MyApp.preferences.getString(MyApp.USER_NAME,null))) {
             tvMsg.setGravity(Gravity.RIGHT);
             tvUser.setGravity(Gravity.RIGHT);
             tvUser.setVisibility(View.GONE);
@@ -87,32 +88,43 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
 
         }
         if(model.getAuthor().equalsIgnoreCase("Admin")) {
-            tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
-            linearBtn.setVisibility(View.VISIBLE);
-            tvUser.setVisibility(View.GONE);
-            btnYes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (adminMsg.contains("Start a house party")) {
-                        Intent ii = new Intent(activity, InviteFriendActivity.class);
-                        activity.startActivity(ii);
-                    } else {
-                        UserProfile profile = new UserProfile();
-                        profile.updateUserGroup(activity, EventChatFragment.eventID);
-                    }
-                }
-            });
-            btnNo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    TextView tvTT = (TextView) v.findViewById(R.id.tvChat);
-                    if (adminMsg.contains("Start a house party")) {
+            try{
+                if (!model.getToUser().equalsIgnoreCase(MyApp.preferences.getString("Android_ID", null))) {
+                    v.setVisibility(View.GONE);
+                } else {
+                    tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
+                    linearBtn.setVisibility(View.VISIBLE);
+                    tvUser.setVisibility(View.GONE);
+                    btnYes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (adminMsg.contains("Start a house party")) {
+                                Intent ii = new Intent(activity, InviteFriendActivity.class);
+                                activity.startActivity(ii);
+                            } else {
+                                UserProfile profile = new UserProfile();
+                                profile.updateUserGroup(activity, EventChatFragment.eventID);
+                                SharedPreferences.Editor editor = MyApp.preferences.edit();
+                                editor.putBoolean(EventChatFragment.eventID, true);
+                                editor.commit();
+                            }
+                        }
+                    });
+                    btnNo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            TextView tvTT = (TextView) v.findViewById(R.id.tvChat);
+                            if (adminMsg.contains("Start a house party")) {
 
-                    } else {
-                      activity.finish();
-                    }
+                            } else {
+                                activity.finish();
+                            }
+                        }
+                    });
                 }
-            });
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
         }else{
             tvMsg.setBackgroundColor(Color.TRANSPARENT);
         }

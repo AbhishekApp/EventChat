@@ -155,7 +155,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
-            userName = MyApp.preferences.getString(SignUpActivity.USER_NAME, null);
+            userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             if(!TextUtils.isEmpty(userName) || cannedFlag) {
                 if(cannedFlag){
 

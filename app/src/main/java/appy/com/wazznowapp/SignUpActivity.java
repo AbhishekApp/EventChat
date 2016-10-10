@@ -25,17 +25,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
 
     ActionBar actionBar;
-    Button btnSign;
+    static Button btnSign;
     UserProfile userProfile;
     EditText etName, etLastName, etPhone, etEmail;
     TextView tvNahGuestUser;
     SharedPreferences.Editor editor;
-    public static String USER_JOINED_GROUP = "UserJoinedGroup";
-    public static String USER_NAME = "UserName";
-    public static String USER_LAST_NAME = "UserLastName";
-    public static String USER_PHONE = "UserPhone";
-    public static String USER_EMAIL = "UserEmail";
-    public static String USER_PASSWORD = "UserPassword";
+
 
     UserLoginSignupAction userSignup;
 
@@ -74,6 +69,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         int id = v.getId();
 
         if(id == R.id.btnSignup){
+            btnSign.setClickable(false);
             String uName = etName.getText().toString();
             String uLastName = etLastName.getText().toString();
             String uEmail = etEmail.getText().toString();
@@ -85,14 +81,19 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 userSignup.userSignup(SignUpActivity.this, uName, uLastName, uPhone, uEmail, uPass);
                // finish();
             }
+
         }
         else if(id == R.id.tvNahGuestUser){
             editor = MyApp.preferences.edit();
-            editor.putString(USER_NAME, "Guest User");
+            editor.putString(MyApp.USER_NAME, "Guest User");
             editor.commit();
             finish();
         }
 
+    }
+
+    public static void makeClickable(){
+        btnSign.setClickable(true);
     }
 
 

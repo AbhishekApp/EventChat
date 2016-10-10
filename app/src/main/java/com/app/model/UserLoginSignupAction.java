@@ -57,19 +57,20 @@ public class UserLoginSignupAction {
                             if (!task.isSuccessful()) {
                                 Toast.makeText(con, "User creation failed", Toast.LENGTH_SHORT).show();
                                 editor = MyApp.preferences.edit();
-                                editor.putString(SignUpActivity.USER_NAME, "");
-                                editor.putString(SignUpActivity.USER_EMAIL, "");
-                                editor.putString(SignUpActivity.USER_PASSWORD, "");
+                                editor.putString(MyApp.USER_NAME, "");
+                                editor.putString(MyApp.USER_EMAIL, "");
+                                editor.putString(MyApp.USER_PASSWORD, "");
                                 editor.commit();
+                                SignUpActivity.makeClickable();
                             }else if(task.isSuccessful()){
                                 Toast.makeText(con, "User created successfully", Toast.LENGTH_SHORT).show();
                                 task.getResult();
                                 editor = MyApp.preferences.edit();
-                                editor.putString(SignUpActivity.USER_NAME, uName);
-                                editor.putString(SignUpActivity.USER_LAST_NAME, uLastName);
-                                editor.putString(SignUpActivity.USER_PHONE, uPhone);
-                                editor.putString(SignUpActivity.USER_EMAIL, email);
-                                editor.putString(SignUpActivity.USER_PASSWORD, password);
+                                editor.putString(MyApp.USER_NAME, uName);
+                                editor.putString(MyApp.USER_LAST_NAME, uLastName);
+                                editor.putString(MyApp.USER_PHONE, uPhone);
+                                editor.putString(MyApp.USER_EMAIL, email);
+                                editor.putString(MyApp.USER_PASSWORD, password);
                                 editor.commit();
 
                                 Firebase firebase = new Firebase(firebaseUserURL);

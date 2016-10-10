@@ -69,7 +69,7 @@ public class UserProfile {
 
     public void updateUserGroup(Context con, String newGroup) {
 
-        String userGroup = MyApp.preferences.getString(SignUpActivity.USER_JOINED_GROUP, null);
+        String userGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, null);
         if(userGroup != null && !TextUtils.isEmpty(userGroup)){
             if(!userGroup.contains(newGroup)){
                 userGroup = userGroup +", "+ newGroup;
@@ -86,7 +86,7 @@ public class UserProfile {
         alanRef.updateChildren(nickname);
      // Toast.makeText(con, "User group update successfully "+newGroup, Toast.LENGTH_SHORT).show();
         SharedPreferences.Editor editor = MyApp.preferences.edit();
-        editor.putString(SignUpActivity.USER_JOINED_GROUP, userGroup);
+        editor.putString(MyApp.USER_JOINED_GROUP, userGroup);
         editor.commit();
     }
 
