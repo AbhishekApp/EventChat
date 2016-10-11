@@ -28,7 +28,6 @@ import appy.com.wazznowapp.SignUpActivity;
  * Created by admin on 8/11/2016.
  */
 public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
- //   (Query mRef, Class<T> mModelClass, int mLayout, Activity activity)
 
     Activity activity;
     TextView tvUser;
