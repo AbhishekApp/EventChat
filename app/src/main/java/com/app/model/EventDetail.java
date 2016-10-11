@@ -1,9 +1,11 @@
 package com.app.model;
 
+import java.io.Serializable;
+
 /**
  * Created by admin on 9/16/2016.
  */
-public class EventDetail {
+public class EventDetail implements Serializable{
 
     String super_category_name;
     String catergory_id;
@@ -11,6 +13,7 @@ public class EventDetail {
     String event_meta;
     String event_title;
     String event_image_url;
+    long event_time;
 
     public void setSuper_category_name(String super_category_name) {
         this.super_category_name = super_category_name;
@@ -32,6 +35,10 @@ public class EventDetail {
 
     public void setEvent_title(String event_title) {
         this.event_title = event_title;
+    }
+
+    public void setEvent_time(long event_time){
+        this.event_time = event_time;
     }
 
     public String getSuper_category_name() {
@@ -57,4 +64,9 @@ public class EventDetail {
     public String getEvent_title() {
         return event_title;
     }
+
+    public long getEvent_time(){
+        return event_time;
+    }
+
 }

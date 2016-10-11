@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.app.model.ConnectDetector;
+import com.app.model.EventDetail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class EventChatFragment extends AppCompatActivity  {
     static String CateName;
     static String SuperCateName;
     public static String eventID;
+    EventDetail eventDetail;
 
 
     @Override
@@ -37,14 +39,16 @@ public class EventChatFragment extends AppCompatActivity  {
         setContentView(R.layout.event_chat_fragment);
 
         connectDetector = new ConnectDetector(this);
-        SuperCateName = getIntent().getStringExtra("SuperCateName");
-        CateName = getIntent().getStringExtra("CateName");
-        eventID = getIntent().getStringExtra("EventID");
+        eventDetail = (EventDetail) getIntent().getSerializableExtra("EventDetail");
+        SuperCateName = eventDetail.getSuper_category_name();
+        CateName = eventDetail.getCategory_name();
+        eventID = eventDetail.getCatergory_id();
 
         if(MyApp.firebaseFlag && connectDetector.getConnection()) {
             init();
         }else{
             Toast.makeText(this, "Please check internet connection. Server Error.", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -53,7 +57,7 @@ public class EventChatFragment extends AppCompatActivity  {
         setSupportActionBar(toolbar);*/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Group Name");
+        actionBar.setTitle(CateName);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);

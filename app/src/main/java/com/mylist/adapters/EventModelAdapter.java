@@ -13,7 +13,9 @@ import com.app.model.EventData;
 import com.app.model.EventDetail;
 import com.app.model.EventModel;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
@@ -72,7 +74,8 @@ public class EventModelAdapter extends BaseAdapter {
         viewHolder.tvCateName.setText(detail.getCategory_name());
         viewHolder.tvEventName.setText(detail.getEvent_title());
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
-        String groupRec = preferences.getString(SignUpActivity.USER_JOINED_GROUP, null);
+        viewHolder.tvHour.setText(String.valueOf(getTimeInterval(detail.getEvent_time())));
+        String groupRec = preferences.getString(MyApp.USER_JOINED_GROUP, null);
 
         try {
             if (groupRec != null && detail.getCatergory_id() != null) {
@@ -91,5 +94,30 @@ public class EventModelAdapter extends BaseAdapter {
     class ViewHolder{
         ImageView img, imgChat;
         TextView tvCateName, tvHour, tvEventName, tvNoOfTune, tvEventPlace;
+    }
+
+    private int getTimeInterval(long eventTimeStamp){
+        try {
+            if (eventTimeStamp != 0) {
+                Date purchasedDate = new Date();
+//multiply the timestampt with 1000 as java expects the time in milliseconds
+                purchasedDate.setTime((long) eventTimeStamp * 1000);
+
+                Date currentDate = new Date();
+                currentDate.setTime((long) System.currentTimeMillis() * 1000);
+
+//To calculate the days difference between two dates
+                int diffInDays = (int) ((currentDate.getTime() - purchasedDate.getTime())
+                        / (1000 * 60 * 60 * 24));
+
+                Date date = new Date(diffInDays);
+
+                return diffInDays;
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return 0;
+        }
+        return 0;
     }
 }
