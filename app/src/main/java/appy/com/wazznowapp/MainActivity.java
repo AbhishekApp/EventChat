@@ -279,7 +279,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         detail.setCatergory_id(jsonDetail.optString("event_id"));
                         detail.setEvent_meta(jsonDetail.optString("event_meta"));
                         detail.setEvent_title(jsonDetail.optString("event_title"));
-                        detail.setEvent_time(Long.parseLong(jsonDetail.optString("event_time")));
+                        detail.setEvent_date(jsonDetail.optString("event_date"));
+                        detail.setEvent_time(jsonDetail.optString("event_time"));
+                        detail.setSubscribed_user(jsonDetail.optString("subscribed_user"));
                         model.alEvent.add(detail);
                         arrayListEvent.add(detail);
                     }

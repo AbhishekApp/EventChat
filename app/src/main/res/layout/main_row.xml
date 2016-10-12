@@ -44,7 +44,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2 Hours to go"
+                android:gravity="right"
                 android:padding="3dp"
+                android:layout_marginLeft="2dp"
+                android:layout_toRightOf="@+id/tvCatRow"
                 android:layout_alignParentRight="true"/>
 
         </RelativeLayout>

@@ -1,6 +1,10 @@
 package com.app.model;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
+
+import appy.com.wazznowapp.MyApp;
 
 /**
  * Created by admin on 9/16/2016.
@@ -13,7 +17,25 @@ public class EventDetail implements Serializable{
     String event_meta;
     String event_title;
     String event_image_url;
-    long event_time;
+    String event_time;
+    String event_date;
+    String subscribed_user;
+
+    public String getSubscribed_user() {
+        return subscribed_user;
+    }
+
+    public void setSubscribed_user(String subscribed_user) {
+           this.subscribed_user = subscribed_user;
+    }
+
+    public String getEvent_date() {
+        return event_date;
+    }
+
+    public void setEvent_date(String event_date) {
+        this.event_date = event_date;
+    }
 
     public void setSuper_category_name(String super_category_name) {
         this.super_category_name = super_category_name;
@@ -37,7 +59,7 @@ public class EventDetail implements Serializable{
         this.event_title = event_title;
     }
 
-    public void setEvent_time(long event_time){
+    public void setEvent_time(String event_time){
         this.event_time = event_time;
     }
 
@@ -65,7 +87,7 @@ public class EventDetail implements Serializable{
         return event_title;
     }
 
-    public long getEvent_time(){
+    public String getEvent_time(){
         return event_time;
     }
 
