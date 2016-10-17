@@ -22,7 +22,7 @@
         android:layout_weight="0.4"
         android:orientation="vertical"
         android:background="@color/white"
-        android:paddingLeft="7dp">
+        android:paddingLeft="2dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -36,7 +36,8 @@
                 android:layout_height="wrap_content"
                 android:maxLength="15"
                 android:text="IPL"
-                android:padding="3dp"
+                android:textSize="14sp"
+                android:padding="2dp"
                 android:layout_alignParentLeft="true"/>
 
             <TextView
@@ -44,9 +45,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2 Hours to go"
+                android:textSize="12sp"
                 android:gravity="right"
-                android:padding="3dp"
-                android:layout_marginLeft="2dp"
+                android:padding="2dp"
+                android:layout_marginLeft="1dp"
                 android:layout_toRightOf="@+id/tvCatRow"
                 android:layout_alignParentRight="true"/>
 

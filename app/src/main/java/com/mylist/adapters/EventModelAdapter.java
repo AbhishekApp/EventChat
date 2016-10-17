@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.model.EventDetail;
+import com.app.model.MyUtill;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import appy.com.wazznowapp.MainActivity;
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
 
@@ -26,6 +28,7 @@ import appy.com.wazznowapp.R;
  */
 public class EventModelAdapter extends BaseAdapter {
 
+    MyUtill myUtill;
     Context con;
     ArrayList<EventDetail> alList;
     ViewHolder viewHolder;
@@ -35,6 +38,7 @@ public class EventModelAdapter extends BaseAdapter {
             this.con = con;
             this.alList = alList;
             preferences = MyApp.preferences;
+            myUtill = new MyUtill();
     }
 
     @Override
@@ -74,7 +78,11 @@ public class EventModelAdapter extends BaseAdapter {
         viewHolder.tvCateName.setText(detail.getCategory_name());
         viewHolder.tvEventName.setText(detail.getEvent_title());
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
-        viewHolder.tvHour.setText(String.valueOf(getTimeDifference(detail.getEvent_date(), detail.getEvent_time())));
+        String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time())).trim();
+        System.out.println("Line 79 event Time Difference :"+strTime+":");
+        if(!TextUtils.isEmpty(strTime)){
+            viewHolder.tvHour.setText(strTime);
+        }
         String groupRec = preferences.getString(MyApp.USER_JOINED_GROUP, null);
         if(detail.getSubscribed_user().equalsIgnoreCase("0")) {
                 viewHolder.tvNoOfTune.setVisibility(View.GONE);
@@ -87,14 +95,16 @@ public class EventModelAdapter extends BaseAdapter {
                     try {
                         int iSubscribedUser = Integer.parseInt(subscribed_user);
                         iSubscribedUser--;
-                        subscribed_user = "You +" + iSubscribedUser;
+                        subscribed_user = new String("You +" + iSubscribedUser);
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        subscribed_user = "+" + subscribed_user;
+                        subscribed_user = new String(" +" + subscribed_user);
                     }
+                }else{
+                    subscribed_user = new String(" +" + subscribed_user);
                 }
             }else{
-                subscribed_user = "+" + subscribed_user;
+                subscribed_user = new String(" +" + subscribed_user);
             }
             viewHolder.tvNoOfTune.setVisibility(View.VISIBLE);
             viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");
@@ -118,58 +128,5 @@ public class EventModelAdapter extends BaseAdapter {
         TextView tvCateName, tvHour, tvEventName, tvNoOfTune, tvEventPlace;
     }
 
-    private String getTimeDifference(String startDate, String startTime){
-        String format = "MM/dd/yyyy HH:mm:ss";
-        System.out.println("event Time Difference : "+startDate+" "+startTime);
-        String date1 = startDate;
-        String time1 = startTime;
-        DateFormat dtFormat = new SimpleDateFormat(format);
-        Date date = new Date();
-        System.out.println(dtFormat.format(date));
-        String eDate[] = dtFormat.format(date).split(" ");
-        String date2 = eDate[0];
-        String time2 = eDate[1];
 
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        Date fromDate = null;
-        Date toDate = null;
-        try {
-//            fromDate = date1+time1;
-            fromDate = sdf.parse(date1 + " " + time1);
-            toDate = sdf.parse(date2 + " " + time2);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-//        System.out.println("Time Difference toDate : "+toDate);
-//        System.out.println("Time Difference fromDate : "+fromDate);
-
-        long diff =  fromDate.getTime() - toDate.getTime();
-        String dateFormat="";
-        int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-        if(diffDays>0){
-            dateFormat+=diffDays+" day ";
-        }
-        diff -= diffDays * (24 * 60 * 60 * 1000);
-
-//        System.out.println("Time Difference diff : "+diff);
-
-        int diffhours = (int) (diff / (60 * 60 * 1000));
-        if(diffhours>0){
-            dateFormat+=diffhours+" hour ";
-        }
-        diff -= diffhours * (60 * 60 * 1000);
-
-        int diffmin = (int) (diff / (60 * 1000));
-        if(diffmin>0){
-            dateFormat+=diffmin+" min ";
-        }
-        diff -= diffmin * (60 * 1000);
-
-        int diffsec = (int) (diff / (1000));
-        if(diffsec>0){
-           // dateFormat+=diffsec+" sec";
-        }
-        System.out.println("Time Difference : "+dateFormat);
-        return dateFormat;
-    }
 }

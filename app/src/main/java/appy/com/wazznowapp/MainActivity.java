@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.app.model.EventData;
 import com.app.model.EventDetail;
 import com.app.model.EventModel;
+import com.app.model.MyUtill;
 import com.firebase.client.Firebase;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
@@ -33,6 +34,7 @@ import com.mylist.adapters.EventModelAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,7 +42,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Firebase firebase;
    // Firebase alanRef;
     ArrayList<EventModel> alModel;
-    ArrayList<EventDetail> arrayListEvent;
-    EventModelAdapter eventAdapter;
+    static ArrayList<EventDetail> arrayListEvent;
+    static EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
     ProgressDialog progressDialog;
 
@@ -239,11 +245,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         HttpURLConnection urlConnection;
         JSONArray jsonArray;
+        MyUtill myUtill;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog.setMessage("Event Detail Loading...");
+            myUtill = new MyUtill();
         }
 
         @Override
@@ -282,8 +290,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         detail.setEvent_date(jsonDetail.optString("event_date"));
                         detail.setEvent_time(jsonDetail.optString("event_time"));
                         detail.setSubscribed_user(jsonDetail.optString("subscribed_user"));
-                        model.alEvent.add(detail);
-                        arrayListEvent.add(detail);
+                        String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
+                        if(!TextUtils.isEmpty(strTime)) {
+                            model.alEvent.add(detail);
+                            arrayListEvent.add(detail);
+                        }else{
+                            System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
+                        }
                     }
                     alModel.add(model);
                 }
@@ -308,6 +321,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             progressDialog.hide();
 
         }
+    }
+
+    public static void setEventListData(int position){
+        arrayListEvent.remove(position);
+        eventAdapter.notifyDataSetChanged();
     }
 
     private void addUserDetail(){
@@ -424,5 +442,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
     }
+
+
+
 
 }
