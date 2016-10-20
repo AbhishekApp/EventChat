@@ -14,12 +14,22 @@ public class EventDetail implements Serializable{
     String super_category_name;
     String catergory_id;
     String category_name;
+    String event_id;
     String event_meta;
     String event_title;
     String event_image_url;
     String event_time;
     String event_date;
     String subscribed_user;
+
+    public String getEvent_id() {
+        return event_id;
+    }
+
+    public void setEvent_id(String event_id) {
+        this.event_id = event_id;
+    }
+
 
     public String getSubscribed_user() {
         return subscribed_user;

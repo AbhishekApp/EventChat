@@ -295,7 +295,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setSuper_category_name(superCateName);
                             detail.setCategory_name(subCateName);
                             detail.setCatergory_id(subCateID);
-                            detail.setCatergory_id(jOBJ.optString("event_id"));
+                            detail.setCatergory_id(jOBJ.optString("event_sub_id"));
+                            detail.setEvent_id(jOBJ.optString("event_id"));
                             detail.setEvent_meta(jOBJ.optString("event_meta"));
                             detail.setEvent_title(jOBJ.optString("event_title"));
                             detail.setEvent_date(jOBJ.optString("event_date"));

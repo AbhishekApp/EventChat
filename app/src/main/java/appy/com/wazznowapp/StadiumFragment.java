@@ -65,7 +65,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.eventID+"/ "+EventChatFragment.CateName).child("StadiumChat");
+        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.CateName+"/ "+EventChatFragment.eventID).child("StadiumChat");
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
     }
 
