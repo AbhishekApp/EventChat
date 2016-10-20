@@ -6,8 +6,11 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.firebase.client.Firebase;
+
+import java.util.ArrayList;
 
 /**
  * Created by admin on 8/9/2016.
@@ -26,6 +29,7 @@ public class MyApp extends Application {
     public static String USER_PHONE = "UserPhone";
     public static String USER_EMAIL = "UserEmail";
     public static String USER_PASSWORD = "UserPassword";
+    public static ArrayList<CannedMessage> alCanMsg;
 
     @Override
     public void onCreate() {
@@ -37,6 +41,7 @@ public class MyApp extends Application {
         }
         preferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         getDeviveID(getApplicationContext());
+        alCanMsg = new ArrayList<CannedMessage>();
     }
 
     public static String getDeviveID(Context con){

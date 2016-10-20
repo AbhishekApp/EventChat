@@ -276,27 +276,41 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     JSONObject jSon = jsonObject.getJSONObject(i);
                     EventModel model = new EventModel();
                     String superCateName = jSon.optString("event_superCategory");
+                    String superCateID = jSon.optString("event_super_id");
                     model.setEvent_super_category(superCateName);
+                    model.setEvent_super_id(superCateID);
                     model.alEvent = new ArrayList<EventDetail>();
                     JSONArray jArray = jSon.getJSONArray("Cate");
                     for(int j = 0; j <jArray.length() ; j++){
                         EventDetail detail = new EventDetail();
                         JSONObject jsonDetail = jArray.getJSONObject(j);
-                        detail.setSuper_category_name(superCateName);
-                        detail.setCategory_name(jsonDetail.optString("event_category"));
-                        detail.setCatergory_id(jsonDetail.optString("event_id"));
-                        detail.setEvent_meta(jsonDetail.optString("event_meta"));
-                        detail.setEvent_title(jsonDetail.optString("event_title"));
-                        detail.setEvent_date(jsonDetail.optString("event_date"));
-                        detail.setEvent_time(jsonDetail.optString("event_time"));
-                        detail.setSubscribed_user(jsonDetail.optString("subscribed_user"));
-                        String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
-                        if(!TextUtils.isEmpty(strTime)) {
-                            model.alEvent.add(detail);
-                            arrayListEvent.add(detail);
-                        }else{
-                            System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
+
+                        String subCateName = jsonDetail.optString("event_category");
+                        String subCateID = jsonDetail.optString("event_sub_id");
+
+                        JSONArray jsArr = jsonDetail.getJSONArray("sub_cate");
+                        for(int t = 0 ; t < jsArr.length(); t++ ){
+                            detail = new EventDetail();
+                            JSONObject jOBJ = jsArr.getJSONObject(t);
+                            detail.setSuper_category_name(superCateName);
+                            detail.setCategory_name(subCateName);
+                            detail.setCatergory_id(subCateID);
+                            detail.setCatergory_id(jOBJ.optString("event_id"));
+                            detail.setEvent_meta(jOBJ.optString("event_meta"));
+                            detail.setEvent_title(jOBJ.optString("event_title"));
+                            detail.setEvent_date(jOBJ.optString("event_date"));
+                            detail.setEvent_time(jOBJ.optString("event_time"));
+                            detail.setSubscribed_user(jOBJ.optString("subscribed_user"));
+                            String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
+                            if(!TextUtils.isEmpty(strTime)) {
+                                model.alEvent.add(detail);
+                                arrayListEvent.add(detail);
+                            }else{
+                                System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
+                            }
                         }
+
+
                     }
                     alModel.add(model);
                 }

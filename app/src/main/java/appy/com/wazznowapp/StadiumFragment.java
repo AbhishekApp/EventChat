@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -35,7 +36,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     ImageView send;
     StadiumChatListAdapter adapter;
     EditText etMsg;
-    View viewLay;
+    GridView viewLay;
 
     Firebase myFirebaseRef;
     Firebase alanRef;
@@ -84,7 +85,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         send = (ImageView) v.findViewById(R.id.imgSendChat);
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        viewLay = (View) v.findViewById(R.id.viewLay);
+        viewLay = (GridView) v.findViewById(R.id.viewLay);
  //     al = new ArrayList<String>();
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
@@ -173,7 +174,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         viewLay.setVisibility(View.GONE);
                     } else {
                         viewLay.setVisibility(View.VISIBLE);
-                        Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
                 }else if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")) {
                     String msg = etMsg.getText().toString();
@@ -196,6 +197,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 }
 
             }else{
+                Toast.makeText(getActivity(), "Unregister user can send only canned message", Toast.LENGTH_SHORT).show();
+                viewLay.setVisibility(View.VISIBLE);
 //                Intent ii = new Intent(getActivity(), SignUpActivity.class);
 //                startActivity(ii);
 //                startActivityForResult(ii, 111);
