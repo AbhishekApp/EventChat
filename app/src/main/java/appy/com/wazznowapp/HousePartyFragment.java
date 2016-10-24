@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -35,7 +36,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     ImageView send;
     StadiumChatListAdapter adapter;
     EditText etMsg;
-    View viewLay;
+    GridView viewLay;
 
     String mPhotoUrl;
     Firebase myFirebaseRef;
@@ -83,7 +84,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         send = (ImageView) v.findViewById(R.id.imgSendChat);
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        viewLay = (View) v.findViewById(R.id.viewLay);
+        viewLay = (GridView) v.findViewById(R.id.viewLay);
         //     al = new ArrayList<String>();
 
 

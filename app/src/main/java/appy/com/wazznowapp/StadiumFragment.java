@@ -18,12 +18,14 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.app.model.ChatData;
 import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
+import com.mylist.adapters.CannedAdapter;
 import com.mylist.adapters.StadiumChatListAdapter;
 
 /**
@@ -36,11 +38,13 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     ImageView send;
     StadiumChatListAdapter adapter;
     EditText etMsg;
+    LinearLayout linearCanMsg;
     GridView viewLay;
 
     Firebase myFirebaseRef;
     Firebase alanRef;
     private SwipeRefreshLayout swipeRefreshLayout;
+    CannedAdapter cannedAdapter;
 
 
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
@@ -85,8 +89,14 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         send = (ImageView) v.findViewById(R.id.imgSendChat);
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
         viewLay = (GridView) v.findViewById(R.id.viewLay);
+        cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
+        viewLay.setAdapter(cannedAdapter);
  //     al = new ArrayList<String>();
+
+        linearCanMsg.setVisibility(View.GONE);
+
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
@@ -145,6 +155,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     @Override
     public void onClick(View v) {
+        try{
         int id = v.getId();
         View view = getActivity().getCurrentFocus();
         if (id == R.id.imgEmoji) {
@@ -152,14 +163,14 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-            if (viewLay.getVisibility() == View.VISIBLE) {
-                viewLay.setVisibility(View.GONE);
+            if (linearCanMsg.getVisibility() == View.VISIBLE) {
+                linearCanMsg.setVisibility(View.GONE);
             } else {
-                viewLay.setVisibility(View.VISIBLE);
+                linearCanMsg.setVisibility(View.VISIBLE);
                 Toast.makeText(getActivity(),"Emoji will be shown soon", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.etChatMsg) {
-            viewLay.setVisibility(View.GONE);
+            linearCanMsg.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
 
             if(!TextUtils.isEmpty(userName) || cannedFlag) {
@@ -170,10 +181,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
 
-                    if (viewLay.getVisibility() == View.VISIBLE) {
-                        viewLay.setVisibility(View.GONE);
+                    if (linearCanMsg.getVisibility() == View.VISIBLE) {
+                        linearCanMsg.setVisibility(View.GONE);
                     } else {
-                        viewLay.setVisibility(View.VISIBLE);
+                        linearCanMsg.setVisibility(View.VISIBLE);
                        // Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
                 }else if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")) {
@@ -198,17 +209,21 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
             }else{
                 Toast.makeText(getActivity(), "Unregister user can send only canned message", Toast.LENGTH_SHORT).show();
-                viewLay.setVisibility(View.VISIBLE);
+                if (view != null) {
+                    imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                linearCanMsg.setVisibility(View.VISIBLE);
 //                Intent ii = new Intent(getActivity(), SignUpActivity.class);
 //                startActivity(ii);
 //                startActivityForResult(ii, 111);
             }
         }
+        }catch (Exception ex){
+
+        }
     }
 
-    public void updateUserGroup(){
-
-    }
 
     @Override
     public void onRefresh() {
@@ -221,5 +236,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
+
+
 }
 

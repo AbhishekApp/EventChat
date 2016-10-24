@@ -14,9 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.model.CannedMessage;
 import com.app.model.EventData;
 import com.app.model.EventDetail;
 import com.app.model.EventModel;
@@ -34,7 +34,6 @@ import com.mylist.adapters.EventModelAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,13 +41,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -68,13 +62,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ProgressDialog progressDialog;
 
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
-    String eventURL = "https://wazznow-cd155.firebaseio.com/EventList.json";
+    String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
+    String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(!firstFlag) {
+            /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
+            firstFlag = true;
+            UserDetailTask task = new UserDetailTask();
+            task.execute();
+            Intent ii = new Intent(this, MySplashActivity.class);
+            startActivity(ii);
+
+        }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(AppInvite.API)
@@ -106,16 +110,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             }
                         });
         init();
-        if(!firstFlag) {
-            /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
-            firstFlag = true;
-            UserDetailTask task = new UserDetailTask();
-            task.execute();
-            Intent ii = new Intent(this, MySplashActivity.class);
-            startActivity(ii);
-
-        }
-
     }
 
     @Override
@@ -136,68 +130,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         eventAdapter = new EventModelAdapter(this, arrayListEvent);
         listMain.setAdapter(eventAdapter);
         listMain.setOnItemClickListener(this);
-        // adapter = new AdapterMainFirst(this, al);
-        //   addUserDetail();
-
-//        EventTask task = new EventTask();
-//        task.execute();
-
-       /* Firebase usersRef = firebase.child("users");//.child(""+length);
-        final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-      //  length++;
-        System.out.println("USER List length : " + 80);
-        users.put(" "+ 10, alanisawesomeMap);
-
-        usersRef.setValue(users);*/
-
-      /*  EventData data = new EventData("Cricket", "IPL");
-        alanRef.setValue(data);
-        data = new EventData("Tennis", "Wimblondon");
-        alanRef.setValue(data);
-        data = new EventData("Football", "DLADSFJ");
-        alanRef.setValue(data);*/
-
-     /*  Map<String, String> alanisawesomeMap = new HashMap<String, String>();
-        alanisawesomeMap.put("event_category", "IPL");
-        alanisawesomeMap.put("event_title", "MI vs XXR");
-        alanisawesomeMap.put("event_meta", "Match 25, MC stadium, Bangalore");
-        Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-        users.put("User1 "+MyApp.getDeviveID(this), alanisawesomeMap);*/
-    /*    final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-        //  length++;
-        System.out.println("USER List length : " + 80);
-        users.put(" "+ 10, alanisawesomeMap);
-        firebase.child("users").setValue(users);*/
-
-     /*    alanisawesomeMap = new HashMap<String, String>();
-        alanisawesomeMap.put("event_category", "Ranji");
-        alanisawesomeMap.put("event_title", "Delhi vs Punjab");
-        alanisawesomeMap.put("event_meta", "Match 21, MC stadium, Bangalore");
-        users.put("RANJI", alanisawesomeMap);
-        alanRef.setValue(users);*/
-
-       /* Firebase usersRef = firebase.child("users");
-        Map<String, String> alanisawesomeMap = new HashMap<String, String>();
-        alanisawesomeMap.put("birthYear", "1912");
-        alanisawesomeMap.put("fullName", "Alan Turing");
-        Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-        users.put("alanisawesome0", alanisawesomeMap);
-        usersRef.setValue(users);
-
-        alanisawesomeMap = new HashMap<String, String>();
-        alanisawesomeMap.put("birthYear", "1888");
-        alanisawesomeMap.put("fullName", "Alan Mishra");
-
-        users.put("alanisawesome1", alanisawesomeMap);
-        usersRef.setValue(users);
-
-        alanisawesomeMap = new HashMap<String, String>();
-        alanisawesomeMap.put("birthYear", "1975");
-        alanisawesomeMap.put("fullName", "Amitabh");
-
-        users.put("alanisawesome2", alanisawesomeMap);
-        usersRef.setValue(users);*/
-
 
     }
 
@@ -256,19 +188,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         protected Void doInBackground(Void... params) {
-            URL url = null;
+//            URL url = null;
             try {
-                url = new URL(eventURL);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                br.close();
+//                url = new URL(eventURL);
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+//                StringBuilder sb = new StringBuilder();
+//                String line;
+//                while ((line = br.readLine()) != null) {
+//                    sb.append(line + "\n");
+//                }
+//                br.close();
 
-                JSONArray jsonObject = new JSONArray(sb.toString());
+//                JSONArray jsonObject = new JSONArray(sb.toString());
+                JSONArray jsonObject = myUtill.getJSONFromServer(eventURL);
                 System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
                 int length =  jsonObject.length();
                 System.out.println("EVENT DATA length : " + length);
@@ -317,14 +250,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
 
                 System.out.println("EVENT DETAIL : "+alModel.toString());
-            } catch (MalformedURLException e) {
+            }catch (JSONException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } finally {
-                urlConnection.disconnect();
             }
             return null;
         }
@@ -334,7 +261,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             super.onPostExecute(aVoid);
             eventAdapter.notifyDataSetChanged();
             progressDialog.hide();
-
+            CannedTask cannedTask = new CannedTask();
+            cannedTask.execute();
         }
     }
 
@@ -369,26 +297,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             super.onPreExecute();
             deviceID =  MyApp.getDeviveID(MainActivity.this);
             addUserDetail();
-            System.out.println("EVENT DATA deviceID : "+deviceID);
-            progressDialog.setMessage("Loading...");
-            progressDialog.show();
+            System.out.println("EVENT DATA deviceID : " + deviceID);
+
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             URL url = null;
-            try {
-                url = new URL(firebaseURL+"/users.json");
-                urlConnection = (HttpURLConnection) url.openConnection();
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                br.close();
+                try {
+                    url = new URL(firebaseURL+"/users.json");
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    br.close();
 
-                JSONObject jsonObject = new JSONObject(sb.toString());
+                    JSONObject jsonObject = new JSONObject(sb.toString());
                 System.out.println("EVENT DATA JSONOBJECT : " + jsonObject.toString());
                 flagExist = jsonObject.has(deviceID);
                 System.out.println("EVENT DATA  Found : "+flagExist);
@@ -422,7 +349,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
            try {
                if (flagExist) {
 //                   Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
-                   progressDialog.setMessage("User Found");
+
                    System.out.println("EVENT DATA User Already Registered");
                    MyApp.preferences.getString(MyApp.USER_NAME, null);
                    String uName = jUser.optString("name");
@@ -451,6 +378,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
            }catch (Exception ex){
                System.out.println("EVENT DATA onPostExecute Exception : "+ex.toString());
            }finally {
+               progressDialog.hide();
                EventTask task = new EventTask();
                task.execute();
            }
@@ -458,7 +386,44 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    class CannedTask extends AsyncTask<Void, Void, Void>{
 
+        MyUtill myUtill;
+        JSONArray jsonArray;
+        CannedMessage message;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myUtill = new MyUtill();
+            message = new CannedMessage();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            MyApp.alCanMsg = new ArrayList<CannedMessage>();
+            jsonArray = myUtill.getJSONFromServer(cannedURL);
+
+            for(int i = 0 ; i < jsonArray.length() ; i++){
+                try {
+                    message = new CannedMessage();
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    message.setCanned_message(jsonObject.optString("Msg"));
+                    MyApp.alCanMsg.add(message);
+                } catch (JSONException e) {
+                    Log.e("CannedTask","get canned message ERROR: "+e.toString());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.hide();
+
+        }
+    }
 
 
 }
