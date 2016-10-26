@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.app.model.ChatData;
+import com.app.model.UserProfile;
 import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
 import com.mylist.adapters.CannedAdapter;
@@ -31,7 +33,7 @@ import com.mylist.adapters.StadiumChatListAdapter;
 /**
  * Created by admin on 8/2/2016.
  */
-public class StadiumFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener  {
+public class StadiumFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
 
     ListView listView;
     ImageView imgEmoji;
@@ -101,6 +103,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
+        viewLay.setOnItemClickListener(this);
     }
 
     @Override
@@ -167,7 +170,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 linearCanMsg.setVisibility(View.GONE);
             } else {
                 linearCanMsg.setVisibility(View.VISIBLE);
-                Toast.makeText(getActivity(),"Emoji will be shown soon", Toast.LENGTH_SHORT).show();
+       //         Toast.makeText(getActivity(),"Emoji will be shown soon", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.etChatMsg) {
             linearCanMsg.setVisibility(View.GONE);
@@ -195,20 +198,19 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                             //     al.add(msg);
                             adapter.notifyDataSetChanged();
                             etMsg.setText("");
-                            ChatData alan = new ChatData(userName, msg);
-                            alanRef.push().setValue(alan);
+                           sendMsg(msg);
 
                         } else {
                             Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
-                if(userName.equalsIgnoreCase("Guest User")){
+              /*  if(userName.equalsIgnoreCase("Guest User")){
                     Toast.makeText(getActivity(), "Canned messages coming soon for guest users", Toast.LENGTH_SHORT).show();
-                }
+                }*/
 
             }else{
-                Toast.makeText(getActivity(), "Unregister user can send only canned message", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getActivity(), "Unregister user can send only canned message", Toast.LENGTH_SHORT).show();
                 if (view != null) {
                     imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -235,6 +237,37 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String msg = MyApp.alCanMsg.get(position).getCanned_message();
+        sendMsg(msg);
+    }
+
+    private void sendMsg(String msg){
+        String deviceID = MyApp.getDeviveID(getActivity());
+        String sender = MyApp.preferences.getString(MyApp.USER_NAME, "Guest");
+        if(sender.equalsIgnoreCase("Guest")){
+            int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: "+EventChatFragment.eventID, "0"));
+            if(noSend < 3){
+                noSend++;
+                SharedPreferences.Editor editor = MyApp.preferences.edit();
+                editor.putString("SendTime: "+EventChatFragment.eventID, String.valueOf(noSend));
+                editor.commit();
+                ChatData alan = new ChatData(sender, msg, deviceID);
+                alanRef.push().setValue(alan);
+                UserProfile profile = new UserProfile();
+                profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
+            }else{
+                Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                startActivity(ii);
+//                return;
+            }
+
+        }
+
     }
 
 

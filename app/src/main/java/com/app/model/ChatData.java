@@ -1,5 +1,7 @@
 package com.app.model;
 
+import appy.com.wazznowapp.MyApp;
+
 /**
  * Created by admin on 8/9/2016.
  */
@@ -11,10 +13,10 @@ public class ChatData {
     private String toUser;
 
     public ChatData() {}
-    public ChatData(String author, String title)
-    {
-        this(author, title," ");
-    }
+    /*  public ChatData(String author, String title)
+   {
+       this(author, title, " ");
+   }*/
     public ChatData(String author, String title, String toUser)
     {
         this.author = author;

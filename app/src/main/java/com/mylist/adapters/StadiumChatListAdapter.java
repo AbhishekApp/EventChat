@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,17 +60,21 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvMsg.setPadding(2, 2, 2, 2);
         tvUser.setPadding(2, 2, 2, 2);
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        if(model.getAuthor().equalsIgnoreCase(MyApp.preferences.getString(MyApp.USER_NAME,null))) {
-            tvMsg.setGravity(Gravity.RIGHT);
-            tvUser.setGravity(Gravity.RIGHT);
-            tvUser.setVisibility(View.GONE);
+        String sender = model.getAuthor();
+        String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
+        boolean isEqual = sender.equalsIgnoreCase(userName);
+        if(!TextUtils.isEmpty(userName) && isEqual) {
+                tvMsg.setGravity(Gravity.RIGHT);
+                tvUser.setGravity(Gravity.RIGHT);
+                tvUser.setVisibility(View.GONE);
 
-            linear.setGravity(Gravity.RIGHT);
-            relativeParam.addRule(Gravity.CENTER);
-            relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            linear.setLayoutParams(relativeParam);
-            linear.setBackgroundResource(R.drawable.outgoing_message_bg);
-            linearBtn.setVisibility(View.GONE);
+                linear.setGravity(Gravity.RIGHT);
+                relativeParam.addRule(Gravity.CENTER);
+                relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                linear.setLayoutParams(relativeParam);
+                linear.setBackgroundResource(R.drawable.outgoing_message_bg);
+                linearBtn.setVisibility(View.GONE);
+
         }
         else{
             tvMsg.setGravity(Gravity.LEFT);
@@ -128,7 +133,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             tvMsg.setBackgroundColor(Color.TRANSPARENT);
         }
         if(model.getAuthor().equalsIgnoreCase("Guest User")) {
-            tvUser.setVisibility(View.GONE);
+         //   tvUser.setVisibility(View.GONE);
         }
     }
 

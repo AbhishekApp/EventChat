@@ -177,7 +177,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                         //     al.add(msg);
                         adapter.notifyDataSetChanged();
                         etMsg.setText("");
-                        ChatData alan = new ChatData(userName, msg);
+                        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()));
                         alanRef.push().setValue(alan);
 
                     }else{
