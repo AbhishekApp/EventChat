@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent iChat = new Intent(this, EventChatFragment.class);
         iChat.putExtra("EventDetail", arrayListEvent.get(position));
+
         startActivity(iChat);
     }
 
