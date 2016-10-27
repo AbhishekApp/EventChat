@@ -114,10 +114,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent iChat = new Intent(this, EventChatFragment.class);
-        iChat.putExtra("EventDetail", arrayListEvent.get(position));
+        EventDetail eventDetail = arrayListEvent.get(position);
+        String eventName = eventDetail.getCategory_name();
+        int i = 0;
+        for(; i < arrayListEvent.size() ; i++){
+            EventDetail event = arrayListEvent.get(i);
+            if(eventName.equals(event.getCategory_name())){
+                Intent iChat = new Intent(this, EventChatFragment.class);
+                iChat.putExtra("EventDetail", eventDetail);
+                startActivity(iChat);
+                break;
+            }
+        }
 
-        startActivity(iChat);
     }
 
     private void init(){
