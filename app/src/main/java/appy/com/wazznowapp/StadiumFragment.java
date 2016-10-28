@@ -57,7 +57,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     Handler handler;
 
     String userName="";
-    int msgLimit = 10;
+    int msgLimit = 30;
     InputMethodManager imm;
     String subscribedGroup;
 
@@ -129,7 +129,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onResume() {
         super.onResume();
         try {
+            adapter = new StadiumChatListAdapter(alanRef.limit(30), getActivity(), R.layout.chat_layout, "ABHI");
             listView.setAdapter(adapter);
+
             adapter.notifyDataSetChanged();
         }catch (Exception e){}
 
@@ -249,7 +251,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     private void sendMsg(String msg){
         String deviceID = MyApp.getDeviveID(getActivity());
         String sender = MyApp.preferences.getString(MyApp.USER_NAME, "Guest");
-        if(sender.equalsIgnoreCase("Guest")){
+        if(sender.equalsIgnoreCase("Guest") || TextUtils.isEmpty(sender)){
             int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: "+EventChatFragment.eventID, "0"));
             if(noSend < 3){
                 noSend++;
@@ -260,11 +262,15 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 alanRef.push().setValue(alan);
                 UserProfile profile = new UserProfile();
                 profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
+                onRefresh();
             }else{
+                Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
                 startActivity(ii);
 //                return;
             }
+
+        }else{
 
         }
 

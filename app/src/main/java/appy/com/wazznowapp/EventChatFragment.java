@@ -41,7 +41,7 @@ public class EventChatFragment extends AppCompatActivity  {
         connectDetector = new ConnectDetector(this);
         eventDetail = (EventDetail) getIntent().getSerializableExtra("EventDetail");
         SuperCateName = eventDetail.getSuper_category_name();
-        CateName = eventDetail.getCategory_name();
+        CateName = eventDetail.getEvent_title();
         eventID = eventDetail.getEvent_id();
 
         if(MyApp.firebaseFlag && connectDetector.getConnection()) {
