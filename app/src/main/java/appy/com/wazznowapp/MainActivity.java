@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             EventDetail event = arrayListEvent.get(i);
             if(eventName.equals(event.getCategory_name())){
                 Intent iChat = new Intent(this, EventChatFragment.class);
-                iChat.putExtra("EventDetail", eventDetail);
+                iChat.putExtra("EventDetail", event);
                 startActivity(iChat);
                 break;
             }
