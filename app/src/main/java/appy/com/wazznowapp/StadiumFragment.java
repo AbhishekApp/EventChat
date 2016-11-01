@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -253,6 +254,27 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         String sender = MyApp.preferences.getString(MyApp.USER_NAME, "Guest");
         if(sender.equalsIgnoreCase("Guest") || TextUtils.isEmpty(sender)){
             int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: "+EventChatFragment.eventID, "0"));
+            try{
+                if(!MyApp.preferences.getBoolean("HousePartyMessage"+EventChatFragment.eventID, false)) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SharedPreferences.Editor editor = MyApp.preferences.edit();
+                                    editor.putBoolean("HousePartyMessage"+EventChatFragment.eventID,true);
+                                    editor.commit();
+                                    sendHousePartyMsg();
+                                }
+                            });
+
+                        }
+                    }, 12 * 1000);
+                }
+            }catch (Exception ex){
+                Log.e("StadiumFragment", "sendMsg ERROR: "+ex.toString());
+            }
             if(noSend < 3){
                 noSend++;
                 SharedPreferences.Editor editor = MyApp.preferences.edit();
@@ -273,6 +295,13 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         }else{
 
         }
+
+    }
+
+    public void sendHousePartyMsg(){
+        String msg = "Start a house party";
+        ChatData alan = new ChatData("Admin", msg, MyApp.preferences.getString("Android_ID", null));
+        alanRef.push().setValue(alan);
 
     }
 

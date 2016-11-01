@@ -96,7 +96,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                 if (!model.getToUser().equalsIgnoreCase(MyApp.preferences.getString("Android_ID", null))) {
                     v.setVisibility(View.GONE);
                 } else {
-                    tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
+                 //   tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
+                    tvMsg.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat_back));
                     linearBtn.setVisibility(View.VISIBLE);
                     tvUser.setVisibility(View.GONE);
                     btnYes.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +112,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                                 SharedPreferences.Editor editor = MyApp.preferences.edit();
                                 editor.putBoolean(EventChatFragment.eventID, true);
                                 editor.commit();
+
                             }
                         }
                     });

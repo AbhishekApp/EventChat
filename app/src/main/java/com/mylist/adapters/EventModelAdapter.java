@@ -2,6 +2,7 @@ package com.mylist.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,12 +34,14 @@ public class EventModelAdapter extends BaseAdapter {
     ArrayList<EventDetail> alList;
     ViewHolder viewHolder;
     SharedPreferences preferences;
+    String mycolor[];
 
     public EventModelAdapter(Context con, ArrayList<EventDetail> alList){
             this.con = con;
             this.alList = alList;
             preferences = MyApp.preferences;
             myUtill = new MyUtill();
+            mycolor = con.getResources().getStringArray(R.array.mycolor);
     }
 
     @Override
@@ -120,6 +123,7 @@ public class EventModelAdapter extends BaseAdapter {
         }catch (Exception ex){
             viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
         }
+        view.setBackgroundColor(Color.parseColor(mycolor[position]));
         return view;
     }
 
