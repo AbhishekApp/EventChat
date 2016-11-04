@@ -256,21 +256,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: "+EventChatFragment.eventID, "0"));
             try{
                 if(!MyApp.preferences.getBoolean("HousePartyMessage"+EventChatFragment.eventID, false)) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    SharedPreferences.Editor editor = MyApp.preferences.edit();
-                                    editor.putBoolean("HousePartyMessage"+EventChatFragment.eventID,true);
-                                    editor.commit();
-                                    sendHousePartyMsg();
-                                }
-                            });
-
-                        }
-                    }, 12 * 1000);
+                    SharedPreferences.Editor editor = MyApp.preferences.edit();
+                    editor.putBoolean("HousePartyMessage"+EventChatFragment.eventID,true);
+                    editor.commit();
+                    sendHousePartyMsg();
                 }
             }catch (Exception ex){
                 Log.e("StadiumFragment", "sendMsg ERROR: "+ex.toString());

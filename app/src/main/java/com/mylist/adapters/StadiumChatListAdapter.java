@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.model.ChatData;
 import com.app.model.UserProfile;
@@ -57,8 +58,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvUser.setText(model.getAuthor());
         linearBtn.setVisibility(View.GONE);
 
-        tvMsg.setPadding(2, 2, 2, 2);
-        tvUser.setPadding(2, 2, 2, 2);
+//        tvMsg.setPadding(2, 2, 2, 2);
+//        tvUser.setPadding(2, 2, 2, 2);
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         String sender = model.getAuthor();
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
@@ -89,7 +90,13 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             linearBtn.setVisibility(View.GONE);
         }
         if (adminMsg.contains("Start a house party")){
-
+        //    tvMsg.setVisibility(View.GONE);
+            linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat3));
+        }else{
+          //  tvMsg.setVisibility(View.GONE);
+            tvMsg.setText("Congrates you are now part of 2.5k People in stadium following this match");
+            tvMsg.setTextColor(activity.getResources().getColor(R.color.white));
+            linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat1));
         }
         if(model.getAuthor().equalsIgnoreCase("Admin")) {
             try{
@@ -97,7 +104,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                     v.setVisibility(View.GONE);
                 } else {
                  //   tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
-                    tvMsg.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat_back));
+                    tvMsg.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.patch));
                     linearBtn.setVisibility(View.VISIBLE);
                     tvUser.setVisibility(View.GONE);
                     btnYes.setOnClickListener(new View.OnClickListener() {
@@ -112,16 +119,17 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                                 SharedPreferences.Editor editor = MyApp.preferences.edit();
                                 editor.putBoolean(EventChatFragment.eventID, true);
                                 editor.commit();
-
+                                Toast.makeText(activity, "You subscribe this group", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                     btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            TextView tvTT = (TextView) v.findViewById(R.id.tvChat);
+                        //    TextView tvTT = (TextView) v.findViewById(R.id.tvChat);
                             if (adminMsg.contains("Start a house party")) {
-
+                                Intent ii = new Intent(activity, InviteFriendActivity.class);
+                                activity.startActivity(ii);
                             } else {
                                 activity.finish();
                             }

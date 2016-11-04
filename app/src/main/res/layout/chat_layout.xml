@@ -37,7 +37,7 @@
         android:text="CHAT MESSAGE"
         android:textSize="@dimen/text_small_size"
         android:textColor="@color/white"
-        android:padding="8dp"
+        android:padding="12dp"
         android:layout_gravity="center"
         android:ellipsize="end"/>
 
@@ -46,8 +46,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-
             android:weightSum="1"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
             android:gravity="center">
 
             <TextView
