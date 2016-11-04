@@ -24,7 +24,7 @@ public class EventAdapter extends FirebaseListAdapter<EventData> {
     }
 
     @Override
-    protected void populateView(View view, EventData model) {
+    protected void populateView(View view, EventData model, int position) {
         viewHolder = new ViewHolder();
         viewHolder.img = (ImageView) view.findViewById(R.id.imgRowMain);
         viewHolder.tvCateName = (TextView) view.findViewById(R.id.tvCatRow);

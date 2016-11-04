@@ -126,6 +126,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     }
 
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -253,6 +254,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         String deviceID = MyApp.getDeviveID(getActivity());
         String sender = MyApp.preferences.getString(MyApp.USER_NAME, "Guest");
         if(sender.equalsIgnoreCase("Guest") || TextUtils.isEmpty(sender)){
+            if(TextUtils.isEmpty(sender))
+                sender = "Guest";
             int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: "+EventChatFragment.eventID, "0"));
             try{
                 if(!MyApp.preferences.getBoolean("HousePartyMessage"+EventChatFragment.eventID, false)) {

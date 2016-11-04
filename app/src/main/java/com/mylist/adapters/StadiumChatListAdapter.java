@@ -45,7 +45,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
     }
 
     @Override
-    protected void populateView(final View v, ChatData model) {
+    protected void populateView(final View v, ChatData model, int position) {
         tvUser = (TextView) v.findViewById(R.id.tvChatUser);
         tvMsg = (TextView) v.findViewById(R.id.tvChat);
         linear = (LinearLayout) v.findViewById(R.id.linearMsgChat);
@@ -105,6 +105,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             try{
                 if (!model.getToUser().equalsIgnoreCase(MyApp.preferences.getString("Android_ID", null))) {
                     v.setVisibility(View.GONE);
+                    removeChildModel(position);
                 } else {
                  //   tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
 //                    tvMsg.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.patch));
