@@ -52,12 +52,12 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         linearBtn = (LinearLayout) v.findViewById(R.id.linearBtn);
         btnYes = (TextView) v.findViewById(R.id.btnYesTuneOrInvite);
         btnNo = (TextView) v.findViewById(R.id.btnNoThanks);
-        final String adminMsg = tvMsg.getText().toString();
+
 //      tvMsg.loadData(model.getTitle(), "text/utf-8", "iso-8");
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
         linearBtn.setVisibility(View.GONE);
-
+        final String adminMsg = tvMsg.getText().toString();
 //        tvMsg.setPadding(2, 2, 2, 2);
 //        tvUser.setPadding(2, 2, 2, 2);
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -89,22 +89,37 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             linear.setLayoutParams(relativeParam);
             linearBtn.setVisibility(View.GONE);
         }
-        if (adminMsg.contains("Start a house party")){
+      /*  if (adminMsg.contains("Start a house party")){
         //    tvMsg.setVisibility(View.GONE);
-            linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat3));
-        }else{
+            tvMsg.setText(adminMsg);
+            linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat_back));
+        }else if(adminMsg.contains("Congrates you are now part of 2.5k People in stadium following this match")){
           //  tvMsg.setVisibility(View.GONE);
-            tvMsg.setText("Congrates you are now part of 2.5k People in stadium following this match");
+            tvMsg.setText(adminMsg);
             tvMsg.setTextColor(activity.getResources().getColor(R.color.white));
-            linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat1));
-        }
+            linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat_back));
+        }else{
+            linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.incoming_message_bg));
+        }*/
         if(model.getAuthor().equalsIgnoreCase("Admin")) {
             try{
                 if (!model.getToUser().equalsIgnoreCase(MyApp.preferences.getString("Android_ID", null))) {
                     v.setVisibility(View.GONE);
                 } else {
                  //   tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));
-                    tvMsg.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.patch));
+//                    tvMsg.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.patch));
+                  //  tvMsg.setText(adminMsg);
+                    if(adminMsg.contains("Congrates you are now part of"))
+                    {
+                        tvMsg.setPadding(25, 2, 10, 15);
+                        linearBtn.setPadding(4, 4, 4, 4);
+                    }
+                    else {
+                        tvMsg.setPadding(25, 8, 25, 8);
+                        linearBtn.setPadding(6, 22, 6, 6);
+                    }
+                    tvMsg.setTextColor(activity.getResources().getColor(R.color.white));
+                    linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.chat_img_b));
                     linearBtn.setVisibility(View.VISIBLE);
                     tvUser.setVisibility(View.GONE);
                     btnYes.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +156,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             }
         }else{
             tvMsg.setBackgroundColor(Color.TRANSPARENT);
+            linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.incoming_message_bg));
         }
         if(model.getAuthor().equalsIgnoreCase("Guest User")) {
          //   tvUser.setVisibility(View.GONE);

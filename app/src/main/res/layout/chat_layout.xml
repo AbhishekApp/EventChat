@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="1dp"
-        android:gravity="center"
         android:layout_gravity="center"
         android:background="@drawable/incoming_message_bg">
 
@@ -22,10 +21,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="USER NAME"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/black"
         android:textSize="@dimen/text_mid_size"
         android:textStyle="bold"
-        android:layout_gravity="center"
+        android:layout_gravity="left"
         android:padding="4dp"
         />
 
@@ -36,9 +35,9 @@
         android:maxWidth="300dp"
         android:text="CHAT MESSAGE"
         android:textSize="@dimen/text_small_size"
-        android:textColor="@color/white"
-        android:padding="12dp"
-        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:padding="5dp"
+        android:layout_gravity="left"
         android:ellipsize="end"/>
 
         <LinearLayout
@@ -47,8 +46,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+
             android:gravity="center">
 
             <TextView
@@ -60,7 +60,8 @@
                 android:minHeight="15dp"
                 android:maxHeight="15dp"
                 android:layout_marginRight="1dp"
-                android:padding="2dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:layout_weight="0.5"/>
 
        <!--     <View
@@ -76,7 +77,8 @@
                 android:text="No Thanks"
 
                 android:layout_marginLeft="1dp"
-                android:padding="2dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:layout_weight="0.5"/>
 
 
