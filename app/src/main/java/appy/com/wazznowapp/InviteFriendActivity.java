@@ -70,6 +70,8 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 .build();
         intent.setPackage("com.whatsapp");
         intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, "Install WazzNow App.");
+       // intent.setType("text/plain");
 
         //  startActivityForResult(intent, REQUEST_INVITE);
         PackageManager pm=getPackageManager();
