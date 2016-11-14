@@ -149,7 +149,16 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
                         TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
                         tvAdminMsg.setText("Start a House Party. There are most fun.");
-
+                        btnYes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                editor = MyApp.preferences.edit();
+                                editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
+                                editor.commit();
+                                Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
+                                startActivity(ii);
+                            }
+                        });
                     }
                 });
 
