@@ -105,6 +105,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             try{
                 if (!model.getToUser().equalsIgnoreCase(MyApp.preferences.getString("Android_ID", null))) {
                     v.setVisibility(View.GONE);
+
                     removeChildModel(position);
                 } else {
                  //   tvMsg.setBackgroundColor(activity.getResources().getColor(R.color.chat_msg_back));

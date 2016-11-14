@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
 
@@ -67,15 +68,19 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
                 .setCallToActionText(getString(R.string.invitation_cta))
                 .build();
-        startActivityForResult(intent, REQUEST_INVITE);
+        intent.setPackage("com.whatsapp");
+        intent.setAction(Intent.ACTION_SEND);
+
+        //  startActivityForResult(intent, REQUEST_INVITE);
         PackageManager pm=getPackageManager();
         try {
             PackageInfo info=pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
-            Intent waIntent = new Intent(Intent.ACTION_SEND);
-            waIntent.setPackage("com.whatsapp");
+        //    Intent waIntent = new Intent(Intent.ACTION_SEND);
+        //    waIntent.setPackage("com.whatsapp");
             startActivity(Intent.createChooser(intent, "Choose an email client from..."));
 
         } catch (PackageManager.NameNotFoundException e) {
+            Toast.makeText(this, "Whatsapp couldn't open", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }

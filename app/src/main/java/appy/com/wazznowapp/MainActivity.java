@@ -224,8 +224,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     model.setEvent_super_id(superCateID);
                     model.alEvent = new ArrayList<EventDetail>();
                     JSONArray jArray = jSon.getJSONArray("Cate");
+                    EventDetail detail = new EventDetail();
                     for(int j = 0; j <jArray.length() ; j++){
-                        EventDetail detail = new EventDetail();
+
                         JSONObject jsonDetail = jArray.getJSONObject(j);
 
                         String subCateName = jsonDetail.optString("event_category");

@@ -17,11 +17,13 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.model.ChatData;
@@ -43,6 +45,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     EditText etMsg;
     LinearLayout linearCanMsg;
     GridView viewLay;
+    LinearLayout linearLayout;
 
     Firebase myFirebaseRef;
     Firebase alanRef;
@@ -86,6 +89,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     }
 
     private void init(View v) {
+        linearLayout = (LinearLayout) v.findViewById(R.id.linearTopChat);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         listView = (ListView) v.findViewById(R.id.listMain);
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
@@ -112,12 +116,63 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onStart();
         try {
             if (!MyApp.preferences.getBoolean(EventChatFragment.eventID, false)) {
-                adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
-                ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match", MyApp.preferences.getString("Android_ID", null));
-                alanRef.push().setValue(alan);
-                editor = MyApp.preferences.edit();
-                editor.putBoolean(EventChatFragment.eventID, true);
-                editor.commit();
+              adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
+              /*    ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match", MyApp.preferences.getString("Android_ID", null));
+                alanRef.push().setValue(alan);*/
+
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                View v = inflater.inflate(R.layout.admin_msg,null);
+                linearLayout.addView(v);
+                TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
+                TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
+                TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
+                tvAdminMsg.setText("Congrates now you are part of 2.2k in stadium following the match");
+
+                btnNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getActivity().finish();
+                    }
+                });
+
+                btnYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editor = MyApp.preferences.edit();
+                        editor.putBoolean(EventChatFragment.eventID, true);
+                        editor.commit();
+                        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                        View vi = inflater.inflate(R.layout.admin_msg,null);
+//                        linearLayout.removeAllViews();
+                        linearLayout.addView(vi);
+                        TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
+                        TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
+                        TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
+                        tvAdminMsg.setText("Start a House Party. There are most fun.");
+
+                    }
+                });
+
+            }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false)){
+
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                View vi = inflater.inflate(R.layout.admin_msg,null);
+//                        linearLayout.removeAllViews();
+                linearLayout.addView(vi);
+                TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
+                TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
+                TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
+                tvAdminMsg.setText("Start a House Party. There are most fun.");
+                btnYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editor = MyApp.preferences.edit();
+                        editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
+                        editor.commit();
+                        Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
+                        startActivity(ii);
+                    }
+                });
             }
         }catch (Exception ex){
             ex.printStackTrace();
@@ -153,8 +208,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     Runnable runn = new Runnable() {
         @Override
         public void run() {
-            ChatData alan = new ChatData("Admin", "Start a house party, there are most fun.",  MyApp.preferences.getString("Android_ID", null));
-            alanRef.push().setValue(alan);
+//            ChatData alan = new ChatData("Admin", "Start a house party, there are most fun.",  MyApp.preferences.getString("Android_ID", null));
+//            alanRef.push().setValue(alan);
         }
     };
 
@@ -250,8 +305,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         sendMsg(msg);
     }
 
+
     private void sendMsg(String msg){
-        String deviceID = MyApp.getDeviveID(getActivity());
+       String deviceID = MyApp.getDeviveID(getActivity());
         String sender = MyApp.preferences.getString(MyApp.USER_NAME, "Guest");
         if(sender.equalsIgnoreCase("Guest") || TextUtils.isEmpty(sender)){
             if(TextUtils.isEmpty(sender))
