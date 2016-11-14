@@ -152,11 +152,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         btnYes.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                editor = MyApp.preferences.edit();
-                                editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
-                                editor.commit();
-                                Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
-                                startActivity(ii);
+                                housePartyStarted();
                             }
                         });
                     }
@@ -175,11 +171,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        editor = MyApp.preferences.edit();
-                        editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
-                        editor.commit();
-                        Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
-                        startActivity(ii);
+                        housePartyStarted();
                     }
                 });
             }
@@ -189,7 +181,13 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     }
 
-
+    private void housePartyStarted(){
+        editor = MyApp.preferences.edit();
+        editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
+        editor.commit();
+        Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
+        startActivity(ii);
+    }
 
     @Override
     public void onResume() {
