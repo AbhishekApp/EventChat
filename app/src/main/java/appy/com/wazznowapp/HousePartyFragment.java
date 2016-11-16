@@ -118,7 +118,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             }
         });
 
-        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
+        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
 
     }
 
@@ -199,7 +199,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         msgLimit+=10;
         alanRef.limit(msgLimit);
 //        alanRef.
-        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
+        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         listView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();

@@ -43,7 +43,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     ImageView send;
     StadiumChatListAdapter adapter;
     EditText etMsg;
-    LinearLayout linearCanMsg;
+    static LinearLayout linearCanMsg;
     GridView viewLay;
     LinearLayout linearLayout;
 
@@ -51,6 +51,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     Firebase alanRef;
     private SwipeRefreshLayout swipeRefreshLayout;
     CannedAdapter cannedAdapter;
+    static boolean addHousePartyFLAG = false;
+    static boolean addTuneFLAG = false;
 
 
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
@@ -116,49 +118,58 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onStart();
         try {
             if (!MyApp.preferences.getBoolean(EventChatFragment.eventID, false)) {
-              adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
+              adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
               /*    ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match", MyApp.preferences.getString("Android_ID", null));
                 alanRef.push().setValue(alan);*/
+                if(!addTuneFLAG){
+                    addTuneFLAG = true;
+                    LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                    View v = inflater.inflate(R.layout.admin_msg,null);
+                    linearLayout.addView(v);
+                    TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
+                    TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
+                    TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
+                    tvAdminMsg.setText("Congrates now you are part of 2.2k in stadium following the match");
 
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-                View v = inflater.inflate(R.layout.admin_msg,null);
-                linearLayout.addView(v);
-                TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
-                TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
-                TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
-                tvAdminMsg.setText("Congrates now you are part of 2.2k in stadium following the match");
+                    btnNo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getActivity().finish();
+                        }
+                    });
 
-                btnNo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        getActivity().finish();
-                    }
-                });
+                    btnYes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            editor = MyApp.preferences.edit();
+                            editor.putBoolean(EventChatFragment.eventID, true);
+                            editor.commit();
 
-                btnYes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        editor = MyApp.preferences.edit();
-                        editor.putBoolean(EventChatFragment.eventID, true);
-                        editor.commit();
-                        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-                        View vi = inflater.inflate(R.layout.admin_msg,null);
-//                        linearLayout.removeAllViews();
-                        linearLayout.addView(vi);
-                        TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
-                        TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
-                        TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
-                        tvAdminMsg.setText("Start a House Party. There are most fun.");
-                        btnYes.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                housePartyStarted();
+                            /*  Update user, Subscribe this event */
+                            UserProfile profile = new UserProfile();
+                            profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
+                            /*  Update user, Subscribe this event */
+
+                            if(!addHousePartyFLAG){
+                                addHousePartyFLAG = true;
+                                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                                View vi = inflater.inflate(R.layout.admin_msg, null);
+                                linearLayout.addView(vi);
+                                TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
+                                TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
+                                TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
+                                tvAdminMsg.setText("Start a House Party. There are most fun.");
+                                btnYes.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        housePartyStarted();
+                                    }
+                                });
                             }
-                        });
-                    }
-                });
-
-            }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false)){
+                        }
+                    });
+                }
+            }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
 
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vi = inflater.inflate(R.layout.admin_msg,null);
@@ -193,33 +204,33 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onResume() {
         super.onResume();
         try {
-            adapter = new StadiumChatListAdapter(alanRef.limit(30), getActivity(), R.layout.chat_layout, "ABHI");
+            adapter = new StadiumChatListAdapter(alanRef.limit(30), getActivity(), R.layout.chat_layout);
             listView.setAdapter(adapter);
 
             adapter.notifyDataSetChanged();
         }catch (Exception e){}
-
+        userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
         if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")){
             flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.eventID, false);
             subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
             if (subscribedGroup.contains(EventChatFragment.eventID)) {}
-            if(!flagAdminMsg){
+           /* if(!flagAdminMsg){
 
                 handler = new Handler();
                 handler.postDelayed(runn, 20 * 1000);
-            }
+            }*/
         }
 
     }
 
-    Runnable runn = new Runnable() {
+ /*   Runnable runn = new Runnable() {
         @Override
         public void run() {
 //            ChatData alan = new ChatData("Admin", "Start a house party, there are most fun.",  MyApp.preferences.getString("Android_ID", null));
 //            alanRef.push().setValue(alan);
         }
     };
-
+*/
 
 
     @Override
@@ -264,11 +275,13 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                             //     al.add(msg);
                             adapter.notifyDataSetChanged();
                             etMsg.setText("");
-                           sendMsg(msg);
+                            sendMsg(msg);
 
                         } else {
                             Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
+                    }else{
+                        Toast.makeText(getActivity(), "You are not tuned in this Event Group", Toast.LENGTH_SHORT).show();
                     }
                 }
               /*  if(userName.equalsIgnoreCase("Guest User")){
@@ -298,7 +311,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         msgLimit+=10;
         alanRef.limit(msgLimit);
 //        alanRef.
-        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout, "ABHI");
+        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         listView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
@@ -325,7 +338,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     SharedPreferences.Editor editor = MyApp.preferences.edit();
                     editor.putBoolean("HousePartyMessage"+EventChatFragment.eventID,true);
                     editor.commit();
-                    sendHousePartyMsg();
+                 //   sendHousePartyMsg();
                 }
             }catch (Exception ex){
                 Log.e("StadiumFragment", "sendMsg ERROR: "+ex.toString());
@@ -339,7 +352,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 alanRef.push().setValue(alan);
                 UserProfile profile = new UserProfile();
                 profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
-                onRefresh();
+               // onRefresh();
             }else{
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
@@ -348,18 +361,19 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             }
 
         }else{
-
+            ChatData alan = new ChatData(sender, msg, deviceID);
+            alanRef.push().setValue(alan);
         }
 
     }
 
-    public void sendHousePartyMsg(){
+
+/* public void sendHousePartyMsg(){
         String msg = "Start a house party";
         ChatData alan = new ChatData("Admin", msg, MyApp.preferences.getString("Android_ID", null));
         alanRef.push().setValue(alan);
 
-    }
-
+    }*/
 
 }
 

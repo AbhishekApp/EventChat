@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,15 +38,17 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
     TextView btnYes, btnNo;
     LinearLayout linear, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
+    ImageView imgIcon;
 
 
-    public StadiumChatListAdapter(Query ref, Activity activity, int layout, String mUsername){
+    public StadiumChatListAdapter(Query ref, Activity activity, int layout){
         super(ref, ChatData.class, layout, activity);
         this.activity = activity;
     }
 
     @Override
     protected void populateView(final View v, ChatData model, int position) {
+        imgIcon = (ImageView) v.findViewById(R.id.imgIcon);
         tvUser = (TextView) v.findViewById(R.id.tvChatUser);
         tvMsg = (TextView) v.findViewById(R.id.tvChat);
         linear = (LinearLayout) v.findViewById(R.id.linearMsgChat);
@@ -57,7 +60,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
         linearBtn.setVisibility(View.GONE);
-        final String adminMsg = tvMsg.getText().toString();
+   //     final String adminMsg = tvMsg.getText().toString();
 //        tvMsg.setPadding(2, 2, 2, 2);
 //        tvUser.setPadding(2, 2, 2, 2);
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -102,7 +105,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
             linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.incoming_message_bg));
         }*/
         if(model.getAuthor().equalsIgnoreCase("Admin")) {
-            try{
+            imgIcon.setVisibility(View.VISIBLE);
+            /*try{
                 if (!model.getToUser().equalsIgnoreCase(MyApp.preferences.getString("Android_ID", null))) {
                     v.setVisibility(View.GONE);
 
@@ -155,8 +159,9 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                 }
             }catch(Exception ex){
                 ex.printStackTrace();
-            }
+            }*/
         }else{
+            imgIcon.setVisibility(View.GONE);
             tvMsg.setBackgroundColor(Color.TRANSPARENT);
             linear.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.incoming_message_bg));
         }

@@ -73,6 +73,9 @@ public class UserProfile {
         if(userGroup != null && !TextUtils.isEmpty(userGroup)){
             if(!userGroup.contains(newGroup)){
                 userGroup = userGroup +", "+ newGroup;
+            }else
+            {
+                return;
             }
         }else
         {
@@ -88,6 +91,7 @@ public class UserProfile {
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString(MyApp.USER_JOINED_GROUP, userGroup);
         editor.commit();
+        Toast.makeText(con, "Tuned in successfully", Toast.LENGTH_SHORT).show();
     }
 
 }

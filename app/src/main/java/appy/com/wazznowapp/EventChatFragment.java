@@ -1,5 +1,6 @@
 package appy.com.wazznowapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.app.model.ConnectDetector;
@@ -95,7 +98,20 @@ public class EventChatFragment extends AppCompatActivity  {
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void onBackPressed() {
 
+        try{
+            if(StadiumFragment.linearCanMsg.getVisibility() == View.VISIBLE){
+                View view = this.getCurrentFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                StadiumFragment.linearCanMsg.setVisibility(View.GONE);
+            }else {
+                super.onBackPressed();
+            }
+        }catch (Exception ex){}
+    }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -125,5 +141,6 @@ public class EventChatFragment extends AppCompatActivity  {
             return mFragmentTitleList.get(position);
         }
     }
+
 
 }
