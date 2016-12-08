@@ -27,7 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/viewChatDivider"
-        layout="@layout/my_list"/>
+        layout="@layout/my_list"
+        android:layout_marginBottom="5dp"/>
     
     <View
         android:id="@+id/viewChatDivider"
