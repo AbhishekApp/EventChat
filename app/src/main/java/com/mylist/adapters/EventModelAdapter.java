@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class EventModelAdapter extends BaseAdapter {
     ViewHolder viewHolder;
     SharedPreferences preferences;
     String mycolor[];
+    int colorIndex;
 
     public EventModelAdapter(Context con, ArrayList<EventDetail> alList){
             this.con = con;
@@ -43,6 +45,7 @@ public class EventModelAdapter extends BaseAdapter {
             preferences = MyApp.preferences;
             myUtill = new MyUtill();
             mycolor = con.getResources().getStringArray(R.array.mycolor);
+            colorIndex = 0;
     }
 
     @Override
@@ -83,7 +86,7 @@ public class EventModelAdapter extends BaseAdapter {
         viewHolder.tvEventName.setText(detail.getEvent_title());
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
         String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time())).trim();
-        System.out.println("Line 79 event Time Difference :"+strTime+":");
+        System.out.println("Line 89 event Time Difference :"+strTime+":");
         if(!TextUtils.isEmpty(strTime)){
             viewHolder.tvHour.setText(strTime);
         }
@@ -124,7 +127,15 @@ public class EventModelAdapter extends BaseAdapter {
         }catch (Exception ex){
             viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
         }
-        view.setBackgroundColor(Color.parseColor(mycolor[position]));
+
+        try{
+            if(colorIndex >= mycolor.length-1){
+                colorIndex = 0;
+            }
+            view.setBackgroundColor(Color.parseColor(mycolor[colorIndex++]));
+        }catch (Exception ex){
+            Log.e("EventModelAdapter","Set Background Color ERROR: "+ex.toString());
+        }
         return view;
     }
 

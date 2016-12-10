@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,7 +15,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -29,7 +26,6 @@ import android.widget.Toast;
 import com.app.model.ChatData;
 import com.app.model.UserProfile;
 import com.firebase.client.Firebase;
-import com.firebase.client.ValueEventListener;
 import com.mylist.adapters.CannedAdapter;
 import com.mylist.adapters.StadiumChatListAdapter;
 
@@ -129,7 +125,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
-                    tvAdminMsg.setText("Congrates now you are part of 2.2k in stadium following the match");
+
+                    tvAdminMsg.setText("Congrates now you are part of "+EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
 
                     btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override

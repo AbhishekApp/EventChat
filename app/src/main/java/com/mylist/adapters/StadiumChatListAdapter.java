@@ -63,9 +63,10 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
 
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         String sender = model.getAuthor();
+        String fromUser = model.getToUser();
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         boolean isEqual = sender.equalsIgnoreCase(userName);
-        if(!TextUtils.isEmpty(userName) && isEqual) {
+        if((!TextUtils.isEmpty(userName) && isEqual) || (fromUser.equals(MyApp.getDeviveID(activity)))) {
                 tvMsg.setGravity(Gravity.RIGHT);
                 tvUser.setGravity(Gravity.RIGHT);
                 tvUser.setVisibility(View.GONE);

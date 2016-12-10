@@ -33,7 +33,7 @@ public class EventChatFragment extends AppCompatActivity  {
     static String CateName;
     static String SuperCateName;
     public static String eventID;
-    EventDetail eventDetail;
+    static EventDetail eventDetail;
 
 
     @Override

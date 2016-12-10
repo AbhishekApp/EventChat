@@ -26,12 +26,13 @@
     <string name="notuser_signup">Not a user signup</string>
 
     <string-array name="mycolor">
-        <item>#1D6FF4</item>
-        <item>#F41DA5</item>
+        <item>#24FA08</item>
+        <item>#E51E17</item>
         <item>#FAD945</item>
-        <item>#3FD049</item>
+        <item>#04DEFF</item>
+        <item>#F41DA5</item>
         <item>#C75EF8</item>
         <item>#17D7E5</item>
-        <item>#E51E17</item>
+
     </string-array>
 </resources>

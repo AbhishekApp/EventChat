@@ -32,6 +32,9 @@ public class EventDetail implements Serializable{
 
 
     public String getSubscribed_user() {
+        if(TextUtils.isEmpty(subscribed_user)){
+            subscribed_user = "0";
+        }
         return subscribed_user;
     }
 
