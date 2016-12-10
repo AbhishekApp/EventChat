@@ -117,9 +117,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onStart() {
         super.onStart();
         try {
+
             if (!MyApp.preferences.getBoolean(EventChatFragment.eventID, false)) {
               adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
-              /*    ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match", MyApp.preferences.getString("Android_ID", null));
+          /*    ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match", MyApp.preferences.getString("Android_ID", null));
                 alanRef.push().setValue(alan);*/
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
@@ -152,6 +153,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
                             if(!addHousePartyFLAG){
                                 addHousePartyFLAG = true;
+                                linearLayout.removeAllViews();
                                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                                 View vi = inflater.inflate(R.layout.admin_msg, null);
                                 linearLayout.addView(vi);
@@ -171,6 +173,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 }
             }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
 
+                linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vi = inflater.inflate(R.layout.admin_msg,null);
 //                        linearLayout.removeAllViews();
@@ -185,9 +188,11 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         housePartyStarted();
                     }
                 });
+            }else{
+                linearLayout.removeAllViews();
             }
         }catch (Exception ex){
-            ex.printStackTrace();
+            Log.e("StadiumFragment","onStart method ERROR: "+ex.toString());
         }
 
     }
@@ -375,5 +380,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     }*/
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        addTuneFLAG = false;
+        addHousePartyFLAG = false;
+    }
 }
 

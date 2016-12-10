@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import appy.com.wazznowapp.EventChatFragment;
 import appy.com.wazznowapp.MainActivity;
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
@@ -114,7 +115,7 @@ public class EventModelAdapter extends BaseAdapter {
         }
         try {
             if (groupRec != null && detail.getCatergory_id() != null) {
-                if (groupRec.contains(detail.getCatergory_id())) {
+                if (MyApp.preferences.getBoolean(detail.getEvent_id(), false)) {
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                 } else {
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
