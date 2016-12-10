@@ -115,7 +115,7 @@ public class EventModelAdapter extends BaseAdapter {
         }
         try {
             if (groupRec != null && detail.getCatergory_id() != null) {
-                if (MyApp.preferences.getBoolean(detail.getEvent_id(), false)) {
+                if (MyApp.preferences.getBoolean(detail.getEvent_id (), false)) {
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                 } else {
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);

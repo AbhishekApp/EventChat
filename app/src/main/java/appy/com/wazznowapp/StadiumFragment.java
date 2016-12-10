@@ -60,7 +60,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     boolean cannedFlag = false;
     SharedPreferences.Editor editor;
     boolean flagAdminMsg;
-    Handler handler;
 
     String userName="";
     int msgLimit = 30;
@@ -220,7 +219,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
             if (subscribedGroup.contains(EventChatFragment.eventID)) {}
            /* if(!flagAdminMsg){
-
                 handler = new Handler();
                 handler.postDelayed(runn, 20 * 1000);
             }*/
@@ -352,6 +350,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 noSend++;
                 SharedPreferences.Editor editor = MyApp.preferences.edit();
                 editor.putString("SendTime: "+EventChatFragment.eventID, String.valueOf(noSend));
+
+                editor.putBoolean(EventChatFragment.eventID, true);
                 editor.commit();
                 ChatData alan = new ChatData(sender, msg, deviceID);
                 alanRef.push().setValue(alan);

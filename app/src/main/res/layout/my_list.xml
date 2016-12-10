@@ -23,7 +23,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:listSelector="@drawable/ripple_effect"
-            android:divider="@color/white" >
+            android:divider="@android:color/transparent" >
 
         </ListView>
 
