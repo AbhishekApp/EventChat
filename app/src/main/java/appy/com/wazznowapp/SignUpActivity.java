@@ -237,7 +237,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    public void onComplete(Task<AuthResult> task) {
                         Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful()) {
                             Log.w("Login", "signInWithEmail:failed", task.getException());
