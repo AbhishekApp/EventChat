@@ -1,10 +1,10 @@
 package appy.com.wazznowapp;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -44,10 +44,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-
-
     ListView listMain;
     ArrayList<EventData> al;
     private static boolean firstFlag = false;
@@ -60,16 +57,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     static EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
     ProgressDialog progressDialog;
-
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
-
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if(!firstFlag) {
             /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
             firstFlag = true;
@@ -81,34 +78,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(AppInvite.API)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult connectionResult) {
-                        Toast.makeText(MainActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
-                    }
-                }).build();
+            .addApi(AppInvite.API)
+            .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                @Override
+                public void onConnectionFailed(ConnectionResult connectionResult) {
+                    Toast.makeText(MainActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
+                }
+            }).build();
 
         boolean autoLaunchDeepLink = true;
         AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
-                .setResultCallback(
-                        new ResultCallback<AppInviteInvitationResult>() {
-                            @Override
-                            public void onResult(AppInviteInvitationResult result) {
-                                Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
-                                if (result.getStatus().isSuccess()) {
-                                    // Extract information from the intent
-                                    Intent intent = result.getInvitationIntent();
-                                    String deepLink = AppInviteReferral.getDeepLink(intent);
-                                    String invitationId = AppInviteReferral.getInvitationId(intent);
-
-                                    // Because autoLaunchDeepLink = true we don't have to do anything
-                                    // here, but we could set that to false and manually choose
-                                    // an Activity to launch to handle the deep link here.
-                                    // ...
-                                }
-                            }
-                        });
+            .setResultCallback(
+                new ResultCallback<AppInviteInvitationResult>() {
+                    @Override
+                    public void onResult(AppInviteInvitationResult result) {
+                        Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
+                        if (result.getStatus().isSuccess()) {
+                            // Extract information from the intent
+                            Intent intent = result.getInvitationIntent();
+                            String deepLink = AppInviteReferral.getDeepLink(intent);
+                            String invitationId = AppInviteReferral.getInvitationId(intent);
+                        }
+                    }
+                });
         init();
     }
 
@@ -131,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void init(){
         firebase = new Firebase(firebaseURL);
-
         progressDialog = new ProgressDialog(this);
         listMain = (ListView) findViewById(R.id.listMainEvent);
         al = new ArrayList<EventData>();
@@ -184,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     class EventTask extends AsyncTask<Void, Void, Void>{
-
         HttpURLConnection urlConnection;
         JSONArray jsonArray;
         MyUtill myUtill;
@@ -198,19 +188,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         protected Void doInBackground(Void... params) {
-//            URL url = null;
             try {
-//                url = new URL(eventURL);
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-//                StringBuilder sb = new StringBuilder();
-//                String line;
-//                while ((line = br.readLine()) != null) {
-//                    sb.append(line + "\n");
-//                }
-//                br.close();
-
-//                JSONArray jsonObject = new JSONArray(sb.toString());
                 JSONArray jsonObject = myUtill.getJSONFromServer(eventURL);
                 System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
                 int length =  jsonObject.length();
@@ -228,10 +206,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     for(int j = 0; j <jArray.length() ; j++){
 
                         JSONObject jsonDetail = jArray.getJSONObject(j);
-
                         String subCateName = jsonDetail.optString("event_category");
                         String subCateID = jsonDetail.optString("event_sub_id");
-
                         JSONArray jsArr = jsonDetail.getJSONArray("sub_cate");
                         for(int t = 0 ; t < jsArr.length(); t++ ){
                             detail = new EventDetail();
@@ -254,8 +230,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
                             }
                         }
-
-
                     }
                     alModel.add(model);
                 }
@@ -283,7 +257,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void addUserDetail(){
-
         alanisawesomeMap = new HashMap<String, String>();
         alanisawesomeMap.put("name", MyApp.preferences.getString(MyApp.USER_NAME, null));
         alanisawesomeMap.put("lastName", MyApp.preferences.getString(MyApp.USER_LAST_NAME, null));
@@ -296,7 +269,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     class UserDetailTask extends AsyncTask<Void, Void, Void> {
-
         HttpURLConnection urlConnection;
         JSONArray jsonArray;
         JSONObject jUser;
@@ -359,8 +331,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Firebase usersRef = firebase.child("users");//.child(""+length);
            try {
                if (flagExist) {
-//                   Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
-
                    System.out.println("EVENT DATA User Already Registered");
                    MyApp.preferences.getString(MyApp.USER_NAME, null);
                    String uName = jUser.optString("name");
@@ -379,7 +349,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                } else {
                    String email = MyApp.preferences.getString(MyApp.USER_EMAIL, null);
                    if (!TextUtils.isEmpty(email)) {
-
                        final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
                        System.out.println("USER List new deviceID : " + deviceID);
                        users.put("0", alanisawesomeMap);
@@ -398,7 +367,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     class CannedTask extends AsyncTask<Void, Void, Void>{
-
         MyUtill myUtill;
         JSONArray jsonArray;
         CannedMessage message;
@@ -414,7 +382,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected Void doInBackground(Void... params) {
             MyApp.alCanMsg = new ArrayList<CannedMessage>();
             jsonArray = myUtill.getJSONFromServer(cannedURL);
-
             for(int i = 0 ; i < jsonArray.length() ; i++){
                 try {
                     message = new CannedMessage();
@@ -435,6 +402,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
     }
-
-
 }

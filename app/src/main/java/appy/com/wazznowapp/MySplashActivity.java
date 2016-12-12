@@ -8,7 +8,6 @@ import android.os.Handler;
  * Created by admin on 8/1/2016.
  */
 public class MySplashActivity extends Activity{
-
     Handler handler;
 
     @Override

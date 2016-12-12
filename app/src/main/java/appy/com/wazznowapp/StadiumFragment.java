@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,12 +27,10 @@ import com.app.model.UserProfile;
 import com.firebase.client.Firebase;
 import com.mylist.adapters.CannedAdapter;
 import com.mylist.adapters.StadiumChatListAdapter;
-
 /**
  * Created by admin on 8/2/2016.
  */
 public class StadiumFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
-
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
@@ -42,43 +39,32 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     static LinearLayout linearCanMsg;
     GridView viewLay;
     LinearLayout linearLayout;
-
     Firebase myFirebaseRef;
     Firebase alanRef;
     private SwipeRefreshLayout swipeRefreshLayout;
     CannedAdapter cannedAdapter;
     static boolean addHousePartyFLAG = false;
     static boolean addTuneFLAG = false;
-
-
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
-
     boolean cannedFlag = false;
     SharedPreferences.Editor editor;
     boolean flagAdminMsg;
-
     String userName="";
     int msgLimit = 30;
     InputMethodManager imm;
     String subscribedGroup;
 
-    public StadiumFragment() {
-
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
         myFirebaseRef = new Firebase(firebaseURL);
         alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.CateName+"/ "+EventChatFragment.eventID).child("StadiumChat");
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
@@ -106,6 +92,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
         viewLay.setOnItemClickListener(this);
+
     }
 
     @Override
@@ -168,11 +155,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     });
                 }
             }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
-
                 linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vi = inflater.inflate(R.layout.admin_msg,null);
-//                        linearLayout.removeAllViews();
                 linearLayout.addView(vi);
                 TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
                 TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
@@ -207,7 +192,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         try {
             adapter = new StadiumChatListAdapter(alanRef.limit(30), getActivity(), R.layout.chat_layout);
             listView.setAdapter(adapter);
-
             adapter.notifyDataSetChanged();
         }catch (Exception e){}
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
@@ -215,22 +199,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.eventID, false);
             subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
             if (subscribedGroup.contains(EventChatFragment.eventID)) {}
-           /* if(!flagAdminMsg){
-                handler = new Handler();
-                handler.postDelayed(runn, 20 * 1000);
-            }*/
         }
 
     }
 
- /*   Runnable runn = new Runnable() {
-        @Override
-        public void run() {
-//            ChatData alan = new ChatData("Admin", "Start a house party, there are most fun.",  MyApp.preferences.getString("Android_ID", null));
-//            alanRef.push().setValue(alan);
-        }
-    };
-*/
 
 
     @Override
@@ -247,7 +219,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 linearCanMsg.setVisibility(View.GONE);
             } else {
                 linearCanMsg.setVisibility(View.VISIBLE);
-       //         Toast.makeText(getActivity(),"Emoji will be shown soon", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.etChatMsg) {
             linearCanMsg.setVisibility(View.GONE);
@@ -255,7 +226,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
             if(!TextUtils.isEmpty(userName) || cannedFlag) {
                 if(cannedFlag){
-
                     if (view != null) {
                         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -265,7 +235,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         linearCanMsg.setVisibility(View.GONE);
                     } else {
                         linearCanMsg.setVisibility(View.VISIBLE);
-                       // Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
                 }else if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")) {
                     String msg = etMsg.getText().toString();
@@ -284,20 +253,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         Toast.makeText(getActivity(), "You are not tuned in this Event Group", Toast.LENGTH_SHORT).show();
                     }
                 }
-              /*  if(userName.equalsIgnoreCase("Guest User")){
-                    Toast.makeText(getActivity(), "Canned messages coming soon for guest users", Toast.LENGTH_SHORT).show();
-                }*/
-
             }else{
-             //   Toast.makeText(getActivity(), "Unregister user can send only canned message", Toast.LENGTH_SHORT).show();
                 if (view != null) {
                     imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
                 linearCanMsg.setVisibility(View.VISIBLE);
-//                Intent ii = new Intent(getActivity(), SignUpActivity.class);
-//                startActivity(ii);
-//                startActivityForResult(ii, 111);
             }
         }
         }catch (Exception ex){
@@ -310,10 +271,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onRefresh() {
         msgLimit+=10;
         alanRef.limit(msgLimit);
-//        alanRef.
         adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         listView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
@@ -368,14 +327,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         }
 
     }
-
-
-/* public void sendHousePartyMsg(){
-        String msg = "Start a house party";
-        ChatData alan = new ChatData("Admin", msg, MyApp.preferences.getString("Android_ID", null));
-        alanRef.push().setValue(alan);
-
-    }*/
 
 
     @Override

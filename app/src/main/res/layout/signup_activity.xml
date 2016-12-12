@@ -1,99 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="12dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:text="@string/signupheading"
-        />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
-
-        <EditText
-            android:id="@+id/input_name"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:hint="@string/name" />
-    </android.support.design.widget.TextInputLayout>
+            android:text="@string/signupheading"
+            android:textSize="12sp" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_lastname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/input_lastname"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:hint="@string/lastname" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginTop="10dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/input_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/input_phone"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_lastname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_lastname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/lastname"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/phone"
+                android:inputType="number"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:inputType="number"
-            android:hint="@string/phone" />
-    </android.support.design.widget.TextInputLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:text="@string/phonemsg"
-        android:padding="5dp"/>
+            android:padding="5dp"
+            android:text="@string/phonemsg"
+            android:textSize="12sp" />
 
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/input_email"
+            <EditText
+                android:id="@+id/input_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <Button
+            android:id="@+id/btnSignup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:hint="@string/email" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginTop="20dp"
+            android:background="@color/btncolor"
+            android:text="@string/signupbtn"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvNahGuestUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="@string/nosignupmsg"
+            android:textSize="12sp" />
 
 
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btnSignup"
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/btncolor"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:layout_marginTop="20dp"
-        android:textAllCaps="false"
-        android:text="@string/signupbtn"/>
-
-    <TextView
-        android:id="@+id/tvNahGuestUser"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:text="@string/nosignupmsg"
-        android:layout_marginTop="20dp"
-        android:gravity="center_horizontal"
-        android:padding="10dp"/>
-
-</LinearLayout>
+        android:visibility="gone"
+        android:layout_centerInParent="true" />
+</RelativeLayout>
