@@ -57,7 +57,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         init();
         myFirebaseSignup = new Firebase(firebaseURL);
         myFirebaseSignup.child("UserDetail");
-        // myFirebaseSignup.child("UserList");
         userProfile = new UserProfile();
     }
 
@@ -93,7 +92,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             if (flag) {
                 userSignup = new UserLoginSignupAction();
                 userSignup.userSignup(SignUpActivity.this, uName, uLastName, uPhone, uEmail, uPass);
-                // finish();
             }
 
         } else if (id == R.id.tvNahGuestUser) {
@@ -177,9 +175,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onComplete(Task<AuthResult> task) {
                         Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
-
                         progressBar.setVisibility(View.GONE);
-
                         if (!task.isSuccessful()) {
                             Toast.makeText(con, "User creation failed", Toast.LENGTH_SHORT).show();
                             editor = MyApp.preferences.edit();
