@@ -235,41 +235,23 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         };
 
         public void userLogin(Firebase myRef, final Activity con, String email, String password){
-      /*  SimpleLogin authClient = new SimpleLogin(myRef, con);
-        authClient.loginWithEmail(email, password, new SimpleLoginAuthenticatedHandler() {
-            public void authenticated(FirebaseSimpleLoginError error, FirebaseSimpleLoginUser user) {
-                if (error != null) {
-                    // There was an error logging into this account
-                    Toast.makeText(con, "Login failed", Toast.LENGTH_SHORT).show();
-                    Log.e("Signup", "Login Failed ERROR: "+error.getMessage());
-                } else {
-                    // We are now logged in
-                    Toast.makeText(con, "Login Successfull", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
-
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.addAuthStateListener(mAuthListener);
 
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
-                                Log.w("Login", "signInWithEmail:failed", task.getException());
-                                Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
-                            }
-
+                .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
+                        if (!task.isSuccessful()) {
+                            Log.w("Login", "signInWithEmail:failed", task.getException());
+                            Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
                         }
-                    });
+
+                    }
+                });
 
         }
 
@@ -291,78 +273,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         public void userLogout(){
             FirebaseAuth.getInstance().signOut();
         }
-
-   /* Map<String, String> alanisawesomeMap;
-    private void addUserDetail(String name, String lastName, String passKey, String phone, String email){
-
-        Map<String, String> alanisawesomeMap = new HashMap<String, String>();
-        alanisawesomeMap.put("name", name);
-        alanisawesomeMap.put("lastName", lastName);
-        alanisawesomeMap.put("passKey", passKey);
-        alanisawesomeMap.put("phone", phone);
-        alanisawesomeMap.put("email", email);
-        UserDetailTask task = new UserDetailTask();
-        task.execute();
-    }*/
-
-
-    /*class UserDetailTask extends AsyncTask<Void, Void, Void> {
-
-        HttpURLConnection urlConnection;
-        JSONArray jsonArray;
-        int length = -1;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            URL url = null;
-            try {
-                url = new URL(firebaseUserURL+"/users.json");
-                urlConnection = (HttpURLConnection) url.openConnection();
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                br.close();
-                System.out.println("GetUSER jsonObject : " + sb.toString());
-                JSONObject jsonObject = new JSONObject(sb.toString());
-                System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
-                length =  jsonObject.length();
-                System.out.println("EVENT DATA length : " + length);
-
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } finally {
-                urlConnection.disconnect();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-            length++;
-            System.out.println("USER List length : " + length);
-            users.put(""+length, alanisawesomeMap);
-            Firebase usersRef = new Firebase(firebaseUserURL).child("users");//.child(""+length);
-            usersRef.setValue(users);
-        }
-    }*/
     }
-
-
 }
 
 
