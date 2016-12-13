@@ -113,7 +113,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
 
-                    //tvAdminMsg.setText("Congrates now you are part of "+EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
+                    tvAdminMsg.setText("Congrates now you are part of "+EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
 
                     btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override
