@@ -1,6 +1,6 @@
 package appy.com.wazznowapp;
-
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -21,12 +21,10 @@ import com.app.model.EventDetail;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * Created by admin on 8/2/2016.
  */
 public class EventChatFragment extends AppCompatActivity  {
-
     private TabLayout tabLayout;
     private ViewPager viewPager;
     ConnectDetector connectDetector;
@@ -34,13 +32,10 @@ public class EventChatFragment extends AppCompatActivity  {
     static String SuperCateName;
     public static String eventID;
     static EventDetail eventDetail;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_chat_fragment);
-
         connectDetector = new ConnectDetector(this);
         eventDetail = (EventDetail) getIntent().getSerializableExtra("EventDetail");
         SuperCateName = eventDetail.getSuper_category_name();
@@ -61,16 +56,11 @@ public class EventChatFragment extends AppCompatActivity  {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(CateName);
-
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,15 +69,21 @@ public class EventChatFragment extends AppCompatActivity  {
         return super.onCreateOptionsMenu(menu);
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             finish();
         }
-
+        else if(id == R.id.menu_signup){
+            Intent ii = new Intent(this, SignUpActivity.class);
+            startActivity(ii);
+        }else if(id == R.id.menu_info){
+            Intent ii = new Intent(this, InfoActivity.class);
+            startActivity(ii);
+        }else if(id == R.id.menu_more){
+            Toast.makeText(this,"More is coming soon", Toast.LENGTH_SHORT).show();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -100,7 +96,6 @@ public class EventChatFragment extends AppCompatActivity  {
 
     @Override
     public void onBackPressed() {
-
         try{
             if(StadiumFragment.linearCanMsg.getVisibility() == View.VISIBLE){
                 View view = this.getCurrentFocus();
