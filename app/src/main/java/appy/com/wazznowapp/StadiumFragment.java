@@ -29,6 +29,13 @@ import com.firebase.client.Firebase;
 import com.mylist.adapters.CannedAdapter;
 import com.mylist.adapters.StadiumChatListAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by admin on 8/2/2016.
  */
@@ -58,7 +65,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     boolean flagAdminMsg;
 
     String userName="";
-    int msgLimit = 30;
+    int msgLimit = 5;
     InputMethodManager imm;
     String subscribedGroup;
 
@@ -146,7 +153,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                             UserProfile profile = new UserProfile();
                             profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
                             /*  Update user, Subscribe this event */
+                            updateEventList();
+                            listView.setAdapter(adapter);
 
+                            adapter.notifyDataSetChanged();
                             if(!addHousePartyFLAG){
                                 addHousePartyFLAG = true;
                                 linearLayout.removeAllViews();
@@ -188,9 +198,53 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 linearLayout.removeAllViews();
             }
         }catch (Exception ex){
-            Log.e("StadiumFragment","onStart method ERROR: "+ex.toString());
+            Log.e("StadiumFragment", "onStart method ERROR: " + ex.toString());
         }
 
+    }
+
+    private void updateEventList(){
+        try {
+            JSONArray jsonArray = new JSONArray(MyApp.preferences.getString("jsonEventData", null));
+            if(!TextUtils.isEmpty(jsonArray.toString())){
+                String eventUpdateUrl = MyApp.FIREBASE_BASE_URL;
+                for(int i = 0; i < jsonArray.length() ; i++){
+                    //EventChatFragment.eventID;
+                    JSONObject jSon = jsonArray.getJSONObject(i);
+                    String superCate = jSon.optString("event_superCategory");
+                    String cateID = jSon.optString("event_super_id");
+                    if(superCate.equalsIgnoreCase(EventChatFragment.SuperCateName)){
+                        JSONArray jArray = jSon.getJSONArray("Cate");
+                        for(int j = 0; j < jArray.length() ; j++) {
+                            JSONObject jsonDetail = jArray.getJSONObject(j);
+
+                            String subCateID = jsonDetail.optString("event_sub_id");
+                            String subscribedUser = jsonDetail.optString("subscribed_user");
+
+                            if (EventChatFragment.eventDetail.getCatergory_id().equalsIgnoreCase(subCateID)){
+                                try{
+                                    int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
+                                    noOfSubscrbedUser++;
+                                    jsonDetail.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
+                                    eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j;
+
+                                    Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
+                                    subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
+                                    Firebase eventFire =  new Firebase(eventUpdateUrl);
+                                    eventFire.updateChildren(subscribeUserMap);
+
+                                }catch (Exception ex){
+                                    Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Log.i("StadiumFragment", "Subscribed user Data ERROR: " + e.toString());
+        }
     }
 
     private void housePartyStarted(){
@@ -205,10 +259,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onResume() {
         super.onResume();
         try {
-            adapter = new StadiumChatListAdapter(alanRef.limit(30), getActivity(), R.layout.chat_layout);
-            listView.setAdapter(adapter);
+            adapter = new StadiumChatListAdapter(alanRef.limit(5), getActivity(), R.layout.chat_layout);
+         //   listView.setAdapter(adapter);
 
-            adapter.notifyDataSetChanged();
+          //  adapter.notifyDataSetChanged();
         }catch (Exception e){}
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
         if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")){
