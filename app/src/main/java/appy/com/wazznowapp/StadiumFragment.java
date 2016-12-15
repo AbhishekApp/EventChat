@@ -424,12 +424,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     }
 
 
-/* public void sendHousePartyMsg(){
-        String msg = "Start a house party";
-        ChatData alan = new ChatData("Admin", msg, MyApp.preferences.getString("Android_ID", null));
-        alanRef.push().setValue(alan);
 
-    }*/
 
 
     @Override
