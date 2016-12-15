@@ -307,8 +307,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             linearCanMsg.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
 
-            if(!TextUtils.isEmpty(userName) || cannedFlag) {
-                if(cannedFlag){
+            if(!TextUtils.isEmpty(userName) /*|| cannedFlag*/) {
+               /* if(cannedFlag){
 
                     if (view != null) {
                         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -321,7 +321,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         linearCanMsg.setVisibility(View.VISIBLE);
                        // Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
-                }else if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")) {
+                }else*/ if(!TextUtils.isEmpty(userName)/* && !userName.equalsIgnoreCase("Guest User")*/) {
                     String msg = etMsg.getText().toString();
                     subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
                     if (subscribedGroup.contains(EventChatFragment.eventID)) {
@@ -348,10 +348,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
-                linearCanMsg.setVisibility(View.VISIBLE);
-//                Intent ii = new Intent(getActivity(), SignUpActivity.class);
-//                startActivity(ii);
-//                startActivityForResult(ii, 111);
+           //     linearCanMsg.setVisibility(View.VISIBLE);
+                Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                startActivity(ii);
+               // startActivityForResult(ii, 111);
             }
         }
         }catch (Exception ex){

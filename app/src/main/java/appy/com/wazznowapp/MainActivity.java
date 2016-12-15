@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
+    static boolean eventFLAG = false;
 
 
     @Override
@@ -147,6 +148,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         eventAdapter.notifyDataSetChanged();
+        if(eventFLAG){
+            al = new ArrayList<EventData>();
+            alModel = new ArrayList<EventModel>();
+            arrayListEvent = new ArrayList<EventDetail>();
+            EventTask task = new EventTask();
+            task.execute();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        eventFLAG = true;
     }
 
     @Override
@@ -175,6 +189,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         firstFlag = false;
+        SharedPreferences.Editor editor = MyApp.preferences.edit();
+        editor.putString("jsonEventData", "");
+        editor.commit();
     }
 
     @Override
@@ -193,7 +210,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog.setMessage("Event Detail Loading...");
+            progressDialog.show();
             myUtill = new MyUtill();
+            eventFLAG = false;
         }
 
         @Override
