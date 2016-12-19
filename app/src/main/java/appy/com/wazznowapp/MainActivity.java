@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         firstFlag = false;
+        eventFLAG = false;
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString("jsonEventData", "");
         editor.commit();
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         String subCateName = jsonDetail.optString("event_category");
                         String subCateID = jsonDetail.optString("event_sub_id");
-                        String subscribedUser = jsonDetail.optString("subscribed_user");
+
 
                         JSONArray jsArr = jsonDetail.getJSONArray("sub_cate");
                         for(int t = 0 ; t < jsArr.length(); t++ ){
@@ -268,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_title(jOBJ.optString("event_title"));
                             detail.setEvent_date(jOBJ.optString("event_date"));
                             detail.setEvent_time(jOBJ.optString("event_time"));
+                            String subscribedUser = jOBJ.optString("subscribed_user");
                             detail.setSubscribed_user(subscribedUser);
                             String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
                             if(!TextUtils.isEmpty(strTime)) {
@@ -293,17 +295,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            eventAdapter.notifyDataSetChanged();
+            listMain.setAdapter(eventAdapter);
             progressDialog.hide();
             CannedTask cannedTask = new CannedTask();
             cannedTask.execute();
         }
     }
 
-    public static void setEventListData(int position){
-        arrayListEvent.remove(position);
-        eventAdapter.notifyDataSetChanged();
-    }
+//    public static void setEventListData(int position){
+//        arrayListEvent.remove(position);
+//        eventAdapter.notifyDataSetChanged();
+//    }
 
     private void addUserDetail(){
 

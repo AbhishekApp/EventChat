@@ -218,25 +218,31 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         for(int j = 0; j < jArray.length() ; j++) {
                             JSONObject jsonDetail = jArray.getJSONObject(j);
 
+
                             String subCateID = jsonDetail.optString("event_sub_id");
-                            String subscribedUser = jsonDetail.optString("subscribed_user");
+                            JSONArray jsArr = jsonDetail.getJSONArray("sub_cate");
+                            for(int t = 0 ; t < jsArr.length(); t++ ){
+                                JSONObject jOBJ = jsArr.getJSONObject(t);
+                                String subscribedUser = jOBJ.optString("subscribed_user").trim();
+                                String eventID = jOBJ.optString("event_id");
+                                if (EventChatFragment.eventDetail.getEvent_id().equalsIgnoreCase(eventID)){
+                                    try{
+                                        int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
+                                        noOfSubscrbedUser++;
+                                        jOBJ.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
+                                        eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j +"/sub_cate/"+ t;
 
-                            if (EventChatFragment.eventDetail.getCatergory_id().equalsIgnoreCase(subCateID)){
-                                try{
-                                    int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
-                                    noOfSubscrbedUser++;
-                                    jsonDetail.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
-                                    eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j;
-
-                                    Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
-                                    subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
-                                    Firebase eventFire =  new Firebase(eventUpdateUrl);
-                                    eventFire.updateChildren(subscribeUserMap);
-
-                                }catch (Exception ex){
-                                    Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
+                                        Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
+                                        subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
+                                        Firebase eventFire =  new Firebase(eventUpdateUrl);
+                                        eventFire.updateChildren(subscribeUserMap);
+                                        break;
+                                    }catch (Exception ex){
+                                        Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
+                                    }
                                 }
                             }
+
 
                         }
                     }
@@ -381,26 +387,35 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
 
     private void sendMsg(String msg){
+
        String deviceID = MyApp.getDeviveID(getActivity());
-        String sender = MyApp.preferences.getString(MyApp.USER_NAME, "Guest");
-        if(sender.equalsIgnoreCase("Guest") || TextUtils.isEmpty(sender)){
-            if(TextUtils.isEmpty(sender))
-                sender = "Guest";
-            int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: "+EventChatFragment.eventID, "0"));
-            try{
-                if(!MyApp.preferences.getBoolean("HousePartyMessage"+EventChatFragment.eventID, false)) {
+        String sender = MyApp.preferences.getString(MyApp.USER_NAME, "");
+        if(sender.contains("Guest") || TextUtils.isEmpty(sender)) {
+            if (TextUtils.isEmpty(sender)) {
+                Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                startActivity(ii);
+            } else {
+
+
+            int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
+            try {
+                if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatFragment.eventID, false)) {
                     SharedPreferences.Editor editor = MyApp.preferences.edit();
-                    editor.putBoolean("HousePartyMessage"+EventChatFragment.eventID,true);
+                    editor.putBoolean("HousePartyMessage" + EventChatFragment.eventID, true);
                     editor.commit();
-                 //   sendHousePartyMsg();
+                    //   sendHousePartyMsg();
                 }
-            }catch (Exception ex){
-                Log.e("StadiumFragment", "sendMsg ERROR: "+ex.toString());
+            } catch (Exception ex) {
+                Log.e("StadiumFragment", "sendMsg ERROR: " + ex.toString());
             }
-            if(noSend < 3){
+            if (noSend < 3) {
+                if (noSend == 0) {
+                    listView.setAdapter(adapter);
+                    updateEventList();
+                }
                 noSend++;
                 SharedPreferences.Editor editor = MyApp.preferences.edit();
-                editor.putString("SendTime: "+EventChatFragment.eventID, String.valueOf(noSend));
+                editor.putString("SendTime: " + EventChatFragment.eventID, String.valueOf(noSend));
 
                 editor.putBoolean(EventChatFragment.eventID, true);
                 editor.commit();
@@ -408,13 +423,15 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 alanRef.push().setValue(alan);
                 UserProfile profile = new UserProfile();
                 profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
-               // onRefresh();
-            }else{
+                // onRefresh();
+
+            } else {
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
                 startActivity(ii);
 //                return;
             }
+         }
 
         }else{
             ChatData alan = new ChatData(sender, msg, deviceID);

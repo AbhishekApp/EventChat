@@ -109,7 +109,7 @@ public class MyUtill {
         if(diffsec>0){
             // dateFormat+=diffsec+" sec";
         }
-        System.out.println("Line 184 event Time Difference : "+dateFormat);
+        System.out.println("Line 112 event Time Difference : "+dateFormat);
         return dateFormat.trim();
     }
 }

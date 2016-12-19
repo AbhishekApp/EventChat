@@ -98,17 +98,19 @@ public class EventModelAdapter extends BaseAdapter {
 
             String subscribed_user = detail.getSubscribed_user();
             if (groupRec != null && detail.getCatergory_id() != null) {
-                if (groupRec.contains(detail.getCatergory_id())) {
+                if (groupRec.contains(detail.getEvent_id())) {
                     try {
                         int iSubscribedUser = Integer.parseInt(subscribed_user);
                         iSubscribedUser--;
                         subscribed_user = new String("You +" + iSubscribedUser);
+                        viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         subscribed_user = new String(" +" + subscribed_user);
                     }
                 }else{
                     subscribed_user = new String(" +" + subscribed_user);
+                    viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
                 }
             }else{
                 subscribed_user = new String(" +" + subscribed_user);
@@ -116,7 +118,7 @@ public class EventModelAdapter extends BaseAdapter {
             viewHolder.tvNoOfTune.setVisibility(View.VISIBLE);
             viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");
         }
-        try {
+        /*try {
             if (groupRec != null && detail.getCatergory_id() != null) {
                 if (MyApp.preferences.getBoolean(detail.getEvent_id (), false)) {
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
@@ -126,7 +128,7 @@ public class EventModelAdapter extends BaseAdapter {
             }
         }catch (Exception ex){
             viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
-        }
+        }*/
 
         try{
             if(colorIndex >= mycolor.length-1){

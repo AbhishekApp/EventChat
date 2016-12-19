@@ -81,6 +81,7 @@ public class UserProfile {
         {
             userGroup = newGroup;
         }
+
         Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
         String deviceID = MyApp.getDeviveID(con);
         Firebase alanRef = usersRef.child("users/"+deviceID+"/0");
