@@ -327,7 +327,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         linearCanMsg.setVisibility(View.VISIBLE);
                        // Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
                     }
-                }else*/ if(!TextUtils.isEmpty(userName)/* && !userName.equalsIgnoreCase("Guest User")*/) {
+                }else*/ if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
                     String msg = etMsg.getText().toString();
                     subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
                     if (subscribedGroup.contains(EventChatFragment.eventID)) {

@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
-    static boolean eventFLAG = false;
+  //  static boolean eventFLAG = false;
 
 
     @Override
@@ -148,19 +148,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         eventAdapter.notifyDataSetChanged();
-        if(eventFLAG){
+//        if(eventFLAG){
             al = new ArrayList<EventData>();
             alModel = new ArrayList<EventModel>();
             arrayListEvent = new ArrayList<EventDetail>();
             EventTask task = new EventTask();
             task.execute();
-        }
+//        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        eventFLAG = true;
+//        eventFLAG = true;
     }
 
     @Override
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         firstFlag = false;
-        eventFLAG = false;
+//        eventFLAG = false;
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString("jsonEventData", "");
         editor.commit();
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             progressDialog.setMessage("Event Detail Loading...");
             progressDialog.show();
             myUtill = new MyUtill();
-            eventFLAG = false;
+//            eventFLAG = false;
         }
 
         @Override
@@ -415,8 +415,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                System.out.println("EVENT DATA onPostExecute Exception : "+ex.toString());
            }finally {
                progressDialog.hide();
-               EventTask task = new EventTask();
-               task.execute();
+//               EventTask task = new EventTask();
+//               task.execute();
            }
 
         }
