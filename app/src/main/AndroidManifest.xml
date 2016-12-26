@@ -25,7 +25,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MySplashActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
 
         <activity android:name=".EventChatFragment"
             android:screenOrientation="portrait"

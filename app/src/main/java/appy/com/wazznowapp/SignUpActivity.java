@@ -100,6 +100,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             editor = MyApp.preferences.edit();
             editor.putString(MyApp.USER_NAME, "Guest User");
             editor.commit();
+            setResult(101);
             finish();
         }
 

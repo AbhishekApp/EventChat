@@ -10,7 +10,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/canned_background"
-    android:layout_margin="7dp">
+    android:layout_margin="5dp">
 
     <TextView
         android:id="@+id/tvCanMsg"

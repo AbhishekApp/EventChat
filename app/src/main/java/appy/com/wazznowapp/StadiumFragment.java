@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.model.ChatData;
+import com.app.model.ConnectDetector;
 import com.app.model.UserProfile;
 import com.firebase.client.Firebase;
 import com.mylist.adapters.CannedAdapter;
@@ -41,6 +42,7 @@ import java.util.Map;
  */
 public class StadiumFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
 
+    ConnectDetector connectDetector;
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
@@ -57,12 +59,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     static boolean addHousePartyFLAG = false;
     static boolean addTuneFLAG = false;
 
-
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
 
     boolean cannedFlag = false;
     SharedPreferences.Editor editor;
     boolean flagAdminMsg;
+
 
     String userName="";
     int msgLimit = 5;
@@ -78,9 +80,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.CateName+"/ "+EventChatFragment.eventID).child("StadiumChat");
-        userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+        connectDetector = new ConnectDetector(getActivity());
+        if(connectDetector.getConnection()) {
+            myFirebaseRef = new Firebase(firebaseURL);
+            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("StadiumChat");
+            userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+        }
     }
 
     @Override
@@ -119,11 +124,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onStart() {
         super.onStart();
         try {
-
             if (!MyApp.preferences.getBoolean(EventChatFragment.eventID, false)) {
               adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
           /*    ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match", MyApp.preferences.getString("Android_ID", null));
-                alanRef.push().setValue(alan);*/
+                alanRef.push().setValue(alan);  */
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
@@ -133,7 +137,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
 
-                    tvAdminMsg.setText("Congrates now you are part of "+EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
+                    tvAdminMsg.setText("Congrats now you are part of "+EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
 
                     btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -152,20 +156,22 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                             /*  Update user, Subscribe this event */
                             UserProfile profile = new UserProfile();
                             profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
-                            /*  Update user, Subscribe this event */
                             updateEventList();
+                            /*  Update user, Subscribe this event */
+
                             listView.setAdapter(adapter);
 
                             adapter.notifyDataSetChanged();
                             if(!addHousePartyFLAG){
                                 addHousePartyFLAG = true;
-                                linearLayout.removeAllViews();
+                         //     linearLayout.removeAllViews();
                                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                                 View vi = inflater.inflate(R.layout.admin_msg, null);
                                 linearLayout.addView(vi);
                                 TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
                                 TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
                                 TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
+                                btnYes.setText("Invite Friends");
                                 tvAdminMsg.setText("Start a House Party. There are most fun.");
                                 btnYes.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -179,19 +185,26 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 }
             }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
 
-                linearLayout.removeAllViews();
+            //    linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vi = inflater.inflate(R.layout.admin_msg,null);
-//                        linearLayout.removeAllViews();
+                linearLayout.removeAllViews();
                 linearLayout.addView(vi);
                 TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
                 TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
                 TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
+                btnYes.setText("Invite Friends");
                 tvAdminMsg.setText("Start a House Party. There are most fun.");
                 btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         housePartyStarted();
+                    }
+                });
+                btnNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        linearLayout.removeAllViews();
                     }
                 });
             }else{
@@ -202,6 +215,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         }
 
     }
+
 
     private void updateEventList(){
         try {
@@ -218,31 +232,25 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         for(int j = 0; j < jArray.length() ; j++) {
                             JSONObject jsonDetail = jArray.getJSONObject(j);
 
-
                             String subCateID = jsonDetail.optString("event_sub_id");
-                            JSONArray jsArr = jsonDetail.getJSONArray("sub_cate");
-                            for(int t = 0 ; t < jsArr.length(); t++ ){
-                                JSONObject jOBJ = jsArr.getJSONObject(t);
-                                String subscribedUser = jOBJ.optString("subscribed_user").trim();
-                                String eventID = jOBJ.optString("event_id");
-                                if (EventChatFragment.eventDetail.getEvent_id().equalsIgnoreCase(eventID)){
-                                    try{
-                                        int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
-                                        noOfSubscrbedUser++;
-                                        jOBJ.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
-                                        eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j +"/sub_cate/"+ t;
+                            String subscribedUser = jsonDetail.optString("subscribed_user");
 
-                                        Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
-                                        subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
-                                        Firebase eventFire =  new Firebase(eventUpdateUrl);
-                                        eventFire.updateChildren(subscribeUserMap);
-                                        break;
-                                    }catch (Exception ex){
-                                        Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
-                                    }
+                            if (EventChatFragment.eventDetail.getCatergory_id().equalsIgnoreCase(subCateID)){
+                                try{
+                                    int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
+                                    noOfSubscrbedUser++;
+                                    jsonDetail.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
+                                    eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j;
+
+                                    Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
+                                    subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
+                                    Firebase eventFire =  new Firebase(eventUpdateUrl);
+                                    eventFire.updateChildren(subscribeUserMap);
+
+                                }catch (Exception ex){
+                                    Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
                                 }
                             }
-
 
                         }
                     }
@@ -252,6 +260,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             Log.i("StadiumFragment", "Subscribed user Data ERROR: " + e.toString());
         }
     }
+
 
     private void housePartyStarted(){
         editor = MyApp.preferences.edit();
@@ -266,31 +275,26 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onResume();
         try {
             adapter = new StadiumChatListAdapter(alanRef.limit(5), getActivity(), R.layout.chat_layout);
-         //   listView.setAdapter(adapter);
-
-          //  adapter.notifyDataSetChanged();
+            int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
+            if(noSend > 0){
+                listView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            }
+         //
         }catch (Exception e){}
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
         if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")){
             flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.eventID, false);
             subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-            if (subscribedGroup.contains(EventChatFragment.eventID)) {}
-           /* if(!flagAdminMsg){
-                handler = new Handler();
-                handler.postDelayed(runn, 20 * 1000);
-            }*/
+            if (subscribedGroup.contains(EventChatFragment.eventID)) {
+
+            }
+
         }
 
     }
 
- /*   Runnable runn = new Runnable() {
-        @Override
-        public void run() {
-//            ChatData alan = new ChatData("Admin", "Start a house party, there are most fun.",  MyApp.preferences.getString("Android_ID", null));
-//            alanRef.push().setValue(alan);
-        }
-    };
-*/
+
 
 
     @Override
@@ -299,35 +303,13 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         int id = v.getId();
         View view = getActivity().getCurrentFocus();
         if (id == R.id.imgEmoji) {
-            if (view != null) {
-                imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-            if (linearCanMsg.getVisibility() == View.VISIBLE) {
-                linearCanMsg.setVisibility(View.GONE);
-            } else {
-                linearCanMsg.setVisibility(View.VISIBLE);
-       //         Toast.makeText(getActivity(),"Emoji will be shown soon", Toast.LENGTH_SHORT).show();
-            }
+
         } else if (id == R.id.etChatMsg) {
             linearCanMsg.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
 
-            if(!TextUtils.isEmpty(userName) /*|| cannedFlag*/) {
-               /* if(cannedFlag){
-
-                    if (view != null) {
-                        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-
-                    if (linearCanMsg.getVisibility() == View.VISIBLE) {
-                        linearCanMsg.setVisibility(View.GONE);
-                    } else {
-                        linearCanMsg.setVisibility(View.VISIBLE);
-                       // Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
-                    }
-                }else*/ if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
+            if(!TextUtils.isEmpty(userName)) {
+              if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
                     String msg = etMsg.getText().toString();
                     subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
                     if (subscribedGroup.contains(EventChatFragment.eventID)) {
@@ -343,6 +325,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     }else{
                         Toast.makeText(getActivity(), "You are not tuned in this Event Group", Toast.LENGTH_SHORT).show();
                     }
+                }else{
+                    Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                    startActivityForResult(ii, 111);
                 }
               /*  if(userName.equalsIgnoreCase("Guest User")){
                     Toast.makeText(getActivity(), "Canned messages coming soon for guest users", Toast.LENGTH_SHORT).show();
@@ -356,8 +341,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 }
            //     linearCanMsg.setVisibility(View.VISIBLE);
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
-                startActivity(ii);
-               // startActivityForResult(ii, 111);
+               // startActivity(ii);
+                startActivityForResult(ii, 111);
             }
         }
         }catch (Exception ex){
@@ -365,6 +350,31 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 111){
+            if(resultCode == 101){
+                int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
+                if(noSend < 3) {
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                    if (linearCanMsg.getVisibility() == View.VISIBLE) {
+                        linearCanMsg.setVisibility(View.GONE);
+                    } else {
+                        linearCanMsg.setVisibility(View.VISIBLE);
+                    }
+                }else{
+                    Toast.makeText(getActivity(), "You have already send free messages.", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        }
+    }
 
     @Override
     public void onRefresh() {
@@ -416,8 +426,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 noSend++;
                 SharedPreferences.Editor editor = MyApp.preferences.edit();
                 editor.putString("SendTime: " + EventChatFragment.eventID, String.valueOf(noSend));
-
                 editor.putBoolean(EventChatFragment.eventID, true);
+
                 editor.commit();
                 ChatData alan = new ChatData(sender, msg, deviceID);
                 alanRef.push().setValue(alan);

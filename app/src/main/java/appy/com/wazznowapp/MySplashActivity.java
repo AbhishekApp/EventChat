@@ -22,6 +22,7 @@ public class MySplashActivity extends Activity{
     Runnable runn = new Runnable() {
         @Override
         public void run() {
+
             finish();
             overridePendingTransition(0, R.anim.fade_out);
         }

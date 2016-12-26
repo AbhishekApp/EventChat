@@ -106,14 +106,14 @@ public class EventModelAdapter extends BaseAdapter {
                         viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        subscribed_user = new String(" +" + subscribed_user);
+                    //    subscribed_user = new String(" +" + subscribed_user);
                     }
                 }else{
-                    subscribed_user = new String(" +" + subscribed_user);
+                //    subscribed_user = new String(" +" + subscribed_user);
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
                 }
             }else{
-                subscribed_user = new String(" +" + subscribed_user);
+            //    subscribed_user = new String(" +" + subscribed_user);
             }
             viewHolder.tvNoOfTune.setVisibility(View.VISIBLE);
             viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");

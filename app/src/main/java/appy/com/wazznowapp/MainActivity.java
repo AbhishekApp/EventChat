@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.app.model.CannedMessage;
+import com.app.model.ConnectDetector;
 import com.app.model.EventData;
 import com.app.model.EventDetail;
 import com.app.model.EventModel;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ListView listMain;
     ArrayList<EventData> al;
     private static boolean firstFlag = false;
+    private static int resumeCount = 1;
     GoogleApiClient mGoogleApiClient;
     EventAdapter adapter;
     Firebase firebase;
@@ -59,66 +61,76 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     static ArrayList<EventDetail> arrayListEvent;
     static EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
-    ProgressDialog progressDialog;
+    static ProgressDialog progressDialog;
+    ConnectDetector connectDetector;
 
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
-  //  static boolean eventFLAG = false;
+//    static boolean eventFLAG = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(!firstFlag) {
+        connectDetector = new ConnectDetector(this);
+        if(connectDetector.getConnection()) {
+            if (!firstFlag) {
             /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
-            firstFlag = true;
-            UserDetailTask task = new UserDetailTask();
-            task.execute();
-            Intent ii = new Intent(this, MySplashActivity.class);
-            startActivity(ii);
+                firstFlag = true;
+                UserDetailTask task = new UserDetailTask();
+                task.execute();
+                Intent ii = new Intent(this, MySplashActivity.class);
+                startActivity(ii);
+            }
 
-        }
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(AppInvite.API)
+                    .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(ConnectionResult connectionResult) {
+                            Toast.makeText(MainActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }).build();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(AppInvite.API)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult connectionResult) {
-                        Toast.makeText(MainActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
-                    }
-                }).build();
+            boolean autoLaunchDeepLink = true;
+            AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
+                    .setResultCallback(
+                            new ResultCallback<AppInviteInvitationResult>() {
+                                @Override
+                                public void onResult(AppInviteInvitationResult result) {
+                                    Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
+                                    if (result.getStatus().isSuccess()) {
+                                        // Extract information from the intent
+                                        Intent intent = result.getInvitationIntent();
+                                        String deepLink = AppInviteReferral.getDeepLink(intent);
+                                        String invitationId = AppInviteReferral.getInvitationId(intent);
 
-        boolean autoLaunchDeepLink = true;
-        AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
-                .setResultCallback(
-                        new ResultCallback<AppInviteInvitationResult>() {
-                            @Override
-                            public void onResult(AppInviteInvitationResult result) {
-                                Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
-                                if (result.getStatus().isSuccess()) {
-                                    // Extract information from the intent
-                                    Intent intent = result.getInvitationIntent();
-                                    String deepLink = AppInviteReferral.getDeepLink(intent);
-                                    String invitationId = AppInviteReferral.getInvitationId(intent);
-
-                                    // Because autoLaunchDeepLink = true we don't have to do anything
-                                    // here, but we could set that to false and manually choose
-                                    // an Activity to launch to handle the deep link here.
-                                    // ...
+                                        // Because autoLaunchDeepLink = true we don't have to do anything
+                                        // here, but we could set that to false and manually choose
+                                        // an Activity to launch to handle the deep link here.
+                                        // ...
+                                    }
                                 }
-                            }
-                        });
-        init();
+                            });
+            init();
+        } else{
+            Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
+        }
     }
+
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
         String eventName = eventDetail.getCategory_name();
-        int i = 0;
-        for(; i < arrayListEvent.size() ; i++){
+        Intent iChat = new Intent(this, EventChatFragment.class);
+        iChat.putExtra("EventDetail", eventDetail);
+        startActivity(iChat);
+
+      /*  for(int i = 0; i < arrayListEvent.size() ; i++){
             EventDetail event = arrayListEvent.get(i);
             if(eventName.equals(event.getCategory_name())){
                 Intent iChat = new Intent(this, EventChatFragment.class);
@@ -126,42 +138,47 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 startActivity(iChat);
                 break;
             }
-        }
+        }*/
 
     }
 
     private void init(){
-        firebase = new Firebase(firebaseURL);
 
-        progressDialog = new ProgressDialog(this);
-        listMain = (ListView) findViewById(R.id.listMainEvent);
-        al = new ArrayList<EventData>();
-        alModel = new ArrayList<EventModel>();
-        arrayListEvent = new ArrayList<EventDetail>();
-        eventAdapter = new EventModelAdapter(this, arrayListEvent);
-        listMain.setAdapter(eventAdapter);
-        listMain.setOnItemClickListener(this);
+            firebase = new Firebase(firebaseURL);
+            progressDialog = new ProgressDialog(this);
+            listMain = (ListView) findViewById(R.id.listMainEvent);
+            al = new ArrayList<EventData>();
+            alModel = new ArrayList<EventModel>();
+            arrayListEvent = new ArrayList<EventDetail>();
+            eventAdapter = new EventModelAdapter(this, arrayListEvent);
+            listMain.setAdapter(eventAdapter);
+            listMain.setOnItemClickListener(this);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        eventAdapter.notifyDataSetChanged();
-//        if(eventFLAG){
-            al = new ArrayList<EventData>();
-            alModel = new ArrayList<EventModel>();
-            arrayListEvent = new ArrayList<EventDetail>();
-            EventTask task = new EventTask();
-            task.execute();
-//        }
+        if(connectDetector.getConnection()) {
+            eventAdapter.notifyDataSetChanged();
+            if (resumeCount > 2) {
+                al = new ArrayList<EventData>();
+                alModel = new ArrayList<EventModel>();
+                arrayListEvent = new ArrayList<EventDetail>();
+                EventTask task = new EventTask();
+                task.execute();
+            }
+            resumeCount++;
+        }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        eventFLAG = true;
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        al = new ArrayList<EventData>();
+//        alModel = new ArrayList<EventModel>();
+//        arrayListEvent = new ArrayList<EventDetail>();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -189,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         firstFlag = false;
+        resumeCount = 1;
 //        eventFLAG = false;
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString("jsonEventData", "");
@@ -214,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             progressDialog.show();
             myUtill = new MyUtill();
 //            eventFLAG = false;
+
         }
 
         @Override
@@ -254,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         String subCateName = jsonDetail.optString("event_category");
                         String subCateID = jsonDetail.optString("event_sub_id");
-
+                        String subscribedUser = jsonDetail.optString("subscribed_user");
 
                         JSONArray jsArr = jsonDetail.getJSONArray("sub_cate");
                         for(int t = 0 ; t < jsArr.length(); t++ ){
@@ -263,13 +282,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setSuper_category_name(superCateName);
                             detail.setCategory_name(subCateName);
                             detail.setCatergory_id(subCateID);
-                        //    detail.setCatergory_id(jOBJ.optString("event_sub_id"));
+                      //    detail.setCatergory_id(jOBJ.optString("event_sub_id"));
                             detail.setEvent_id(jOBJ.optString("event_id"));
                             detail.setEvent_meta(jOBJ.optString("event_meta"));
                             detail.setEvent_title(jOBJ.optString("event_title"));
                             detail.setEvent_date(jOBJ.optString("event_date"));
                             detail.setEvent_time(jOBJ.optString("event_time"));
-                            String subscribedUser = jOBJ.optString("subscribed_user");
+
                             detail.setSubscribed_user(subscribedUser);
                             String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
                             if(!TextUtils.isEmpty(strTime)) {
@@ -296,6 +315,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             listMain.setAdapter(eventAdapter);
+            eventAdapter.notifyDataSetChanged();
             progressDialog.hide();
             CannedTask cannedTask = new CannedTask();
             cannedTask.execute();
@@ -415,8 +435,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                System.out.println("EVENT DATA onPostExecute Exception : "+ex.toString());
            }finally {
                progressDialog.hide();
-//               EventTask task = new EventTask();
-//               task.execute();
+               EventTask task = new EventTask();
+               task.execute();
            }
 
         }
