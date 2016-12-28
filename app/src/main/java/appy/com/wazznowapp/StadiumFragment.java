@@ -94,6 +94,14 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
+
+        int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
+        if(!(noSend > 0 && noSend < 3)){
+            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+
+
         return view;
     }
 
@@ -177,6 +185,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                                     @Override
                                     public void onClick(View v) {
                                         housePartyStarted();
+                                    }
+                                });
+                                btnNo.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        linearLayout.removeAllViews();
                                     }
                                 });
                             }
@@ -279,6 +293,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             if(noSend > 0){
                 listView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
+                if(noSend < 3){
+                    linearCanMsg.setVisibility(View.VISIBLE);
+                }
             }
          //
         }catch (Exception e){}
@@ -293,8 +310,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         }
 
     }
-
-
 
 
     @Override
@@ -403,7 +418,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         if(sender.contains("Guest") || TextUtils.isEmpty(sender)) {
             if (TextUtils.isEmpty(sender)) {
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
-                startActivity(ii);
+                startActivityForResult(ii, 111);
             } else {
 
 
@@ -438,7 +453,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             } else {
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
-                startActivity(ii);
+                startActivityForResult(ii, 111);
 //                return;
             }
          }

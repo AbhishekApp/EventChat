@@ -68,6 +68,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         boolean isEqual = sender.equalsIgnoreCase(userName);
         if((!TextUtils.isEmpty(userName) && isEqual) || (fromUser.equals(MyApp.getDeviveID(activity)))) {
                 tvMsg.setGravity(Gravity.RIGHT);
+                tvMsg.setTextColor(activity.getResources().getColor(R.color.white));
+                tvMsg.setPadding(15,15,90,15);
                 tvUser.setGravity(Gravity.RIGHT);
                 tvUser.setVisibility(View.GONE);
 
@@ -75,7 +77,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                 relativeParam.addRule(Gravity.CENTER);
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 linear.setLayoutParams(relativeParam);
-                linear.setBackgroundResource(R.drawable.outgoing_message_bg);
+                linear.setBackgroundResource(R.drawable.chat_outgoing_background);
 
                 linearBtn.setVisibility(View.GONE);
 
