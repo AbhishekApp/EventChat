@@ -134,8 +134,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         try {
             if (!MyApp.preferences.getBoolean(EventChatFragment.eventID, false)) {
               adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
-          /*    ChatData alan = new ChatData("Admin", "Congrates now you are part of 2.2k in stadium following the match", MyApp.preferences.getString("Android_ID", null));
-                alanRef.push().setValue(alan);  */
+
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
