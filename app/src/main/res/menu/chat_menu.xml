@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_noti"
+        android:title="@string/noti"
+        android:icon="@drawable/noti_zig"
+        app:showAsAction="always"
+        android:orderInCategory="1"/>
+
+    <item android:id="@+id/menu_info"
+        android:title="@string/info"
+        android:icon="@android:drawable/title_bar"
+        android:orderInCategory="1"/>
+
+    <item android:id="@+id/menu_mute"
+        android:title="@string/mute"
+        android:icon="@android:drawable/title_bar"
+        android:orderInCategory="1"/>
+
+    <item android:id="@+id/menu_signup"
+        android:title="@string/signup"
+        android:icon="@android:drawable/title_bar"
+        android:orderInCategory="1"/>
+
+    <item android:id="@+id/menu_more"
+        android:title="@string/more"
+        android:icon="@android:drawable/title_bar"
+        android:orderInCategory="1"/>
+
+</menu>
