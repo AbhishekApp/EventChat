@@ -65,7 +65,7 @@ public class EventChatFragment extends AppCompatActivity  {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_menu, menu);
+        menuInflater.inflate(R.menu.chat_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -83,6 +83,8 @@ public class EventChatFragment extends AppCompatActivity  {
             startActivity(ii);
         }else if(id == R.id.menu_more){
             Toast.makeText(this,"More is coming soon", Toast.LENGTH_SHORT).show();
+        }else if(id == R.id.menu_noti){
+            Toast.makeText(this,"Notification is coming soon", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }

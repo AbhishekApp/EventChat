@@ -98,7 +98,7 @@ public class EventModelAdapter extends BaseAdapter {
 
             String subscribed_user = detail.getSubscribed_user();
             if (groupRec != null && detail.getCatergory_id() != null) {
-                if (groupRec.contains(detail.getEvent_id())) {
+                if (groupRec.contains(detail.getCatergory_id())) {
                     try {
                         int iSubscribedUser = Integer.parseInt(subscribed_user);
                         iSubscribedUser--;

@@ -34,6 +34,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,13 +97,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
 
-        int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
-        if(!(noSend > 0 && noSend < 3)){
-            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        }
-
-
         return view;
     }
 
@@ -132,7 +127,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onStart() {
         super.onStart();
         try {
-            if (!MyApp.preferences.getBoolean(EventChatFragment.eventID, false)) {
+            if (!MyApp.preferences.getBoolean(EventChatFragment.eventDetail.getCatergory_id(), false)) {
               adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
 
                 if(!addTuneFLAG){
@@ -157,12 +152,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                         @Override
                         public void onClick(View v) {
                             editor = MyApp.preferences.edit();
-                            editor.putBoolean(EventChatFragment.eventID, true);
+                            editor.putBoolean(EventChatFragment.eventDetail.getCatergory_id(), true);
                             editor.commit();
 
                             /*  Update user, Subscribe this event */
                             UserProfile profile = new UserProfile();
-                            profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
+                            profile.updateUserGroup(getActivity(), EventChatFragment.eventDetail.getCatergory_id());
                             updateEventList();
                             /*  Update user, Subscribe this event */
 
@@ -283,18 +278,28 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         startActivity(ii);
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         try {
+            imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             adapter = new StadiumChatListAdapter(alanRef.limit(5), getActivity(), R.layout.chat_layout);
             int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
             if(noSend > 0){
                 listView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                if(noSend < 3){
-                    linearCanMsg.setVisibility(View.VISIBLE);
-                }
+
+            }
+            if(!(noSend > 0 && noSend < 3)){
+                InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                linearCanMsg.setVisibility(View.GONE);
+            }else{
+                linearCanMsg.setVisibility(View.VISIBLE);
+                View view = getActivity().getCurrentFocus();
+
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
          //
         }catch (Exception e){}
@@ -317,7 +322,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         int id = v.getId();
         View view = getActivity().getCurrentFocus();
         if (id == R.id.imgEmoji) {
-
+            if (view != null) {
+//                imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(etMsg, InputMethodManager.SHOW_IMPLICIT);
         } else if (id == R.id.etChatMsg) {
             linearCanMsg.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
@@ -326,13 +336,11 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
               if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
                     String msg = etMsg.getText().toString();
                     subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-                    if (subscribedGroup.contains(EventChatFragment.eventID)) {
+                    if (subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
                         if (!TextUtils.isEmpty(msg)) {
-                            //     al.add(msg);
                             adapter.notifyDataSetChanged();
                             etMsg.setText("");
                             sendMsg(msg);
-
                         } else {
                             Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
@@ -343,24 +351,17 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     Intent ii = new Intent(getActivity(), SignUpActivity.class);
                     startActivityForResult(ii, 111);
                 }
-              /*  if(userName.equalsIgnoreCase("Guest User")){
-                    Toast.makeText(getActivity(), "Canned messages coming soon for guest users", Toast.LENGTH_SHORT).show();
-                }*/
 
             }else{
-             //   Toast.makeText(getActivity(), "Unregister user can send only canned message", Toast.LENGTH_SHORT).show();
                 if (view != null) {
-                    imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                  imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
-           //     linearCanMsg.setVisibility(View.VISIBLE);
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
-               // startActivity(ii);
                 startActivityForResult(ii, 111);
             }
         }
         }catch (Exception ex){
-
+            Log.e("StadiumFrament", "On Click Exception : "+ex.toString());
         }
     }
 
@@ -394,10 +395,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onRefresh() {
         msgLimit+=10;
         alanRef.limit(msgLimit);
-//        alanRef.
         adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
-        listView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
@@ -419,8 +417,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
                 startActivityForResult(ii, 111);
             } else {
-
-
             int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
             try {
                 if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatFragment.eventID, false)) {
@@ -443,12 +439,11 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 editor.putBoolean(EventChatFragment.eventID, true);
 
                 editor.commit();
-                ChatData alan = new ChatData(sender, msg, deviceID);
+                ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp());
                 alanRef.push().setValue(alan);
                 UserProfile profile = new UserProfile();
                 profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
                 // onRefresh();
-
             } else {
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
@@ -458,7 +453,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
          }
 
         }else{
-            ChatData alan = new ChatData(sender, msg, deviceID);
+            ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp());
             alanRef.push().setValue(alan);
         }
 
@@ -474,5 +469,21 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         addTuneFLAG = false;
         addHousePartyFLAG = false;
     }
+
+
+    public static String getCurrentTimeStamp(){
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String currentDateTime = dateFormat.format(new Date()); // Find todays date
+
+            return currentDateTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
 }
 

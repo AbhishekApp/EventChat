@@ -9,6 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/linearAdmin"
+        android:layout_marginLeft="5dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_launcher" />
 
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/chat_head_"
             android:paddingBottom="3dp"
-            android:paddingLeft="10dp"
+            android:paddingLeft="15dp"
             android:paddingRight="4dp"
             android:paddingTop="3dp"
             android:textColor="@color/white"
@@ -49,7 +50,8 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:padding="4dp"
-                android:text="Yes I want to tune in" />
+                android:gravity="center"
+                android:text="Yes I want to tune in"/>
 
             <TextView
                 android:id="@+id/btnAdminMsgNo"
@@ -57,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:padding="4dp"
-                android:text="No Thanks" />
+                android:gravity="center"
+                android:text="No Thanks"/>
 
         </LinearLayout>
 

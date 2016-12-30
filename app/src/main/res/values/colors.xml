@@ -5,10 +5,11 @@
     <color name="colorAccent">#8480f7</color>
     <color name="chat_background">#8480f7</color>
     <color name="chat_header">#584561</color>
-    <color name="chat_btn_back">#817C7C</color>
+    <color name="chat_btn_back">#E9E8E8</color>
     <color name="chat_msg_back">#572732</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="chat_text_color">#5C5B5B</color>
     <color name="btncolor">#574561</color>
     <color name="orange">#FAA24A</color>
 

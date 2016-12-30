@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
 //    static boolean eventFLAG = false;
-
+    InputMethodManager inputMethodManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +120,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else{
             Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
         }
-
-        InputMethodManager inputMethodManager=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
     }
 
 
@@ -164,6 +161,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
+        try{
+            inputMethodManager=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+        }catch (Exception ex){}
         if(connectDetector.getConnection()) {
             eventAdapter.notifyDataSetChanged();
             if (resumeCount > 2) {
