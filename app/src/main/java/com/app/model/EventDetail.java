@@ -19,8 +19,18 @@ public class EventDetail implements Serializable{
     String event_title;
     String event_image_url;
     String event_time;
+    String event_exp_time;
     String event_date;
     String subscribed_user;
+
+    public String getEvent_exp_time() {
+        return event_exp_time;
+    }
+
+    public void setEvent_exp_time(String event_exp_time) {
+        this.event_exp_time = event_exp_time;
+    }
+
 
     public String getEvent_id() {
         return event_id;
