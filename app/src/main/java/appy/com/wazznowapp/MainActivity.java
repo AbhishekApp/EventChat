@@ -22,9 +22,15 @@ import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.app.model.EventData;
 import com.app.model.EventDetail;
+import com.app.model.EventDtList;
 import com.app.model.EventModel;
+import com.app.model.EventSubCateList;
 import com.app.model.MyUtill;
+import com.app.model.Sub_cate;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
@@ -37,6 +43,7 @@ import com.mylist.adapters.EventModelAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Comment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,13 +65,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     GoogleApiClient mGoogleApiClient;
     EventAdapter adapter;
     Firebase firebase;
-   // Firebase alanRef;
+    Firebase firebaseEvent;
     ArrayList<EventModel> alModel;
     static ArrayList<EventDetail> arrayListEvent;
     static EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
     static ProgressDialog progressDialog;
     ConnectDetector connectDetector;
+    final String TAG = "MainActivity";
+
 
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
@@ -147,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void init(){
 
             firebase = new Firebase(firebaseURL);
+            firebaseEvent = firebase.child("EventList");
             progressDialog = new ProgressDialog(this);
             listMain = (ListView) findViewById(R.id.listMainEvent);
             al = new ArrayList<EventData>();
@@ -155,6 +165,86 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             eventAdapter = new EventModelAdapter(this, arrayListEvent);
             listMain.setAdapter(eventAdapter);
             listMain.setOnItemClickListener(this);
+
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
+
+                EventDtList comment = dataSnapshot.getValue(EventDtList.class);
+                // A new comment has been added, add it to the displayed list
+           //     Comment comment = dataSnapshot.getValue(Comment.class);
+                Log.d(TAG, "onChildAdded:" +  comment.toString());
+                // ...
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+               // A comment has changed, use the key to determine if we are displaying this
+                // comment and if so displayed the changed comment.
+                EventDtList evList = dataSnapshot.getValue(EventDtList.class);
+             //   String commentKey = dataSnapshot.getKey();
+
+                arrayListEvent = new ArrayList<EventDetail>();
+                EventDetail eventDetail = new EventDetail();
+                for(int i = 0; i < evList.getCate().size(); i++){
+                    eventDetail = new EventDetail();
+                    EventSubCateList subCtList = evList.getCate().get(i);
+                    eventDetail.setSuper_category_name(evList.getEvent_super_category());
+                    for(int j = 0; j < subCtList.getSub_cate().size(); j++){
+                        eventDetail.setCategory_name(subCtList.getEvent_category());
+                        eventDetail.setCatergory_id(subCtList.getEvent_sub_id());
+                        eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
+
+                        Sub_cate subCate = subCtList.getSub_cate().get(j);
+                        eventDetail.setEvent_id(subCate.getEvent_id());
+                        eventDetail.setEvent_date(subCate.getEvent_date());
+                        eventDetail.setEvent_meta(subCate.getEvent_meta());
+                        eventDetail.setEvent_time(subCate.getEvent_time());
+                        eventDetail.setEvent_title(subCate.getEvent_title());
+                        eventDetail.setEvent_exp_time(subCate.getEvent_exp_time());
+                        arrayListEvent.add(eventDetail);
+                    }
+                }
+                listMain.setAdapter(eventAdapter);
+                eventAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+                // A comment has changed, use the key to determine if we are displaying this
+                // comment and if so remove it.
+                String commentKey = dataSnapshot.getKey();
+                Log.d(TAG, "onChildRemoved:" + commentKey.toString());
+
+                // ...
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+
+                // A comment has changed position, use the key to determine if we are
+                // displaying this comment and if so move it.
+                Comment movedComment = dataSnapshot.getValue(Comment.class);
+                String commentKey = dataSnapshot.getKey();
+                Log.d(TAG, "onChildMoved:" + movedComment.toString());
+                Log.d(TAG, "onChildMoved:" + commentKey.toString());
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.w(TAG, "postComments:onCancelled", firebaseError.toException());
+                Toast.makeText(MainActivity.this, "Failed to load comments.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+
+        };
+        firebaseEvent.addChildEventListener(childEventListener);
 
     }
 
@@ -166,13 +256,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
         }catch (Exception ex){}
         if(connectDetector.getConnection()) {
+            eventAdapter = new EventModelAdapter(this, arrayListEvent);
+            listMain.setAdapter(eventAdapter);
             eventAdapter.notifyDataSetChanged();
             if (resumeCount > 2) {
                 al = new ArrayList<EventData>();
-                alModel = new ArrayList<EventModel>();
-                arrayListEvent = new ArrayList<EventDetail>();
-                EventTask task = new EventTask();
-                task.execute();
+//                alModel = new ArrayList<EventModel>();
+//                arrayListEvent = new ArrayList<EventDetail>();
+//                EventTask task = new EventTask();
+//                task.execute();
             }
             resumeCount++;
         }
@@ -270,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     String superCateID = jSon.optString("event_super_id");
                     model.setEvent_super_category(superCateName);
                     model.setEvent_super_id(superCateID);
-                    model.alEvent = new ArrayList<EventDetail>();
+                    model.Cate = new ArrayList<EventDetail>();
                     JSONArray jArray = jSon.getJSONArray("Cate");
                     EventDetail detail = new EventDetail();
                     for(int j = 0; j <jArray.length() ; j++){
@@ -281,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         String subCateID = jsonDetail.optString("event_sub_id");
                         String subscribedUser = jsonDetail.optString("subscribed_user");
 
-                        JSONArray jsArr = jsonDetail.getJSONArray("sub_cate");
+                        JSONArray jsArr = jsonDetail.getJSONArray("Sub_cate");
                         for(int t = 0 ; t < jsArr.length(); t++ ){
                             detail = new EventDetail();
                             JSONObject jOBJ = jsArr.getJSONObject(t);
@@ -298,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setSubscribed_user(subscribedUser);
                             String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
                             if(!TextUtils.isEmpty(strTime)) {
-                                model.alEvent.add(detail);
+                                model.Cate.add(detail);
                                 arrayListEvent.add(detail);
                             }else{
                                 System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());

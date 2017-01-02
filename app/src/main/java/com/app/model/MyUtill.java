@@ -30,6 +30,7 @@ public class MyUtill {
 
 
         try {
+            Log.e("MyUtill","getJSONFromServer URL : "+urlStr);
             url = new URL(urlStr);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -44,7 +45,7 @@ public class MyUtill {
                 sb.append(line + "\n");
             }
             br.close();
-
+            System.out.println(sb.toString());
              jsonObject = new JSONArray(sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,7 +55,7 @@ public class MyUtill {
             Log.e("MyUtill", "Get Data From Server ERROR: "+ex.toString());
         }
 
-        System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+    //    System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
 
         return jsonObject;
     }

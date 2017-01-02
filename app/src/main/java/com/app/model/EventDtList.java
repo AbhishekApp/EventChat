@@ -3,19 +3,20 @@ package com.app.model;
 import java.util.ArrayList;
 
 /**
- * Created by admin on 9/16/2016.
+ * Created by admin on 1/2/2017.
  */
-public class EventModel {
+
+public class EventDtList {
 
     String event_superCategory;
     String event_super_id;
-    public ArrayList<EventDetail> Cate;
+    public ArrayList<EventSubCateList> Cate;
 
-    public ArrayList<EventDetail> getCate() {
+    public ArrayList<EventSubCateList> getCate() {
         return Cate;
     }
 
-    public void setCate(ArrayList<EventDetail> cate) {
+    public void setCate(ArrayList<EventSubCateList> cate) {
         Cate = cate;
     }
 
@@ -42,5 +43,4 @@ public class EventModel {
     public String getEvent_super_category(){
         return this.event_superCategory;
     }
-
 }

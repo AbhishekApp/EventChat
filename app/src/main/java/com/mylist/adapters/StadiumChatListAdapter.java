@@ -66,7 +66,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         String fromUser = model.getToUser();
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         boolean isEqual = sender.equalsIgnoreCase(userName);
-        if((!TextUtils.isEmpty(userName) && isEqual) || (fromUser.equals(MyApp.getDeviveID(activity)))) {
+        if((fromUser.equals(MyApp.getDeviveID(activity)))) {
                 tvMsg.setGravity(Gravity.RIGHT);
                 tvMsg.setTextColor(activity.getResources().getColor(R.color.white));
                 tvMsg.setPadding(15,15,90,15);
@@ -84,16 +84,19 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         }
         else{
             tvMsg.setGravity(Gravity.LEFT);
+            tvMsg.setPadding(35,5,10,15);
             tvUser.setGravity(Gravity.LEFT);
             tvUser.setVisibility(View.VISIBLE);
+            tvUser.setPadding(35,5,10,5);
 
             relativeParam.addRule(Gravity.LEFT);
             linear.setGravity(Gravity.LEFT);
 
             relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             linear.setLayoutParams(relativeParam);
-            linear.setBackgroundResource(R.drawable.incoming_message_bg);
-
+            linear.setBackgroundResource(R.drawable.chat_incomin_background);
+//            linear.setBackgroundResource(R.drawable.incoming_message_bg);
+            linear.setPadding(35,5,80,5);
             linearBtn.setVisibility(View.GONE);
         }
 
