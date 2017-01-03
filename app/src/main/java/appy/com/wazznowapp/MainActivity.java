@@ -4,8 +4,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,6 +39,10 @@ import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mylist.adapters.EventAdapter;
 import com.mylist.adapters.EventModelAdapter;
 
@@ -59,9 +65,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     ListView listMain;
-    ArrayList<EventData> al;
     private static boolean firstFlag = false;
-    private static int resumeCount = 1;
     GoogleApiClient mGoogleApiClient;
     EventAdapter adapter;
     Firebase firebase;
@@ -78,7 +82,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
-//    static boolean eventFLAG = false;
+
+
+    //    static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
 
     @Override
@@ -159,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             firebaseEvent = firebase.child("EventList");
             progressDialog = new ProgressDialog(this);
             listMain = (ListView) findViewById(R.id.listMainEvent);
-            al = new ArrayList<EventData>();
             alModel = new ArrayList<EventModel>();
             arrayListEvent = new ArrayList<EventDetail>();
             eventAdapter = new EventModelAdapter(this, arrayListEvent);
@@ -204,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         eventDetail.setEvent_time(subCate.getEvent_time());
                         eventDetail.setEvent_title(subCate.getEvent_title());
                         eventDetail.setEvent_exp_time(subCate.getEvent_exp_time());
+                        eventDetail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+subCate.getEvent_id());
                         arrayListEvent.add(eventDetail);
                     }
                 }
@@ -252,21 +258,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         try{
-            inputMethodManager=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+            if(inputMethodManager!=null)
+            {
+                inputMethodManager=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            }
+
         }catch (Exception ex){}
         if(connectDetector.getConnection()) {
             eventAdapter = new EventModelAdapter(this, arrayListEvent);
             listMain.setAdapter(eventAdapter);
             eventAdapter.notifyDataSetChanged();
-            if (resumeCount > 2) {
-                al = new ArrayList<EventData>();
-//                alModel = new ArrayList<EventModel>();
-//                arrayListEvent = new ArrayList<EventDetail>();
-//                EventTask task = new EventTask();
-//                task.execute();
-            }
-            resumeCount++;
+
         }
     }
 
@@ -304,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         firstFlag = false;
-        resumeCount = 1;
+
 //        eventFLAG = false;
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString("jsonEventData", "");
@@ -316,6 +319,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onBackPressed();
         firstFlag = false;
     }
+
 
     class EventTask extends AsyncTask<Void, Void, Void>{
 
@@ -386,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_title(jOBJ.optString("event_title"));
                             detail.setEvent_date(jOBJ.optString("event_date"));
                             detail.setEvent_time(jOBJ.optString("event_time"));
-
+                            detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
                             detail.setSubscribed_user(subscribedUser);
                             String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
                             if(!TextUtils.isEmpty(strTime)) {

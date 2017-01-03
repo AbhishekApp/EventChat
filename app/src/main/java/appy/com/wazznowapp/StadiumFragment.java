@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,10 +136,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                     View v = inflater.inflate(R.layout.admin_msg,null);
                     linearLayout.addView(v);
+                    LinearLayout linearAdminBtn = (LinearLayout) v.findViewById(R.id.linearAdminBtn);
+                    linearAdminBtn.setGravity(Gravity.CENTER);
                     TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
-
+                    btnNo.setText("NO I DON'T WANT TO TUNE IN");
                     tvAdminMsg.setText("Congrats now you are part of "+EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
 
                     btnNo.setOnClickListener(new View.OnClickListener() {
@@ -170,10 +173,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                                 View vi = inflater.inflate(R.layout.admin_msg, null);
                                 linearLayout.addView(vi);
+                                LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
+                                linearAdminBtn.setGravity(Gravity.RIGHT);
                                 TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
                                 TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
                                 TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
-                                btnYes.setText("Invite Friends");
+                                btnYes.setText("INVITE FRIENDS");
                                 tvAdminMsg.setText("Start a House Party. There are most fun.");
                                 btnYes.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -198,6 +203,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 View vi = inflater.inflate(R.layout.admin_msg,null);
                 linearLayout.removeAllViews();
                 linearLayout.addView(vi);
+                LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
+                linearAdminBtn.setGravity(Gravity.RIGHT);
                 TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
                 TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
                 TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);

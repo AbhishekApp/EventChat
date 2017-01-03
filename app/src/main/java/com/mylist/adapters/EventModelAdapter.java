@@ -3,6 +3,8 @@ package com.mylist.adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,11 @@ import android.widget.TextView;
 
 import com.app.model.EventDetail;
 import com.app.model.MyUtill;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,6 +45,7 @@ public class EventModelAdapter extends BaseAdapter {
     SharedPreferences preferences;
     String mycolor[];
     int colorIndex;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public EventModelAdapter(Context con, ArrayList<EventDetail> alList){
             this.con = con;
@@ -85,6 +93,8 @@ public class EventModelAdapter extends BaseAdapter {
         viewHolder.tvCateName.setText(detail.getCategory_name());
         viewHolder.tvEventName.setText(detail.getEvent_title());
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
+        if(!TextUtils.isEmpty(detail.getEvent_image_url()))
+            downloadImageURL(detail.getEvent_id(), viewHolder.img);
         String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time())).trim();
         System.out.println("Line 89 event Time Difference :"+strTime+":");
         if(!TextUtils.isEmpty(strTime)){
@@ -139,6 +149,27 @@ public class EventModelAdapter extends BaseAdapter {
             Log.e("EventModelAdapter","Set Background Color ERROR: "+ex.toString());
         }
         return view;
+    }
+
+    String imgURL = "";
+    public void downloadImageURL(String fileName, final ImageView img){
+
+        StorageReference storageRef = storage.getReferenceFromUrl(MyApp.FIREBASE_IMAGE_URL);
+        StorageReference pathReference = storageRef.child(fileName);
+        storageRef.child(fileName+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Log.e("EventModelAdapter", "Image Url: "+uri.getPath());
+//                Glide.with(con).load(uri.getPath()).into(img);
+                Glide.with(con).load(uri).into(img);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+               Log.e("EventModelAdapter", "Could not fetch Image Url");
+            }
+        });
+
     }
 
     class ViewHolder{

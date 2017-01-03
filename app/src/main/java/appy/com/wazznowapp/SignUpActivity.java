@@ -179,37 +179,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(Task<AuthResult> task) {
                         Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
                         progressBar.setVisibility(View.GONE);
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(con, "User creation failed", Toast.LENGTH_SHORT).show();
-                            editor = MyApp.preferences.edit();
-                            editor.putString(MyApp.USER_NAME, "");
-                            editor.putString(MyApp.USER_EMAIL, "");
-                            editor.putString(MyApp.USER_PASSWORD, "");
-                            editor.commit();
+
+                        if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
+                            Toast.makeText(con, "User Already Exist", Toast.LENGTH_SHORT).show();
+                            userUpdateOnServer(uName, uLastName, uPhone, email, password);
                             SignUpActivity.makeClickable();
+
                         }else if(task.isSuccessful()){
                             Toast.makeText(con, "User created successfully", Toast.LENGTH_SHORT).show();
-                            task.getResult();
-                            editor = MyApp.preferences.edit();
-                            editor.putString(MyApp.USER_NAME, uName);
-                            editor.putString(MyApp.USER_LAST_NAME, uLastName);
-                            editor.putString(MyApp.USER_PHONE, uPhone);
-                            editor.putString(MyApp.USER_EMAIL, email);
-                            editor.putString(MyApp.USER_PASSWORD, password);
-                            editor.commit();
+                            userUpdateOnServer(uName, uLastName, uPhone, email, password);
 
-                            Firebase firebase = new Firebase(firebaseUserURL);
-                            Map<String, String> alanisawesomeMap = new HashMap<String, String>();
-                            alanisawesomeMap.put("name", uName);
-                            alanisawesomeMap.put("lastName", uLastName);
-                            alanisawesomeMap.put("passKey", password);
-                            alanisawesomeMap.put("phone", uPhone);
-                            alanisawesomeMap.put("email", email);
-                            final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-                            System.out.println("USER List new length : " );
-                            System.out.println("USER List new deviceID : " );
-                            users.put("0", alanisawesomeMap);
-                            firebase.child("users/" + password).setValue(users);
                         }
                     }
                 });
@@ -271,6 +250,29 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         public void userLogout(){
             FirebaseAuth.getInstance().signOut();
+        }
+
+        public void userUpdateOnServer(String uName, String uLastName, String uPhone, String email, String password){
+            editor = MyApp.preferences.edit();
+            editor.putString(MyApp.USER_NAME, uName);
+            editor.putString(MyApp.USER_LAST_NAME, uLastName);
+            editor.putString(MyApp.USER_PHONE, uPhone);
+            editor.putString(MyApp.USER_EMAIL, email);
+            editor.putString(MyApp.USER_PASSWORD, password);
+            editor.commit();
+
+            Firebase firebase = new Firebase(firebaseUserURL);
+            Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+            alanisawesomeMap.put("name", uName);
+            alanisawesomeMap.put("lastName", uLastName);
+            alanisawesomeMap.put("passKey", password);
+            alanisawesomeMap.put("phone", uPhone);
+            alanisawesomeMap.put("email", email);
+            final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
+            System.out.println("USER List new length : " );
+            System.out.println("USER List new deviceID : " );
+            users.put("0", alanisawesomeMap);
+            firebase.child("users/" + password).setValue(users);
         }
     }
 }

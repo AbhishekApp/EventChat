@@ -14,10 +14,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
+import com.mylist.adapters.CannedAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,8 @@ public class EventChatFragment extends AppCompatActivity  {
     static String SuperCateName;
     public static String eventID;
     static EventDetail eventDetail;
+    ListView left_drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +55,10 @@ public class EventChatFragment extends AppCompatActivity  {
     }
 
     private void init(){
-     /*   toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(CateName);
+
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -73,6 +76,10 @@ public class EventChatFragment extends AppCompatActivity  {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            View view = this.getCurrentFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            StadiumFragment.linearCanMsg.setVisibility(View.GONE);
             finish();
         }
         else if(id == R.id.menu_signup){
@@ -91,8 +98,8 @@ public class EventChatFragment extends AppCompatActivity  {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new StadiumFragment(), "Stadium");
-        adapter.addFragment(new HousePartyFragment(), "House Party");
+        adapter.addFragment(new StadiumFragment(), "STADIUM");
+        adapter.addFragment(new HousePartyFragment(), "HOUSE PARTY");
         viewPager.setAdapter(adapter);
     }
 
