@@ -67,9 +67,9 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         boolean isEqual = sender.equalsIgnoreCase(userName);
         if((fromUser.equals(MyApp.getDeviveID(activity)))) {
-                tvMsg.setGravity(Gravity.RIGHT);
+//                tvMsg.setGravity(Gravity.RIGHT);
                 tvMsg.setTextColor(activity.getResources().getColor(R.color.white));
-                tvMsg.setPadding(15,15,90,15);
+                tvMsg.setPadding(25,15,70,15);
                 tvUser.setGravity(Gravity.RIGHT);
                 tvUser.setVisibility(View.GONE);
 
@@ -77,8 +77,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                 relativeParam.addRule(Gravity.CENTER);
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 linear.setLayoutParams(relativeParam);
-                linear.setBackgroundResource(R.drawable.chat_outgoing_background);
-
+//              linear.setBackgroundResource(R.drawable.chat_outgoing_background);
+                linear.setBackgroundResource(R.drawable.outgoing_message_bg);
                 linearBtn.setVisibility(View.GONE);
 
         }
@@ -94,8 +94,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
 
             relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             linear.setLayoutParams(relativeParam);
-            linear.setBackgroundResource(R.drawable.chat_incomin_background);
-//            linear.setBackgroundResource(R.drawable.incoming_message_bg);
+//            linear.setBackgroundResource(R.drawable.chat_incomin_background);
+            linear.setBackgroundResource(R.drawable.incoming_message_bg);
             linear.setPadding(35,5,80,5);
             linearBtn.setVisibility(View.GONE);
         }

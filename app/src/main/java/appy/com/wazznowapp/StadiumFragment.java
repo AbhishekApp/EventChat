@@ -66,13 +66,14 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     boolean cannedFlag = false;
     SharedPreferences.Editor editor;
-    boolean flagAdminMsg;
+
 
 
     String userName="";
     int msgLimit = 5;
     InputMethodManager imm;
     String subscribedGroup;
+    int noSend;
 
     public StadiumFragment() {
 
@@ -122,6 +123,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
         viewLay.setOnItemClickListener(this);
+
     }
 
     @Override
@@ -129,15 +131,13 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onStart();
         try {
             if (!MyApp.preferences.getBoolean(EventChatFragment.eventDetail.getCatergory_id(), false)) {
-              adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+                adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
 
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                     View v = inflater.inflate(R.layout.admin_msg,null);
                     linearLayout.addView(v);
-                    LinearLayout linearAdminBtn = (LinearLayout) v.findViewById(R.id.linearAdminBtn);
-                    linearAdminBtn.setGravity(Gravity.CENTER);
                     TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
@@ -208,7 +208,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
                 TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
                 TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
-                btnYes.setText("Invite Friends");
+                btnYes.setText("INVITE FRIENDS");
                 tvAdminMsg.setText("Start a House Party. There are most fun.");
                 btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -290,38 +290,45 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     public void onResume() {
         super.onResume();
         try {
+            View view = getActivity().getCurrentFocus();
             imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             adapter = new StadiumChatListAdapter(alanRef.limit(5), getActivity(), R.layout.chat_layout);
-            int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
-            if(noSend > 0){
-                listView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-
-            }
-            if(!(noSend > 0 && noSend < 3)){
-                InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                linearCanMsg.setVisibility(View.GONE);
+            userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+            noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
+             if(!(noSend >= 0 && noSend < 3)){
+                 if(noSend == 0) {
+                     linearCanMsg.setVisibility(View.VISIBLE);
+                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                     imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                 }else {
+                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                     linearCanMsg.setVisibility(View.GONE);
+                 }
             }else{
                 linearCanMsg.setVisibility(View.VISIBLE);
-                View view = getActivity().getCurrentFocus();
-
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-         //
-        }catch (Exception e){}
-        userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-        if(!TextUtils.isEmpty(userName) && !userName.equalsIgnoreCase("Guest User")){
-            flagAdminMsg = MyApp.preferences.getBoolean(EventChatFragment.eventID, false);
-            subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-            if (subscribedGroup.contains(EventChatFragment.eventID)) {
 
+        }catch (Exception e){}
+
+        if(!TextUtils.isEmpty(userName)) {
+            subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
+            if(subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
+                listView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
 
         }
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        View view = getActivity().getCurrentFocus();
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+    }
 
     @Override
     public void onClick(View v) {
@@ -377,18 +384,22 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 111){
             if(resultCode == 101){
-                int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
+                noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
+                if(noSend == -1){
+                    noSend++;
+                    SharedPreferences.Editor editor = MyApp.preferences.edit();
+                    editor.putString("SendTime: " + EventChatFragment.eventID, String.valueOf(noSend));
+                    editor.putBoolean(EventChatFragment.eventID, true);
+                    editor.commit();
+                }
                 if(noSend < 3) {
                     View view = getActivity().getCurrentFocus();
                     if (view != null) {
                         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
-                    if (linearCanMsg.getVisibility() == View.VISIBLE) {
-                        linearCanMsg.setVisibility(View.GONE);
-                    } else {
-                        linearCanMsg.setVisibility(View.VISIBLE);
-                    }
+
+                    linearCanMsg.setVisibility(View.VISIBLE);
                 }else{
                     Toast.makeText(getActivity(), "You have already send free messages.", Toast.LENGTH_SHORT).show();
                 }
@@ -424,7 +435,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
                 startActivityForResult(ii, 111);
             } else {
-            int noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "0"));
+
             try {
                 if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatFragment.eventID, false)) {
                     SharedPreferences.Editor editor = MyApp.preferences.edit();
