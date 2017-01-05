@@ -62,29 +62,37 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void onInviteClicked() {
-        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
-                .setMessage(getString(R.string.invitation_message))
-                .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
-                .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
-                .setCallToActionText(getString(R.string.invitation_cta))
-                .build();
-        intent.setPackage("com.whatsapp");
-        intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_TEXT, "Install WazzNow App.");
-       // intent.setType("text/plain");
+//        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
+//                .setMessage(getString(R.string.invitation_message))
+//                .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
+//                .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
+//                .setCallToActionText(getString(R.string.invitation_cta))
+//                .build();
+//     //   intent.setPackage("com.whatsapp");
+//        intent.setAction(Intent.ACTION_SEND);
+//        intent.putExtra(Intent.EXTRA_TEXT, "Install WazzNow App.");
+//       // intent.setType("text/plain");
+//        startActivity(Intent.createChooser(intent, "Choose an email client from..."));
+//        //  startActivityForResult(intent, REQUEST_INVITE);
+//        PackageManager pm=getPackageManager();
+//        try {
+//            PackageInfo info=pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
+//        //    Intent waIntent = new Intent(Intent.ACTION_SEND);
+//        //    waIntent.setPackage("com.whatsapp");
+//            startActivity(Intent.createChooser(intent, "Choose an email client from..."));
+//
+//        } catch (PackageManager.NameNotFoundException e) {
+//            Toast.makeText(this, "Whatsapp couldn't open", Toast.LENGTH_SHORT).show();
+//            e.printStackTrace();
+//        }
 
-        //  startActivityForResult(intent, REQUEST_INVITE);
-        PackageManager pm=getPackageManager();
-        try {
-            PackageInfo info=pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
-        //    Intent waIntent = new Intent(Intent.ACTION_SEND);
-        //    waIntent.setPackage("com.whatsapp");
-            startActivity(Intent.createChooser(intent, "Choose an email client from..."));
+        Intent sendIntent = new Intent();
+        String msg = "Hey, check this out: " + getString(R.string.invitation_deep_link);
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+        sendIntent.setType("text/plain");
+        startActivityForResult(sendIntent, REQUEST_INVITE);
 
-        } catch (PackageManager.NameNotFoundException e) {
-            Toast.makeText(this, "Whatsapp couldn't open", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
     }
 
 

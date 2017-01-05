@@ -34,6 +34,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.android.gms.appinvite.AppInvite;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
@@ -54,11 +55,13 @@ import org.w3c.dom.Comment;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
-
+    int REQUEST_INVITE = 111;
 
     //    static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
@@ -123,7 +126,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                         Intent intent = result.getInvitationIntent();
                                         String deepLink = AppInviteReferral.getDeepLink(intent);
                                         String invitationId = AppInviteReferral.getInvitationId(intent);
-
+                                        String inviterDeviceID = intent.getStringExtra("UserDeviceID");
+                                       try{
+                                           Toast.makeText(MainActivity.this, "InvierDevice ID "+inviterDeviceID, Toast.LENGTH_SHORT).show();
+                                           Log.e("MainActivity", "get Deep link URL "+deepLink);
+                                           Log.e("MainActivity", "get Deep link invitationID "+invitationId);
+                                       }catch (Exception ex){
+                                           Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
+                                       }
                                         // Because autoLaunchDeepLink = true we don't have to do anything
                                         // here, but we could set that to false and manually choose
                                         // an Activity to launch to handle the deep link here.
@@ -134,6 +144,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             init();
         } else{
             Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("InviteFriendActivity", "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Log.d("InviteFriendActivity", "onActivityResult: sent invitation " + id);
+                    Toast.makeText(MainActivity.this, "get Deep link onActivityResult Invite Device ID "+id, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                // ...
+            }
         }
     }
 
@@ -174,13 +205,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
-
-                EventDtList comment = dataSnapshot.getValue(EventDtList.class);
-                // A new comment has been added, add it to the displayed list
-           //     Comment comment = dataSnapshot.getValue(Comment.class);
-                Log.d(TAG, "onChildAdded:" +  comment.toString());
-                // ...
+               Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
             }
 
             @Override
@@ -194,10 +219,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 arrayListEvent = new ArrayList<EventDetail>();
                 EventDetail eventDetail = new EventDetail();
                 for(int i = 0; i < evList.getCate().size(); i++){
-                    eventDetail = new EventDetail();
                     EventSubCateList subCtList = evList.getCate().get(i);
-                    eventDetail.setSuper_category_name(evList.getEvent_super_category());
+
                     for(int j = 0; j < subCtList.getSub_cate().size(); j++){
+                        eventDetail = new EventDetail();
+                        eventDetail.setSuper_category_name(evList.getEvent_super_category());
+
                         eventDetail.setCategory_name(subCtList.getEvent_category());
                         eventDetail.setCatergory_id(subCtList.getEvent_sub_id());
                         eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
@@ -211,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         eventDetail.setEvent_exp_time(subCate.getEvent_exp_time());
                         eventDetail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+subCate.getEvent_id());
                         arrayListEvent.add(eventDetail);
+
                     }
                 }
                 listMain.setAdapter(eventAdapter);
@@ -225,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String commentKey = dataSnapshot.getKey();
                 Log.d(TAG, "onChildRemoved:" + commentKey.toString());
 
-                // ...
             }
 
             @Override

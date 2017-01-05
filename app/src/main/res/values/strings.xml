@@ -19,7 +19,7 @@
     <string name="sharewhatsapp">Share via Whatsapp</string>
     <string name="invitation_title">WazzNow</string>
     <string name="invitation_message">Install wazznow app and get updated on our events.</string>
-    <string name="invitation_deep_link">appypie.com</string>
+    <string name="invitation_deep_link">https://ry5a4.app.goo.gl/pGuk</string>
     <string name="invitation_custom_image">http://media.appypie.com/appypie-slider-video/images/logo_new.png</string>
     <string name="invitation_cta">Call to Action</string>
     <string name="password">Password</string>
