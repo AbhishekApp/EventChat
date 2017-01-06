@@ -181,14 +181,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         progressBar.setVisibility(View.GONE);
 
                         if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
-                            Toast.makeText(con, "User Already Exist", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
                             userUpdateOnServer(uName, uLastName, uPhone, email, password);
                             SignUpActivity.makeClickable();
-
+                            setResult(102);
+                            finish();
                         }else if(task.isSuccessful()){
-                            Toast.makeText(con, "User created successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
                             userUpdateOnServer(uName, uLastName, uPhone, email, password);
-
+                            setResult(102);
+                            finish();
                         }
                     }
                 });
@@ -254,7 +256,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         public void userUpdateOnServer(String uName, String uLastName, String uPhone, String email, String password){
             editor = MyApp.preferences.edit();
-            editor.putString(MyApp.USER_NAME, uName);
+            editor.putString(MyApp.USER_NAME, uName+" "+uLastName);
             editor.putString(MyApp.USER_LAST_NAME, uLastName);
             editor.putString(MyApp.USER_PHONE, uPhone);
             editor.putString(MyApp.USER_EMAIL, email);

@@ -72,7 +72,7 @@ public class UserProfile {
         String userGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, null);
         if(userGroup != null && !TextUtils.isEmpty(userGroup)){
             if(!userGroup.contains(newGroup)){
-                userGroup = userGroup +", "+ newGroup;
+                userGroup = userGroup +","+ newGroup;
             }else
             {
                 return;

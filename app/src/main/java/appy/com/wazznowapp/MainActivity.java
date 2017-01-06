@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     static ProgressDialog progressDialog;
     ConnectDetector connectDetector;
     final String TAG = "MainActivity";
+    Handler handler;
 
 
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
@@ -191,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void init(){
-
+            handler = new Handler();
             firebase = new Firebase(firebaseURL);
             firebaseEvent = firebase.child("EventList");
             progressDialog = new ProgressDialog(this);
@@ -292,21 +294,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
         }catch (Exception ex){}
-        if(connectDetector.getConnection()) {
-            eventAdapter = new EventModelAdapter(this, arrayListEvent);
-            listMain.setAdapter(eventAdapter);
-            eventAdapter.notifyDataSetChanged();
-
-        }
+        eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
+        listMain.setAdapter(eventAdapter);
+        handler.postDelayed(runEventTimer, 200);
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        al = new ArrayList<EventData>();
-//        alModel = new ArrayList<EventModel>();
-//        arrayListEvent = new ArrayList<EventDetail>();
-//    }
+
+    Runnable runEventTimer = new Runnable() {
+        @Override
+        public void run() {
+            if(connectDetector.getConnection()) {
+                eventAdapter.notifyDataSetChanged();
+                handler.removeCallbacks(runEventTimer);
+                handler.postDelayed(runEventTimer, 80 * 1000);
+            }
+        }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -451,10 +460,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-//    public static void setEventListData(int position){
-//        arrayListEvent.remove(position);
-//        eventAdapter.notifyDataSetChanged();
-//    }
 
     private void addUserDetail(){
 
@@ -508,6 +513,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 jsonArray = jsonObject.getJSONArray(deviceID);
                 jUser = jsonArray.getJSONObject(0);
                 String devID = jUser.optString(deviceID);
+                String joinedGroup = jUser.optString("joined_group");
+                String jnGrp[] = joinedGroup.split(",");
+                SharedPreferences.Editor editor =  MyApp.preferences.edit();
+                for(int i=0; i < jnGrp.length ; i++){
+                    editor.putBoolean(jnGrp[i], true);
+                }
+                editor.commit();
                 if(devID.equalsIgnoreCase(deviceID)){
                     System.out.println("EVENT DATA Device Id found : " + devID.toString());
                     flagExist = true;

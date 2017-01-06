@@ -64,13 +64,9 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
 
-    boolean cannedFlag = false;
     SharedPreferences.Editor editor;
-
-
-
     String userName="";
-    int msgLimit = 5;
+    int msgLimit = 3;
     InputMethodManager imm;
     String subscribedGroup;
     int noSend;
@@ -115,7 +111,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
         viewLay.setAdapter(cannedAdapter);
  //     al = new ArrayList<String>();
-
+        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         linearCanMsg.setVisibility(View.GONE);
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -131,7 +127,6 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onStart();
         try {
             if (!MyApp.preferences.getBoolean(EventChatFragment.eventDetail.getCatergory_id(), false)) {
-                adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
 
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
@@ -159,40 +154,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                             editor.commit();
 
                             /*  Update user, Subscribe this event */
-                            UserProfile profile = new UserProfile();
-                            profile.updateUserGroup(getActivity(), EventChatFragment.eventDetail.getCatergory_id());
-                            updateEventList();
-                            /*  Update user, Subscribe this event */
-
-                            listView.setAdapter(adapter);
-
-                            adapter.notifyDataSetChanged();
-                            if(!addHousePartyFLAG){
-                                addHousePartyFLAG = true;
-                         //     linearLayout.removeAllViews();
-                                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-                                View vi = inflater.inflate(R.layout.admin_msg, null);
-                                linearLayout.addView(vi);
-                                LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
-                                linearAdminBtn.setGravity(Gravity.RIGHT);
-                                TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
-                                TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
-                                TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
-                                btnYes.setText("INVITE FRIENDS");
-                                tvAdminMsg.setText("Start a House Party. There are most fun.");
-                                btnYes.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        housePartyStarted();
-                                    }
-                                });
-                                btnNo.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        linearLayout.removeAllViews();
-                                    }
-                                });
-                            }
+                            getAdminSecondMessage();
                         }
                     });
                 }
@@ -229,6 +191,42 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             Log.e("StadiumFragment", "onStart method ERROR: " + ex.toString());
         }
 
+    }
+
+    private void getAdminSecondMessage(){
+        UserProfile profile = new UserProfile();
+        profile.updateUserGroup(getActivity(), EventChatFragment.eventDetail.getCatergory_id());
+        updateEventList();
+                            /*  Update user, Subscribe this event */
+
+        if(!addHousePartyFLAG){
+            addHousePartyFLAG = true;
+            //     linearLayout.removeAllViews();
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+            View vi = inflater.inflate(R.layout.admin_msg, null);
+            linearLayout.addView(vi);
+            LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
+            linearAdminBtn.setGravity(Gravity.RIGHT);
+            TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
+            TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
+            TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
+            btnYes.setText("INVITE FRIENDS");
+            tvAdminMsg.setText("Start a House Party. There are most fun.");
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    housePartyStarted();
+                }
+            });
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    linearLayout.removeAllViews();
+                }
+            });
+        }
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
 
@@ -384,6 +382,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 111){
             if(resultCode == 101){
+
                 noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
                 if(noSend == -1){
                     noSend++;
@@ -403,11 +402,13 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 }else{
                     Toast.makeText(getActivity(), "You have already send free messages.", Toast.LENGTH_SHORT).show();
                 }
-
-
+            }
+            else if(resultCode == 102){
+                getAdminSecondMessage();
             }
         }
     }
+
 
     @Override
     public void onRefresh() {

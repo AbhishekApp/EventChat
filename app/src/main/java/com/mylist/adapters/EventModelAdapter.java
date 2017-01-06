@@ -100,15 +100,14 @@ public class EventModelAdapter extends BaseAdapter {
         if(!TextUtils.isEmpty(strTime)){
             viewHolder.tvHour.setText(strTime);
         }
-        String groupRec = preferences.getString(MyApp.USER_JOINED_GROUP, null);
         if(detail.getSubscribed_user().equalsIgnoreCase("0")) {
                 viewHolder.tvNoOfTune.setVisibility(View.GONE);
         }
         else {
 
             String subscribed_user = detail.getSubscribed_user();
-            if (groupRec != null && detail.getCatergory_id() != null) {
-                if (groupRec.contains(detail.getCatergory_id())) {
+//            if (groupRec != null && detail.getCatergory_id() != null) {
+                if (MyApp.preferences.getBoolean(detail.getCatergory_id(), false)) {
                     try {
                         int iSubscribedUser = Integer.parseInt(subscribed_user);
                         iSubscribedUser--;
@@ -122,9 +121,9 @@ public class EventModelAdapter extends BaseAdapter {
                 //    subscribed_user = new String(" +" + subscribed_user);
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
                 }
-            }else{
-            //    subscribed_user = new String(" +" + subscribed_user);
-            }
+//            }else{
+//            //    subscribed_user = new String(" +" + subscribed_user);
+//            }
             viewHolder.tvNoOfTune.setVisibility(View.VISIBLE);
             viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");
         }
