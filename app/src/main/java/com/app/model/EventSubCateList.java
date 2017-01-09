@@ -12,7 +12,7 @@ public class EventSubCateList {
     String subscribed_user;
     String event_sub_id;
     String event_category;
-    ArrayList<Sub_cate> Sub_cate = new ArrayList<Sub_cate>();
+    ArrayList<Sub_cate> Sub_cate;
 
     public ArrayList<Sub_cate> getSub_cate() {
         return Sub_cate;

@@ -193,12 +193,15 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     }
 
+
     private void getAdminSecondMessage(){
         UserProfile profile = new UserProfile();
         profile.updateUserGroup(getActivity(), EventChatFragment.eventDetail.getCatergory_id());
         updateEventList();
                             /*  Update user, Subscribe this event */
-
+        SharedPreferences.Editor editor = MyApp.preferences.edit();
+        editor.putBoolean(EventChatFragment.eventDetail.getCatergory_id(), true);
+        editor.commit();
         if(!addHousePartyFLAG){
             addHousePartyFLAG = true;
             //     linearLayout.removeAllViews();
@@ -290,7 +293,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         try {
             View view = getActivity().getCurrentFocus();
             imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            adapter = new StadiumChatListAdapter(alanRef.limit(5), getActivity(), R.layout.chat_layout);
+            adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
              if(!(noSend >= 0 && noSend < 3)){
@@ -320,6 +323,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     }
 
+
     @Override
     public void onPause() {
         super.onPause();
@@ -327,6 +331,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
+
 
     @Override
     public void onClick(View v) {
@@ -348,17 +353,16 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
               if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
                     String msg = etMsg.getText().toString();
                     subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-                    if (subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
-                        if (!TextUtils.isEmpty(msg)) {
-                            adapter.notifyDataSetChanged();
-                            etMsg.setText("");
-                            sendMsg(msg);
-                        } else {
-                            Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
-                        }
-                    }else{
-                        Toast.makeText(getActivity(), "You are not tuned in this Event Group", Toast.LENGTH_SHORT).show();
+                    if (!subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
+                        getAdminSecondMessage();
                     }
+                      if (!TextUtils.isEmpty(msg)) {
+                          adapter.notifyDataSetChanged();
+                          etMsg.setText("");
+                          sendMsg(msg);
+                      } else {
+                          Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
+                      }
                 }else{
                     Intent ii = new Intent(getActivity(), SignUpActivity.class);
                     startActivityForResult(ii, 111);
@@ -376,6 +380,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             Log.e("StadiumFrament", "On Click Exception : "+ex.toString());
         }
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -412,11 +417,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
     @Override
     public void onRefresh() {
-        msgLimit+=10;
+        msgLimit+=5;
         alanRef.limit(msgLimit);
         adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+        listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);
+    //    swipeRefreshLayout.setRefreshing(false);
     }
 
 
@@ -449,8 +455,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
             }
             if (noSend < 3) {
                 if (noSend == 0) {
-                    listView.setAdapter(adapter);
-                    updateEventList();
+                   getAdminSecondMessage();
                 }
                 noSend++;
                 SharedPreferences.Editor editor = MyApp.preferences.edit();
@@ -460,9 +465,8 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 editor.commit();
                 ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp());
                 alanRef.push().setValue(alan);
-                UserProfile profile = new UserProfile();
-                profile.updateUserGroup(getActivity(), EventChatFragment.eventID);
-                // onRefresh();
+
+                onRefresh();
             } else {
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
@@ -474,12 +478,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         }else{
             ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp());
             alanRef.push().setValue(alan);
+            onRefresh();
         }
 
     }
-
-
-
 
 
     @Override
@@ -490,7 +492,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     }
 
 
-    public static String getCurrentTimeStamp(){
+    public String getCurrentTimeStamp(){
         try {
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

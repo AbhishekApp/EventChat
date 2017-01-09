@@ -87,7 +87,8 @@
                     android:gravity="center"
                     android:padding="3dp"
                     android:layout_alignParentRight="true"
-                    android:drawableLeft="@mipmap/group_icon"/>
+                    android:drawableLeft="@mipmap/group_icon"
+                    android:drawablePadding="2dp"/>
 
             </LinearLayout>
 

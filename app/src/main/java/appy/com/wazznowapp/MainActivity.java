@@ -215,36 +215,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
                // A comment has changed, use the key to determine if we are displaying this
                 // comment and if so displayed the changed comment.
-                EventDtList evList = dataSnapshot.getValue(EventDtList.class);
-             //   String commentKey = dataSnapshot.getKey();
+                try{
+                    EventDtList evList = dataSnapshot.getValue(EventDtList.class);
 
-                arrayListEvent = new ArrayList<EventDetail>();
-                EventDetail eventDetail = new EventDetail();
-                for(int i = 0; i < evList.getCate().size(); i++){
-                    EventSubCateList subCtList = evList.getCate().get(i);
+                    arrayListEvent = new ArrayList<EventDetail>();
+                    EventDetail eventDetail = new EventDetail();
+                    for(int i = 0; i < evList.getCate().size(); i++){
+                        EventSubCateList subCtList = evList.getCate().get(i);
+                        String subscribedUser = subCtList.getSubscribed_user();
 
-                    for(int j = 0; j < subCtList.getSub_cate().size(); j++){
-                        eventDetail = new EventDetail();
-                        eventDetail.setSuper_category_name(evList.getEvent_super_category());
+                        for(int j = 0; j < subCtList.getSub_cate().size(); j++){
+                            eventDetail = new EventDetail();
+                            eventDetail.setSuper_category_name(evList.getEvent_super_category());
 
-                        eventDetail.setCategory_name(subCtList.getEvent_category());
-                        eventDetail.setCatergory_id(subCtList.getEvent_sub_id());
-                        eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
+                            eventDetail.setCategory_name(subCtList.getEvent_category());
+                            eventDetail.setCatergory_id(subCtList.getEvent_sub_id());
+                            eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
 
-                        Sub_cate subCate = subCtList.getSub_cate().get(j);
-                        eventDetail.setEvent_id(subCate.getEvent_id());
-                        eventDetail.setEvent_date(subCate.getEvent_date());
-                        eventDetail.setEvent_meta(subCate.getEvent_meta());
-                        eventDetail.setEvent_time(subCate.getEvent_time());
-                        eventDetail.setEvent_title(subCate.getEvent_title());
-                        eventDetail.setEvent_exp_time(subCate.getEvent_exp_time());
-                        eventDetail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+subCate.getEvent_id());
-                        arrayListEvent.add(eventDetail);
+                            Sub_cate subCate = subCtList.getSub_cate().get(j);
+                            eventDetail.setEvent_id(subCate.getEvent_id());
+                            eventDetail.setEvent_date(subCate.getEvent_date());
+                            eventDetail.setEvent_meta(subCate.getEvent_meta());
+                            eventDetail.setEvent_time(subCate.getEvent_time());
+                            eventDetail.setEvent_title(subCate.getEvent_title());
+                            eventDetail.setEvent_exp_time(subCate.getEvent_exp_time());
+                            eventDetail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+subCate.getEvent_id());
+                            eventDetail.setSubscribed_user(subscribedUser);
+                            arrayListEvent.add(eventDetail);
 
+                        }
                     }
+                    eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
+                    listMain.setAdapter(eventAdapter);
+                    eventAdapter.notifyDataSetChanged();
+                }catch (Exception ex){
+                    Log.e(TAG, "onChildChanged ERROR: "+ex.toString());
                 }
-                listMain.setAdapter(eventAdapter);
-                eventAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -314,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onStop() {
         super.onStop();
-
     }
 
     @Override
@@ -343,7 +348,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         firstFlag = false;
-
 //        eventFLAG = false;
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString("jsonEventData", "");
@@ -366,8 +370,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog.setMessage("Event Detail Loading...");
-            progressDialog.show();
+            try{
+                progressDialog.setMessage("Event Detail Loading...");
+                progressDialog.show();
+            }catch (Exception ex){}
             myUtill = new MyUtill();
 //            eventFLAG = false;
 
@@ -462,7 +468,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     private void addUserDetail(){
-
         alanisawesomeMap = new HashMap<String, String>();
         alanisawesomeMap.put("name", MyApp.preferences.getString(MyApp.USER_NAME, null));
         alanisawesomeMap.put("lastName", MyApp.preferences.getString(MyApp.USER_LAST_NAME, null));

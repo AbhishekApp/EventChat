@@ -1,12 +1,13 @@
 package com.app.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by admin on 1/2/2017.
  */
 
-public class EventDtList {
+public class EventDtList implements Serializable {
 
     String event_superCategory;
     String event_super_id;
