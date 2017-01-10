@@ -7,15 +7,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by admin on 8/3/2016.
@@ -26,6 +30,9 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     ActionBar actionBar;
     Button btnShare;
     int REQUEST_INVITE = 111;
+    String msg;
+    TextView tvMsg;
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +47,18 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         actionBar = getSupportActionBar();
         actionBar.setTitle("Invite Friends");
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        tvMsg = (TextView) findViewById(R.id.tvInviteText);
+        userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+        if(!TextUtils.isEmpty(userName)){
+            if(!userName.contains("user")){
+                tvMsg.setText("Hi..! This is "+ userName +" lets watch Mumbai vs Pune match on June 21 on Pune together");
+            }else{
+                tvMsg.setText("Hi..! lets watch Mumbai vs Pune match on June 21 on Pune together");
+            }
+        }else{
+            tvMsg.setText("Hi..! lets watch Mumbai vs Pune match on June 21 on Pune together");
+        }
         btnShare = (Button) findViewById(R.id.btnInviteFriend);
 
 
@@ -63,7 +82,17 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
     private void onInviteClicked() {
         Intent sendIntent = new Intent();
-        String msg = "Hey, check this out: " + getString(R.string.invitation_deep_link);
+
+        if(!TextUtils.isEmpty(userName)){
+            if(!userName.contains("user")){
+                 msg = "Hi, This is "+userName+". Watch the " + getString(R.string.invitation_deep_link)+"with me right here on WazzNow.";
+            }else{
+                msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+"with me right here on WazzNow.";
+            }
+        }else{
+            msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+"with me right here on WazzNow.";
+        }
+
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
         sendIntent.setType("text/plain");

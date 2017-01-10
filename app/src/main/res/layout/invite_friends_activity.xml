@@ -5,6 +5,7 @@
     android:padding="12dp">
 
     <TextView
+        android:id="@+id/tvInviteText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"

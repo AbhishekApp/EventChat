@@ -28,6 +28,7 @@ import com.app.model.ChatData;
 import com.app.model.ConnectDetector;
 import com.app.model.UserProfile;
 import com.firebase.client.Firebase;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mylist.adapters.CannedAdapter;
 import com.mylist.adapters.StadiumChatListAdapter;
 
@@ -82,9 +83,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
 
         connectDetector = new ConnectDetector(getActivity());
         if(connectDetector.getConnection()) {
+
             myFirebaseRef = new Firebase(firebaseURL);
             alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("StadiumChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            alanRef.keepSynced(true);
         }
     }
 
@@ -111,7 +115,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
         viewLay.setAdapter(cannedAdapter);
  //     al = new ArrayList<String>();
-        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+//        adapter = new MyChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         linearCanMsg.setVisibility(View.GONE);
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -283,6 +287,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
         editor.commit();
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
+        ii.putExtra("EventName", EventChatFragment.eventDetail.getCategory_name());
         startActivity(ii);
     }
 
@@ -359,6 +364,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                       if (!TextUtils.isEmpty(msg)) {
                           adapter.notifyDataSetChanged();
                           etMsg.setText("");
+
                           sendMsg(msg);
                       } else {
                           Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
@@ -418,11 +424,12 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     @Override
     public void onRefresh() {
         msgLimit+=5;
+
         alanRef.limit(msgLimit);
         adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-    //    swipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
 
@@ -436,7 +443,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
     private void sendMsg(String msg){
 
        String deviceID = MyApp.getDeviveID(getActivity());
-        String sender = MyApp.preferences.getString(MyApp.USER_NAME, "");
+       String sender = MyApp.preferences.getString(MyApp.USER_NAME, "");
         if(sender.contains("Guest") || TextUtils.isEmpty(sender)) {
             if (TextUtils.isEmpty(sender)) {
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
@@ -466,7 +473,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
                 ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp());
                 alanRef.push().setValue(alan);
 
-                onRefresh();
+              //  onRefresh();
             } else {
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
@@ -478,7 +485,7 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         }else{
             ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp());
             alanRef.push().setValue(alan);
-            onRefresh();
+     //       onRefresh();
         }
 
     }
@@ -489,6 +496,10 @@ public class StadiumFragment extends Fragment implements View.OnClickListener, S
         super.onDestroy();
         addTuneFLAG = false;
         addHousePartyFLAG = false;
+        editor = MyApp.preferences.edit();
+        editor.putBoolean(EventChatFragment.eventID + "HouseParty", false);
+        editor.commit();
+
     }
 
 

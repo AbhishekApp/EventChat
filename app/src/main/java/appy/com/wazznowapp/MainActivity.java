@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (!firstFlag) {
             /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
                 firstFlag = true;
+
                 UserDetailTask task = new UserDetailTask();
                 task.execute();
                 Intent ii = new Intent(this, MySplashActivity.class);
@@ -213,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+                Log.d(TAG, "onChildChanged previousChildName :" + previousChildName);
                // A comment has changed, use the key to determine if we are displaying this
                 // comment and if so displayed the changed comment.
                 try{
@@ -292,17 +294,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume();
-        try{
-            if(inputMethodManager!=null)
-            {
-                inputMethodManager=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            }
+        if(connectDetector.getConnection()) {
+            try {
+                if (inputMethodManager != null) {
+                    inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                }
 
-        }catch (Exception ex){}
-        eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
-        listMain.setAdapter(eventAdapter);
-        handler.postDelayed(runEventTimer, 200);
+            } catch (Exception ex) {
+            }
+            eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
+            listMain.setAdapter(eventAdapter);
+            handler.postDelayed(runEventTimer, 200);
+        }
     }
 
 
@@ -352,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString("jsonEventData", "");
         editor.commit();
+
     }
 
     @Override

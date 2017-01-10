@@ -154,22 +154,16 @@ public class EventModelAdapter extends BaseAdapter {
     public void downloadImageURL(String fileName, final ImageView img){
         try{
             StorageReference storageRef = storage.getReferenceFromUrl(MyApp.FIREBASE_IMAGE_URL);
-            StorageReference pathReference = storageRef.child(fileName);
-            storageRef.child(fileName+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Log.e("EventModelAdapter", "Image Url: "+uri.getPath());
-    //                Glide.with(con).load(uri.getPath()).into(img);
-                  try{
-                      Glide.with(con).load(uri).into(img);
-                  }catch (Exception ex){}
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                   Log.e("EventModelAdapter", "Could not fetch Image Url");
-                }
-            });
+            StorageReference pathReference = storageRef.child(fileName+".jpg");
+
+                Glide.with(con)
+                        .using(new FirebaseImageLoader())
+                        .load(pathReference)
+                        .into(img);
+
+                // Glide.with(con).load(uri).into(img);
+
+//
         }catch (Exception ex){
             Log.e("EventModelAdapter", "EventModelAdapter DownloadImageURL ERROR: "+ex.toString());
         }
