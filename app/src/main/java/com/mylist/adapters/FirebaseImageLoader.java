@@ -15,20 +15,7 @@ import com.google.firebase.storage.StreamDownloadTask;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * ModelLoader implementation to download images from FirebaseStorage with Glide.
- *
- * Sample Usage:
- * <pre>
- *     StorageReference ref = FirebaseStorage.getInstance().getReference().child("myimage");
- *     ImageView iv = (ImageView) findViewById(R.id.my_image_view);
- *
- *     Glide.with(this)
- *         .using(new FirebaseImageLoader())
- *         .load(ref)
- *         .into(iv);
- * </pre>
- */
+
 public class FirebaseImageLoader implements StreamModelLoader<StorageReference> {
 
     private static final String TAG = "FirebaseImageLoader";
