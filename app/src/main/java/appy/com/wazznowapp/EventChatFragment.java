@@ -79,7 +79,7 @@ public class EventChatFragment extends AppCompatActivity  {
             View view = this.getCurrentFocus();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            StadiumFragment.linearCanMsg.setVisibility(View.GONE);
+            ChatStadiumFragment.linearCanMsg.setVisibility(View.GONE);
             finish();
         }
         else if(id == R.id.menu_signup){
@@ -98,7 +98,7 @@ public class EventChatFragment extends AppCompatActivity  {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new StadiumFragment(), "STADIUM");
+        adapter.addFragment(new ChatStadiumFragment(), "STADIUM");
         adapter.addFragment(new HousePartyFragment(), "HOUSE PARTY");
         viewPager.setAdapter(adapter);
     }
