@@ -5,6 +5,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -33,13 +35,15 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     String msg;
     TextView tvMsg;
     String userName;
+    String eventID, eventCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.invite_friends_activity);
         init();
-
+        eventCategory = getIntent().getStringExtra("EventName");
+        eventID = getIntent().getStringExtra("EventID");
         btnShare.setOnClickListener(this);
 
     }
@@ -85,13 +89,14 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
         if(!TextUtils.isEmpty(userName)){
             if(!userName.contains("user")){
-                 msg = "Hi, This is "+userName+". Watch the " + getString(R.string.invitation_deep_link)+"with me right here on WazzNow.";
+                 msg = "Hi, This is "+userName+". Watch the " + getString(R.string.invitation_deep_link)+" with me right here on WazzNow.";
             }else{
-                msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+"with me right here on WazzNow.";
+                msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+" with me right here on WazzNow.";
             }
         }else{
-            msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+"with me right here on WazzNow.";
+            msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+" with me right here on WazzNow.";
         }
+        Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
 
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
@@ -104,6 +109,36 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    @VisibleForTesting
+    public Uri buildDeepLink(@NonNull String deepLink, int minVersion, boolean isAd) {
+        // Get the unique appcode for this app.
+        String appCode = getString(R.string.app_code);
+
+        // Get this app's package name.
+        String packageName = getApplicationContext().getPackageName();
+
+        // Build the link with all required parameters
+        Uri.Builder builder = new Uri.Builder()
+                .scheme("https")
+                .authority(appCode + ".app.goo.gl/pGuk")
+                .path("/")
+                .appendQueryParameter("link", deepLink.toString())
+                .appendQueryParameter("apn", packageName)
+                .appendQueryParameter("eventid", eventID);
+
+        // If the deep link is used in an advertisement, this value must be set to 1.
+        if (isAd) {
+            builder.appendQueryParameter("ad", "1");
+        }
+
+        // Minimum version is optional.
+        if (minVersion > 0) {
+            builder.appendQueryParameter("amv", Integer.toString(minVersion));
+        }
+
+        // Return the completed deep link.
+        return builder.build();
+    }
 
     @Override
     public void onClick(View v) {

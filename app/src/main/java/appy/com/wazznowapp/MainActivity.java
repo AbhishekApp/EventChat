@@ -130,10 +130,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                         String deepLink = AppInviteReferral.getDeepLink(intent);
                                         String invitationId = AppInviteReferral.getInvitationId(intent);
                                         String inviterDeviceID = intent.getStringExtra("UserDeviceID");
+                                        String eventid = intent.getStringExtra("eventid");
                                        try{
-                                           Toast.makeText(MainActivity.this, "InvierDevice ID "+inviterDeviceID, Toast.LENGTH_SHORT).show();
                                            Log.e("MainActivity", "get Deep link URL "+deepLink);
+                                           Toast.makeText(MainActivity.this, "InvierDevice ID "+inviterDeviceID, Toast.LENGTH_SHORT).show();
+
                                            Log.e("MainActivity", "get Deep link invitationID "+invitationId);
+                                           Log.e("MainActivity", "get Deep link eventid "+eventid);
                                        }catch (Exception ex){
                                            Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
                                        }

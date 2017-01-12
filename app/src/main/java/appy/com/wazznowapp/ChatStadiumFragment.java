@@ -385,6 +385,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         editor.commit();
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
         ii.putExtra("EventName", EventChatFragment.eventDetail.getCategory_name());
+        ii.putExtra("EventID", EventChatFragment.eventDetail.getEvent_id());
         startActivity(ii);
     }
 
@@ -521,10 +522,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     @Override
     public void onRefresh() {
         msgLimit+=5;
-
-   //     alanRef.limit(msgLimit);
-    //    adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
-    //    listView.setAdapter(chatAdapter);
         chatAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
@@ -532,6 +529,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        msgLimit+=2;
         String msg = MyApp.alCanMsg.get(position).getCanned_message();
         sendMsg(msg);
     }
@@ -624,10 +622,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         LinearLayout linear, linearBtn;
         RelativeLayout.LayoutParams relativeParam;
         ImageView imgIcon;
-
+      //  int limit;
         public ChatAdapter(Context context, ArrayList<ChatData> al){
             con = context;
             alList = al;
+      //      limit = msgLimit;
         }
 
 
@@ -668,9 +667,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             }
 
-            ChatData model = alList.get(position);
-            populateView(view, model);
-
+            if(position < alList.size() && msgLimit < alList.size()) {
+                ChatData model = alList.get(alList.size()-msgLimit+position);
+                populateView(view, model);
+            }
             return view;
         }
 

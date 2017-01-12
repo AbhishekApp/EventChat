@@ -106,11 +106,11 @@ public class EventChatFragment extends AppCompatActivity  {
     @Override
     public void onBackPressed() {
         try{
-            if(StadiumFragment.linearCanMsg.getVisibility() == View.VISIBLE){
+            if(ChatStadiumFragment.linearCanMsg.getVisibility() == View.VISIBLE){
                 View view = this.getCurrentFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                StadiumFragment.linearCanMsg.setVisibility(View.GONE);
+                ChatStadiumFragment.linearCanMsg.setVisibility(View.GONE);
             }else {
                 super.onBackPressed();
             }

@@ -28,7 +28,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="https://ry5a4.app.goo.gl/Zi7X" android:scheme="wazznow"/>
+                <data android:host="https://ry5a4.app.goo.gl/pGuk" android:scheme="wazznow"/>
                 <data android:host="http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk" android:scheme="wazznow"/>
             </intent-filter>
         </activity>
