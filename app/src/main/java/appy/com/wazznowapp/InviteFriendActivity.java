@@ -19,7 +19,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.w3c.dom.Text;
 
@@ -36,14 +39,24 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     TextView tvMsg;
     String userName;
     String eventID, eventCategory;
+    String longDeepLink = "https://ry5a4.app.goo.gl/?link=http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk&apn=appy.com.wazznowapp&afl=http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk&st=WazzNow+Title&sd=House+Party+Chat+Invitation&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png&utm_source=";;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.invite_friends_activity);
+        new GoogleApiClient.Builder(this)
+                .addApi(AppInvite.API)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(ConnectionResult connectionResult) {
+                        Toast.makeText(InviteFriendActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
+                    }
+                }).build();
         init();
         eventCategory = getIntent().getStringExtra("EventName");
         eventID = getIntent().getStringExtra("EventID");
+        longDeepLink = longDeepLink + eventID+"&utm_medium=Whatsapp&utm_campaign="+eventCategory;
         btnShare.setOnClickListener(this);
 
     }
@@ -65,13 +78,11 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         }
         btnShare = (Button) findViewById(R.id.btnInviteFriend);
 
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -85,6 +96,22 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void onInviteClicked() {
+
+       /* try{
+        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
+                .setMessage(getString(R.string.invitation_message))
+                .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
+                .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
+                .setCallToActionText(getString(R.string.invitation_cta))
+                .build();
+            intent.putExtra("eventid", eventID);
+            Intent sendIntent = new Intent();
+            sendIntent .setPackage("com.whatsapp");
+            sendIntent.putExtra("intent", intent);
+            startActivityForResult(sendIntent, REQUEST_INVITE);
+        }catch (Exception ex){
+            Log.d("InviteFriendActivity", "onInviteClicked: Exception" + ex.toString());
+        }*/
         Intent sendIntent = new Intent();
 
         if(!TextUtils.isEmpty(userName)){
@@ -97,9 +124,11 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+" with me right here on WazzNow.";
         }
         Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+      //  String dLink = longDeepLink.replace("SenderID", eventID);
 
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT, longDeepLink);
         sendIntent.setType("text/plain");
         sendIntent.setPackage("com.whatsapp");
         try{
@@ -126,10 +155,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 .appendQueryParameter("apn", packageName)
                 .appendQueryParameter("eventid", eventID);
 
-        // If the deep link is used in an advertisement, this value must be set to 1.
-        if (isAd) {
-            builder.appendQueryParameter("ad", "1");
-        }
 
         // Minimum version is optional.
         if (minVersion > 0) {

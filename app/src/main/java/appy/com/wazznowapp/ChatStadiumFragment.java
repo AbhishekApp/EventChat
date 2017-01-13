@@ -384,7 +384,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
         editor.commit();
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
-        ii.putExtra("EventName", EventChatFragment.eventDetail.getCategory_name());
+        ii.putExtra("EventName", EventChatFragment.eventDetail.getCatergory_id());
         ii.putExtra("EventID", EventChatFragment.eventDetail.getEvent_id());
         startActivity(ii);
     }

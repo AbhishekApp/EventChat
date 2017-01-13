@@ -83,7 +83,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     final String TAG = "MainActivity";
     Handler handler;
 
-
+    boolean getInvited = false;
+    String invitedEventid, invitedGroup;
+    HashMap<String,EventDetail> hashMapEvent;
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
@@ -107,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent ii = new Intent(this, MySplashActivity.class);
                 startActivity(ii);
             }
-
+            getInvited = false;
+            hashMapEvent = new HashMap<String,EventDetail>();
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(AppInvite.API)
                     .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
@@ -130,15 +133,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                         String deepLink = AppInviteReferral.getDeepLink(intent);
                                         String invitationId = AppInviteReferral.getInvitationId(intent);
                                         String inviterDeviceID = intent.getStringExtra("UserDeviceID");
-                                        String eventid = intent.getStringExtra("eventid");
+
+                                        Uri uri = intent.getData();
+                                        invitedEventid = uri.getQueryParameter("eventid");
                                        try{
                                            Log.e("MainActivity", "get Deep link URL "+deepLink);
-                                           Toast.makeText(MainActivity.this, "InvierDevice ID "+inviterDeviceID, Toast.LENGTH_SHORT).show();
+                                           Log.e("MainActivity", "get Deep link uri "+uri.toString());
+                                           invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
+                                           Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
+                                           invitedGroup = deepLink.split("utm_campaign=")[1];
+                                           Log.e("MainActivity", "get Deep link group "+invitedGroup);
+                                            getInvited = true;
 
-                                           Log.e("MainActivity", "get Deep link invitationID "+invitationId);
-                                           Log.e("MainActivity", "get Deep link eventid "+eventid);
                                        }catch (Exception ex){
                                            Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
+                                           getInvited = false;
                                        }
                                         // Because autoLaunchDeepLink = true we don't have to do anything
                                         // here, but we could set that to false and manually choose
@@ -164,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 // Get the invitation IDs of all sent messages
                 String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
                 for (String id : ids) {
-                    Log.d("InviteFriendActivity", "onActivityResult: sent invitation " + id);
+                    Log.d("InviteFriendActivity", "get Deep link onActivityResult: sent invitation " + id);
                     Toast.makeText(MainActivity.this, "get Deep link onActivityResult Invite Device ID "+id, Toast.LENGTH_SHORT).show();
                 }
             } else {
@@ -179,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
-        String eventName = eventDetail.getCategory_name();
         Intent iChat = new Intent(this, EventChatFragment.class);
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
@@ -446,6 +454,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             if(!TextUtils.isEmpty(strTime)) {
                                 model.Cate.add(detail);
                                 arrayListEvent.add(detail);
+                                hashMapEvent.put(detail.getEvent_id(), detail);
                             }else{
                                 System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
                             }
@@ -631,7 +640,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progressDialog.hide();
-
+            try{
+                if(getInvited){
+                    EventDetail detail = hashMapEvent.get(invitedEventid);
+                    Intent iChat = new Intent(MainActivity.this, EventChatFragment.class);
+                    iChat.putExtra("EventDetail", detail);
+                    startActivity(iChat);
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
         }
     }
 
