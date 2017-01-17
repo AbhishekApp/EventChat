@@ -1,9 +1,8 @@
 package appy.com.wazznowapp;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
@@ -24,14 +23,25 @@ import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import org.w3c.dom.Text;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 
 /**
  * Created by admin on 8/3/2016.
  */
 public class InviteFriendActivity extends AppCompatActivity implements View.OnClickListener {
-
-
     ActionBar actionBar;
     Button btnShare;
     int REQUEST_INVITE = 111;
@@ -39,7 +49,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     TextView tvMsg;
     String userName;
     String eventID, eventCategory;
-    String longDeepLink = "https://ry5a4.app.goo.gl/?link=http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk&apn=appy.com.wazznowapp&afl=http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk&st=WazzNow+Title&sd=House+Party+Chat+Invitation&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png&utm_source=";;
+    String longDeepLink = "https://ry5a4.app.goo.gl/?link=http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk&apn=appy.com.wazznowapp&afl=http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk&st=WazzNow+Title&sd=House+Party+Chat+Invitation&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png&utm_source=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +66,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         init();
         eventCategory = getIntent().getStringExtra("EventName");
         eventID = getIntent().getStringExtra("EventID");
+      //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
         longDeepLink = longDeepLink + eventID+"&utm_medium=Whatsapp&utm_campaign="+eventCategory;
         btnShare.setOnClickListener(this);
 
@@ -95,8 +106,109 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         return super.onOptionsItemSelected(item);
     }
 
-    private void onInviteClicked() {
 
+
+    public class newShortAsync extends AsyncTask<Void,Void,String> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            BufferedReader reader;
+            StringBuffer buffer;
+            String res=null;
+            String json = "{\"longUrl\": \""+longDeepLink+"\"}";
+            try {
+                URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyAj6g7L2CVtsUM1pTaQHb6eJW_qIXvoiRs");
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setReadTimeout(40000);
+                con.setConnectTimeout(40000);
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/json");
+                OutputStream os = con.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(json);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                int status=con.getResponseCode();
+                InputStream inputStream;
+                if(status== HttpURLConnection.HTTP_OK)
+                    inputStream=con.getInputStream();
+                else
+                    inputStream = con.getErrorStream();
+
+                reader= new BufferedReader(new InputStreamReader(inputStream));
+
+                buffer= new StringBuffer();
+
+                String line="";
+                while((line=reader.readLine())!=null)
+                {
+                    buffer.append(line);
+                }
+
+                res= buffer.toString();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            System.out.println("JSON RESP:" + s);
+            String response=s;
+            try {
+                JSONObject jsonObject=new JSONObject(response);
+                String id=jsonObject.getString("id");
+
+                Intent sendIntent = new Intent();
+                if(!TextUtils.isEmpty(userName)){
+                    if(!userName.contains("user")){
+                        msg = "Hi, This is "+userName+". Watch the " + id+" with me right here on WazzNow.";
+                    }else{
+                        msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
+                    }
+                }else{
+                    msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
+                }
+                Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+                //  String dLink = longDeepLink.replace("SenderID", eventID);
+
+                sendIntent.setAction(Intent.ACTION_SEND);
+
+                sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+                sendIntent.setType("text/plain");
+                sendIntent.setPackage("com.whatsapp");
+                try{
+                    startActivityForResult(sendIntent, REQUEST_INVITE);
+                }catch (Exception ex){
+                    Toast.makeText(getBaseContext(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+    private void onInviteClicked() {
+        //abhishek
        /* try{
         Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
                 .setMessage(getString(R.string.invitation_message))
@@ -112,30 +224,9 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         }catch (Exception ex){
             Log.d("InviteFriendActivity", "onInviteClicked: Exception" + ex.toString());
         }*/
-        Intent sendIntent = new Intent();
 
-        if(!TextUtils.isEmpty(userName)){
-            if(!userName.contains("user")){
-                 msg = "Hi, This is "+userName+". Watch the " + getString(R.string.invitation_deep_link)+" with me right here on WazzNow.";
-            }else{
-                msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+" with me right here on WazzNow.";
-            }
-        }else{
-            msg = "Hi,  Watch the " + getString(R.string.invitation_deep_link)+" with me right here on WazzNow.";
-        }
-        Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-      //  String dLink = longDeepLink.replace("SenderID", eventID);
+        new newShortAsync().execute();
 
-        sendIntent.setAction(Intent.ACTION_SEND);
-
-        sendIntent.putExtra(Intent.EXTRA_TEXT, longDeepLink);
-        sendIntent.setType("text/plain");
-        sendIntent.setPackage("com.whatsapp");
-        try{
-            startActivityForResult(sendIntent, REQUEST_INVITE);
-        }catch (Exception ex){
-            Toast.makeText(this, "Whatsapp couldn't open", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @VisibleForTesting

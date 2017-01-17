@@ -8,8 +8,8 @@ import android.os.Handler;
  * Created by admin on 8/1/2016.
  */
 public class MySplashActivity extends Activity{
-    Handler handler;
 
+    Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +22,6 @@ public class MySplashActivity extends Activity{
     Runnable runn = new Runnable() {
         @Override
         public void run() {
-
             finish();
             overridePendingTransition(0, R.anim.fade_out);
         }
@@ -30,6 +29,7 @@ public class MySplashActivity extends Activity{
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
+    //super.onBackPressed();
     }
+
 }

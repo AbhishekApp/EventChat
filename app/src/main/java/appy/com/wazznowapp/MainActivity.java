@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
-import com.app.model.EventData;
 import com.app.model.EventDetail;
 import com.app.model.EventDtList;
 import com.app.model.EventModel;
@@ -41,10 +39,6 @@ import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.mylist.adapters.EventAdapter;
 import com.mylist.adapters.EventModelAdapter;
 
@@ -56,18 +50,14 @@ import org.w3c.dom.Comment;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-
-
     ListView listMain;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
@@ -82,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ConnectDetector connectDetector;
     final String TAG = "MainActivity";
     Handler handler;
-
     boolean getInvited = false;
     String invitedEventid, invitedGroup;
     HashMap<String,EventDetail> hashMapEvent;
@@ -90,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
     int REQUEST_INVITE = 111;
-
     //    static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
 
@@ -313,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
 
             } catch (Exception ex) {
+                ex.printStackTrace();
             }
             eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
             listMain.setAdapter(eventAdapter);
@@ -363,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         firstFlag = false;
+//        eventFLAG = false;
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString("jsonEventData", "");
         editor.commit();
@@ -378,6 +368,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     class EventTask extends AsyncTask<Void, Void, Void>{
 
+        HttpURLConnection urlConnection;
+        JSONArray jsonArray;
         MyUtill myUtill;
 
         @Override
@@ -394,7 +386,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         protected Void doInBackground(Void... params) {
+//            URL url = null;
             try {
+//                url = new URL(eventURL);
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+//                StringBuilder sb = new StringBuilder();
+//                String line;
+//                while ((line = br.readLine()) != null) {
+//                    sb.append(line + "\n");
+//                }
+//                br.close();
+
+//                JSONArray jsonObject = new JSONArray(sb.toString());
                 JSONArray jsonObject = myUtill.getJSONFromServer(eventURL);
                 System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
                 SharedPreferences.Editor editor = MyApp.preferences.edit();
