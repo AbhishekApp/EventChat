@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (!firstFlag) {
             /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
                 firstFlag = true;
+
                 UserDetailTask task = new UserDetailTask();
                 task.execute();
                 Intent ii = new Intent(this, MySplashActivity.class);
@@ -124,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                         String deepLink = AppInviteReferral.getDeepLink(intent);
                                         String invitationId = AppInviteReferral.getInvitationId(intent);
                                         String inviterDeviceID = intent.getStringExtra("UserDeviceID");
+
                                         Uri uri = intent.getData();
                                         invitedEventid = uri.getQueryParameter("eventid");
                                        try{
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                            Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
                                            invitedGroup = deepLink.split("utm_campaign=")[1];
                                            Log.e("MainActivity", "get Deep link group "+invitedGroup);
-                                           getInvited = true;
+                                            getInvited = true;
 
                                        }catch (Exception ex){
                                            Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
@@ -173,12 +175,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
         Intent iChat = new Intent(this, EventChatFragment.class);
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
+
       /*  for(int i = 0; i < arrayListEvent.size() ; i++){
             EventDetail event = arrayListEvent.get(i);
             if(eventName.equals(event.getCategory_name())){
@@ -188,12 +193,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 break;
             }
         }*/
+
     }
 
     private void init(){
             handler = new Handler();
             firebase = new Firebase(firebaseURL);
             firebaseEvent = firebase.child("EventList");
+
             listMain = (ListView) findViewById(R.id.listMainEvent);
             alModel = new ArrayList<EventModel>();
             arrayListEvent = new ArrayList<EventDetail>();
@@ -215,17 +222,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 // comment and if so displayed the changed comment.
                 try{
                     EventDtList evList = dataSnapshot.getValue(EventDtList.class);
+
                     arrayListEvent = new ArrayList<EventDetail>();
                     EventDetail eventDetail = new EventDetail();
                     for(int i = 0; i < evList.getCate().size(); i++){
                         EventSubCateList subCtList = evList.getCate().get(i);
                         String subscribedUser = subCtList.getSubscribed_user();
+
                         for(int j = 0; j < subCtList.getSub_cate().size(); j++){
                             eventDetail = new EventDetail();
                             eventDetail.setSuper_category_name(evList.getEvent_super_category());
+
                             eventDetail.setCategory_name(subCtList.getEvent_category());
                             eventDetail.setCatergory_id(subCtList.getEvent_sub_id());
                             eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
+
                             Sub_cate subCate = subCtList.getSub_cate().get(j);
                             eventDetail.setEvent_id(subCate.getEvent_id());
                             eventDetail.setEvent_date(subCate.getEvent_date());
@@ -236,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             eventDetail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+subCate.getEvent_id());
                             eventDetail.setSubscribed_user(subscribedUser);
                             arrayListEvent.add(eventDetail);
+
                         }
                     }
                     eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
@@ -259,23 +271,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+
                 // A comment has changed position, use the key to determine if we are
                 // displaying this comment and if so move it.
                 Comment movedComment = dataSnapshot.getValue(Comment.class);
                 String commentKey = dataSnapshot.getKey();
                 Log.d(TAG, "onChildMoved:" + movedComment.toString());
                 Log.d(TAG, "onChildMoved:" + commentKey.toString());
+
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 Log.w(TAG, "postComments:onCancelled", firebaseError.toException());
-                Toast.makeText(MainActivity.this, "Failed to load comments.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Failed to load comments.",
+                        Toast.LENGTH_SHORT).show();
             }
 
 
         };
         firebaseEvent.addChildEventListener(childEventListener);
+
     }
 
     @Override
@@ -355,9 +371,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     class EventTask extends AsyncTask<Void, Void, Void>{
+
         HttpURLConnection urlConnection;
         JSONArray jsonArray;
         MyUtill myUtill;
+
         EventTask(){
             progressDialog = new ProgressDialog(MainActivity.this);
         }
@@ -368,11 +386,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             try{
                 progressDialog.setMessage("Event Detail Loading...");
                 progressDialog.show();
-            }catch (Exception ex){
-                ex.printStackTrace();
-            }
+            }catch (Exception ex){}
             myUtill = new MyUtill();
 //            eventFLAG = false;
+
         }
 
         @Override
@@ -410,9 +427,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     for(int j = 0; j <jArray.length() ; j++){
 
                         JSONObject jsonDetail = jArray.getJSONObject(j);
+
                         String subCateName = jsonDetail.optString("event_category");
                         String subCateID = jsonDetail.optString("event_sub_id");
                         String subscribedUser = jsonDetail.optString("subscribed_user");
+
                         JSONArray jsArr = jsonDetail.getJSONArray("Sub_cate");
                         for(int t = 0 ; t < jsArr.length(); t++ ){
                             detail = new EventDetail();
@@ -437,9 +456,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
                             }
                         }
+
+
                     }
                     alModel.add(model);
                 }
+
                 System.out.println("EVENT DETAIL : "+alModel.toString());
             }catch (JSONException e) {
                 e.printStackTrace();
@@ -466,13 +488,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alanisawesomeMap.put("passKey", MyApp.preferences.getString(MyApp.USER_PASSWORD, null));
         alanisawesomeMap.put("phone", MyApp.preferences.getString(MyApp.USER_PHONE, null));
         alanisawesomeMap.put("email", MyApp.preferences.getString(MyApp.USER_EMAIL, null));
-        alanisawesomeMap.put("userType", MyApp.preferences.getString(MyApp.USER_TYPE, null));
         System.out.println("User Name " + MyApp.preferences.getString(MyApp.USER_NAME, null));
 //        UserDetailTask task = new UserDetailTask();
 //        task.execute();
     }
 
     class UserDetailTask extends AsyncTask<Void, Void, Void> {
+
         HttpURLConnection urlConnection;
         JSONArray jsonArray;
         JSONObject jUser;
@@ -485,6 +507,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             deviceID =  MyApp.getDeviveID(MainActivity.this);
             addUserDetail();
             System.out.println("EVENT DATA deviceID : " + deviceID);
+
         }
 
         @Override
@@ -500,6 +523,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         sb.append(line + "\n");
                     }
                     br.close();
+
                     JSONObject jsonObject = new JSONObject(sb.toString());
                 System.out.println("EVENT DATA JSONOBJECT : " + jsonObject.toString());
                 flagExist = jsonObject.has(deviceID);
@@ -519,6 +543,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     System.out.println("EVENT DATA Device Id found : " + devID.toString());
                     flagExist = true;
                 }
+
             } catch (MalformedURLException e) {
                 System.out.println("EVENT DATA MalfomedURL Exception : " + e.toString());
             } catch (IOException e) {
@@ -539,13 +564,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Firebase usersRef = firebase.child("users");//.child(""+length);
            try {
                if (flagExist) {
-                    //Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
+//                   Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
+
                    System.out.println("EVENT DATA User Already Registered");
                    MyApp.preferences.getString(MyApp.USER_NAME, null);
                    String uName = jUser.optString("name");
                    String uLastName = jUser.optString("lastName");
                    String uEmail = jUser.optString("email");
-                   String uType = jUser.optString("userType");
                    String uPhone = jUser.optString("phone");
                    String uJoinedGroup = jUser.optString("joined_group");
                    SharedPreferences.Editor editor = MyApp.preferences.edit();
@@ -553,13 +578,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                    editor.putString(MyApp.USER_LAST_NAME, uLastName);
                    editor.putString(MyApp.USER_PHONE, uPhone);
                    editor.putString(MyApp.USER_EMAIL, uEmail);
-                   editor.putString(MyApp.USER_TYPE, uType);
                    editor.putString(MyApp.USER_PASSWORD, deviceID);
                    editor.putString(MyApp.USER_JOINED_GROUP, uJoinedGroup);
                    editor.commit();
                } else {
                    String email = MyApp.preferences.getString(MyApp.USER_EMAIL, null);
                    if (!TextUtils.isEmpty(email)) {
+
                        final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
                        System.out.println("USER List new deviceID : " + deviceID);
                        users.put("0", alanisawesomeMap);
@@ -569,7 +594,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
            }catch (Exception ex){
                System.out.println("EVENT DATA onPostExecute Exception : "+ex.toString());
            }finally {
-               //progressDialog.hide();
+//               progressDialog.hide();
                EventTask task = new EventTask();
                task.execute();
            }
@@ -578,6 +603,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     class CannedTask extends AsyncTask<Void, Void, Void>{
+
         MyUtill myUtill;
         JSONArray jsonArray;
         CannedMessage message;
@@ -593,6 +619,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected Void doInBackground(Void... params) {
             MyApp.alCanMsg = new ArrayList<CannedMessage>();
             jsonArray = myUtill.getJSONFromServer(cannedURL);
+
             for(int i = 0 ; i < jsonArray.length() ; i++){
                 try {
                     message = new CannedMessage();

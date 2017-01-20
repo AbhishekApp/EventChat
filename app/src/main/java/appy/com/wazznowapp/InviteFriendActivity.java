@@ -56,7 +56,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             "&sd=House+Party+Chat+Invitation" +
             "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png"+
             "&utm_source=";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,9 +115,11 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
     public class newShortAsync extends AsyncTask<Void,Void,String> {
 
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
         }
 
         @Override
@@ -149,13 +150,17 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                     inputStream = con.getErrorStream();
 
                 reader= new BufferedReader(new InputStreamReader(inputStream));
+
                 buffer= new StringBuffer();
+
                 String line="";
                 while((line=reader.readLine())!=null)
                 {
                     buffer.append(line);
                 }
+
                 res= buffer.toString();
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (ProtocolException e) {
@@ -174,6 +179,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             try {
                 JSONObject jsonObject=new JSONObject(response);
                 String id=jsonObject.getString("id");
+
                 Intent sendIntent = new Intent();
                 if(!TextUtils.isEmpty(userName)){
                     if(!userName.contains("user")){
@@ -184,12 +190,14 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 }else{
                     msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
                 }
-                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+         //       Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
                 //  String dLink = longDeepLink.replace("SenderID", eventID);
+
                 sendIntent.setAction(Intent.ACTION_SEND);
+
                 sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
                 sendIntent.setType("text/plain");
-                //sendIntent.setPackage("com.whatsapp");
+          //      sendIntent.setPackage("com.whatsapp");
                 try{
                     startActivityForResult(sendIntent, REQUEST_INVITE);
                 }catch (Exception ex){
