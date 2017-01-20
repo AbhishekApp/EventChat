@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:paddingLeft="1dp">
+
+    <ImageView
+        android:id="@+id/imgIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/linearAdmin"
+        android:layout_marginLeft="1dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_launcher" />
+
+    <LinearLayout
+        android:id="@+id/linearAdmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:layout_toRightOf="@+id/imgIcon"
+        android:orientation="vertical"
+        android:padding="2dp">
+
+
+        <TextView
+            android:id="@+id/tvAdminMsg1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chat_head_"
+            android:paddingBottom="3dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="4dp"
+            android:paddingTop="3dp"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:id="@+id/linearAdminBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chatbody"
+            android:orientation="horizontal"
+            android:gravity="right"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/btnAdminMsgYes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:padding="2dp"
+                android:gravity="left|center_vertical"
+                android:layout_gravity="left|center_vertical"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:text="YES I WANT TO TUNE IN"
+                />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                />
+
+            <TextView
+                android:id="@+id/btnAdminMsgNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:padding="2dp"
+                android:gravity="right|center_vertical"
+                android:layout_gravity="right|center_vertical"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:text="NO, THANKS"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

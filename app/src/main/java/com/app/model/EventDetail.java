@@ -4,8 +4,6 @@ import android.text.TextUtils;
 
 import java.io.Serializable;
 
-import appy.com.wazznowapp.MyApp;
-
 /**
  * Created by admin on 9/16/2016.
  */
@@ -19,8 +17,18 @@ public class EventDetail implements Serializable{
     String event_title;
     String event_image_url;
     String event_time;
+    String event_exp_time;
     String event_date;
     String subscribed_user;
+
+    public String getEvent_exp_time() {
+        return event_exp_time;
+    }
+
+    public void setEvent_exp_time(String event_exp_time) {
+        this.event_exp_time = event_exp_time;
+    }
+
 
     public String getEvent_id() {
         return event_id;
@@ -32,6 +40,9 @@ public class EventDetail implements Serializable{
 
 
     public String getSubscribed_user() {
+        if(TextUtils.isEmpty(subscribed_user)){
+            subscribed_user = "0";
+        }
         return subscribed_user;
     }
 

@@ -11,8 +11,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -30,6 +28,7 @@ public class MyUtill {
 
 
         try {
+            Log.e("MyUtill","getJSONFromServer URL : "+urlStr);
             url = new URL(urlStr);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -44,7 +43,7 @@ public class MyUtill {
                 sb.append(line + "\n");
             }
             br.close();
-
+            System.out.println(sb.toString());
              jsonObject = new JSONArray(sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,13 +53,13 @@ public class MyUtill {
             Log.e("MyUtill", "Get Data From Server ERROR: "+ex.toString());
         }
 
-        System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+    //    System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
 
         return jsonObject;
     }
 
     public String getTimeDifference(String startDate, String startTime){
-        String format = "MM/dd/yyyy HH:mm:ss";
+/*        String format = "MM/dd/yyyy HH:mm:ss";
         System.out.println("event Time Difference : "+startDate+" "+startTime);
         String date1 = startDate;
         String time1 = startTime;
@@ -109,7 +108,29 @@ public class MyUtill {
         if(diffsec>0){
             // dateFormat+=diffsec+" sec";
         }
-        System.out.println("Line 184 event Time Difference : "+dateFormat);
-        return dateFormat.trim();
+        System.out.println("Line 112 event Time Difference : "+dateFormat);
+        return dateFormat.trim();*/
+
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        String diff="";
+        try {
+            Date Date2 = format.parse(startDate+" "+startTime);
+            long mills = Date2.getTime() - System.currentTimeMillis();
+            mills = mills/1000;
+            long seconds = mills % 60;
+            mills/= 60;
+            long minutes =mills % 60;
+             mills /= 60;
+            long hours = mills % 24;
+            mills /= 24;
+            long days = mills;
+            diff= days+" days "+hours+" hrs "+minutes+" mins";
+            if (diff.contains("-")){
+                diff="";
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return diff;
     }
 }

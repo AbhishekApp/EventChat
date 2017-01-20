@@ -1,10 +1,13 @@
 package appy.com.wazznowapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,17 +15,25 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.app.model.CannedMessage;
-import com.app.model.EventData;
+import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
+import com.app.model.EventDtList;
 import com.app.model.EventModel;
+import com.app.model.EventSubCateList;
 import com.app.model.MyUtill;
+import com.app.model.Sub_cate;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.android.gms.appinvite.AppInvite;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +45,7 @@ import com.mylist.adapters.EventModelAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Comment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,75 +61,130 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     ListView listMain;
-    ArrayList<EventData> al;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
     EventAdapter adapter;
     Firebase firebase;
-   // Firebase alanRef;
+    Firebase firebaseEvent;
     ArrayList<EventModel> alModel;
     static ArrayList<EventDetail> arrayListEvent;
     static EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
-    ProgressDialog progressDialog;
+    static ProgressDialog progressDialog;
+    ConnectDetector connectDetector;
+    final String TAG = "MainActivity";
+    Handler handler;
 
+    boolean getInvited = false;
+    String invitedEventid, invitedGroup;
+    HashMap<String,EventDetail> hashMapEvent;
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
+    int REQUEST_INVITE = 111;
 
+    //    static boolean eventFLAG = false;
+    InputMethodManager inputMethodManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(!firstFlag) {
+        connectDetector = new ConnectDetector(this);
+        if(connectDetector.getConnection()) {
+            if (!firstFlag) {
             /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
-            firstFlag = true;
-            UserDetailTask task = new UserDetailTask();
-            task.execute();
-            Intent ii = new Intent(this, MySplashActivity.class);
-            startActivity(ii);
+                firstFlag = true;
 
-        }
+                UserDetailTask task = new UserDetailTask();
+                task.execute();
+                Intent ii = new Intent(this, MySplashActivity.class);
+                startActivity(ii);
+            }
+            getInvited = false;
+            hashMapEvent = new HashMap<String,EventDetail>();
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(AppInvite.API)
+                    .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(ConnectionResult connectionResult) {
+                            Toast.makeText(MainActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }).build();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(AppInvite.API)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult connectionResult) {
-                        Toast.makeText(MainActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
-                    }
-                }).build();
+            boolean autoLaunchDeepLink = true;
+            AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
+                    .setResultCallback(
+                            new ResultCallback<AppInviteInvitationResult>() {
+                                @Override
+                                public void onResult(AppInviteInvitationResult result) {
+                                    Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
+                                    if (result.getStatus().isSuccess()) {
+                                        // Extract information from the intent
+                                        Intent intent = result.getInvitationIntent();
+                                        String deepLink = AppInviteReferral.getDeepLink(intent);
+                                        String invitationId = AppInviteReferral.getInvitationId(intent);
+                                        String inviterDeviceID = intent.getStringExtra("UserDeviceID");
 
-        boolean autoLaunchDeepLink = true;
-        AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
-                .setResultCallback(
-                        new ResultCallback<AppInviteInvitationResult>() {
-                            @Override
-                            public void onResult(AppInviteInvitationResult result) {
-                                Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
-                                if (result.getStatus().isSuccess()) {
-                                    // Extract information from the intent
-                                    Intent intent = result.getInvitationIntent();
-                                    String deepLink = AppInviteReferral.getDeepLink(intent);
-                                    String invitationId = AppInviteReferral.getInvitationId(intent);
+                                        Uri uri = intent.getData();
+                                        invitedEventid = uri.getQueryParameter("eventid");
+                                       try{
+                                           Log.e("MainActivity", "get Deep link URL "+deepLink);
+                                           Log.e("MainActivity", "get Deep link uri "+uri.toString());
+                                           invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
+                                           Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
+                                           invitedGroup = deepLink.split("utm_campaign=")[1];
+                                           Log.e("MainActivity", "get Deep link group "+invitedGroup);
+                                            getInvited = true;
 
-                                    // Because autoLaunchDeepLink = true we don't have to do anything
-                                    // here, but we could set that to false and manually choose
-                                    // an Activity to launch to handle the deep link here.
-                                    // ...
+                                       }catch (Exception ex){
+                                           Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
+                                           getInvited = false;
+                                       }
+                                        // Because autoLaunchDeepLink = true we don't have to do anything
+                                        // here, but we could set that to false and manually choose
+                                        // an Activity to launch to handle the deep link here.
+                                        // ...
+                                    }
                                 }
-                            }
-                        });
-        init();
+                            });
+            init();
+        } else{
+            Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
+        }
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("InviteFriendActivity", "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Log.d("InviteFriendActivity", "get Deep link onActivityResult: sent invitation " + id);
+                    Toast.makeText(MainActivity.this, "get Deep link onActivityResult Invite Device ID "+id, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                // ...
+            }
+        }
+    }
+
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
-        String eventName = eventDetail.getCategory_name();
-        int i = 0;
-        for(; i < arrayListEvent.size() ; i++){
+        Intent iChat = new Intent(this, EventChatFragment.class);
+        iChat.putExtra("EventDetail", eventDetail);
+        startActivity(iChat);
+
+      /*  for(int i = 0; i < arrayListEvent.size() ; i++){
             EventDetail event = arrayListEvent.get(i);
             if(eventName.equals(event.getCategory_name())){
                 Intent iChat = new Intent(this, EventChatFragment.class);
@@ -125,28 +192,142 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 startActivity(iChat);
                 break;
             }
-        }
+        }*/
 
     }
 
     private void init(){
-        firebase = new Firebase(firebaseURL);
+            handler = new Handler();
+            firebase = new Firebase(firebaseURL);
+            firebaseEvent = firebase.child("EventList");
+            progressDialog = new ProgressDialog(this);
+            listMain = (ListView) findViewById(R.id.listMainEvent);
+            alModel = new ArrayList<EventModel>();
+            arrayListEvent = new ArrayList<EventDetail>();
+            eventAdapter = new EventModelAdapter(this, arrayListEvent);
+            listMain.setAdapter(eventAdapter);
+            listMain.setOnItemClickListener(this);
 
-        progressDialog = new ProgressDialog(this);
-        listMain = (ListView) findViewById(R.id.listMainEvent);
-        al = new ArrayList<EventData>();
-        alModel = new ArrayList<EventModel>();
-        arrayListEvent = new ArrayList<EventDetail>();
-        eventAdapter = new EventModelAdapter(this, arrayListEvent);
-        listMain.setAdapter(eventAdapter);
-        listMain.setOnItemClickListener(this);
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+               Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+                Log.d(TAG, "onChildChanged previousChildName :" + previousChildName);
+               // A comment has changed, use the key to determine if we are displaying this
+                // comment and if so displayed the changed comment.
+                try{
+                    EventDtList evList = dataSnapshot.getValue(EventDtList.class);
+
+                    arrayListEvent = new ArrayList<EventDetail>();
+                    EventDetail eventDetail = new EventDetail();
+                    for(int i = 0; i < evList.getCate().size(); i++){
+                        EventSubCateList subCtList = evList.getCate().get(i);
+                        String subscribedUser = subCtList.getSubscribed_user();
+
+                        for(int j = 0; j < subCtList.getSub_cate().size(); j++){
+                            eventDetail = new EventDetail();
+                            eventDetail.setSuper_category_name(evList.getEvent_super_category());
+
+                            eventDetail.setCategory_name(subCtList.getEvent_category());
+                            eventDetail.setCatergory_id(subCtList.getEvent_sub_id());
+                            eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
+
+                            Sub_cate subCate = subCtList.getSub_cate().get(j);
+                            eventDetail.setEvent_id(subCate.getEvent_id());
+                            eventDetail.setEvent_date(subCate.getEvent_date());
+                            eventDetail.setEvent_meta(subCate.getEvent_meta());
+                            eventDetail.setEvent_time(subCate.getEvent_time());
+                            eventDetail.setEvent_title(subCate.getEvent_title());
+                            eventDetail.setEvent_exp_time(subCate.getEvent_exp_time());
+                            eventDetail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+subCate.getEvent_id());
+                            eventDetail.setSubscribed_user(subscribedUser);
+                            arrayListEvent.add(eventDetail);
+
+                        }
+                    }
+                    eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
+                    listMain.setAdapter(eventAdapter);
+                    eventAdapter.notifyDataSetChanged();
+                }catch (Exception ex){
+                    Log.e(TAG, "onChildChanged ERROR: "+ex.toString());
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+                // A comment has changed, use the key to determine if we are displaying this
+                // comment and if so remove it.
+                String commentKey = dataSnapshot.getKey();
+                Log.d(TAG, "onChildRemoved:" + commentKey.toString());
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+
+                // A comment has changed position, use the key to determine if we are
+                // displaying this comment and if so move it.
+                Comment movedComment = dataSnapshot.getValue(Comment.class);
+                String commentKey = dataSnapshot.getKey();
+                Log.d(TAG, "onChildMoved:" + movedComment.toString());
+                Log.d(TAG, "onChildMoved:" + commentKey.toString());
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.w(TAG, "postComments:onCancelled", firebaseError.toException());
+                Toast.makeText(MainActivity.this, "Failed to load comments.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+
+        };
+        firebaseEvent.addChildEventListener(childEventListener);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        eventAdapter.notifyDataSetChanged();
+        if(connectDetector.getConnection()) {
+            try {
+                if (inputMethodManager != null) {
+                    inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
+            listMain.setAdapter(eventAdapter);
+            handler.postDelayed(runEventTimer, 200);
+        }
+    }
+
+
+    Runnable runEventTimer = new Runnable() {
+        @Override
+        public void run() {
+            if(connectDetector.getConnection()) {
+                eventAdapter.notifyDataSetChanged();
+                handler.removeCallbacks(runEventTimer);
+                handler.postDelayed(runEventTimer, 80 * 1000);
+            }
+        }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -175,6 +356,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         super.onDestroy();
         firstFlag = false;
+//        eventFLAG = false;
+        SharedPreferences.Editor editor = MyApp.preferences.edit();
+        editor.putString("jsonEventData", "");
+        editor.commit();
+
     }
 
     @Override
@@ -182,6 +368,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onBackPressed();
         firstFlag = false;
     }
+
 
     class EventTask extends AsyncTask<Void, Void, Void>{
 
@@ -192,8 +379,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog.setMessage("Event Detail Loading...");
+            try{
+                progressDialog.setMessage("Event Detail Loading...");
+                progressDialog.show();
+            }catch (Exception ex){}
             myUtill = new MyUtill();
+//            eventFLAG = false;
+
         }
 
         @Override
@@ -213,6 +405,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //                JSONArray jsonObject = new JSONArray(sb.toString());
                 JSONArray jsonObject = myUtill.getJSONFromServer(eventURL);
                 System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+                SharedPreferences.Editor editor = MyApp.preferences.edit();
+                editor.putString("jsonEventData",jsonObject.toString());
+                editor.commit();
                 int length =  jsonObject.length();
                 System.out.println("EVENT DATA length : " + length);
                 for(int i = 0 ; i < length; i++){
@@ -222,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     String superCateID = jSon.optString("event_super_id");
                     model.setEvent_super_category(superCateName);
                     model.setEvent_super_id(superCateID);
-                    model.alEvent = new ArrayList<EventDetail>();
+                    model.Cate = new ArrayList<EventDetail>();
                     JSONArray jArray = jSon.getJSONArray("Cate");
                     EventDetail detail = new EventDetail();
                     for(int j = 0; j <jArray.length() ; j++){
@@ -231,25 +426,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         String subCateName = jsonDetail.optString("event_category");
                         String subCateID = jsonDetail.optString("event_sub_id");
+                        String subscribedUser = jsonDetail.optString("subscribed_user");
 
-                        JSONArray jsArr = jsonDetail.getJSONArray("sub_cate");
+                        JSONArray jsArr = jsonDetail.getJSONArray("Sub_cate");
                         for(int t = 0 ; t < jsArr.length(); t++ ){
                             detail = new EventDetail();
                             JSONObject jOBJ = jsArr.getJSONObject(t);
                             detail.setSuper_category_name(superCateName);
                             detail.setCategory_name(subCateName);
                             detail.setCatergory_id(subCateID);
-                        //    detail.setCatergory_id(jOBJ.optString("event_sub_id"));
+                      //    detail.setCatergory_id(jOBJ.optString("event_sub_id"));
                             detail.setEvent_id(jOBJ.optString("event_id"));
                             detail.setEvent_meta(jOBJ.optString("event_meta"));
                             detail.setEvent_title(jOBJ.optString("event_title"));
                             detail.setEvent_date(jOBJ.optString("event_date"));
                             detail.setEvent_time(jOBJ.optString("event_time"));
-                            detail.setSubscribed_user(jOBJ.optString("subscribed_user"));
+                            detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
+                            detail.setSubscribed_user(subscribedUser);
                             String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
                             if(!TextUtils.isEmpty(strTime)) {
-                                model.alEvent.add(detail);
+                                model.Cate.add(detail);
                                 arrayListEvent.add(detail);
+                                hashMapEvent.put(detail.getEvent_id(), detail);
                             }else{
                                 System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
                             }
@@ -270,6 +468,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            listMain.setAdapter(eventAdapter);
             eventAdapter.notifyDataSetChanged();
             progressDialog.hide();
             CannedTask cannedTask = new CannedTask();
@@ -277,13 +476,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    public static void setEventListData(int position){
-        arrayListEvent.remove(position);
-        eventAdapter.notifyDataSetChanged();
-    }
 
     private void addUserDetail(){
-
         alanisawesomeMap = new HashMap<String, String>();
         alanisawesomeMap.put("name", MyApp.preferences.getString(MyApp.USER_NAME, null));
         alanisawesomeMap.put("lastName", MyApp.preferences.getString(MyApp.USER_LAST_NAME, null));
@@ -334,6 +528,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 jsonArray = jsonObject.getJSONArray(deviceID);
                 jUser = jsonArray.getJSONObject(0);
                 String devID = jUser.optString(deviceID);
+                String joinedGroup = jUser.optString("joined_group");
+                String jnGrp[] = joinedGroup.split(",");
+                SharedPreferences.Editor editor =  MyApp.preferences.edit();
+                for(int i=0; i < jnGrp.length ; i++){
+                    editor.putBoolean(jnGrp[i], true);
+                }
+                editor.commit();
                 if(devID.equalsIgnoreCase(deviceID)){
                     System.out.println("EVENT DATA Device Id found : " + devID.toString());
                     flagExist = true;
@@ -432,7 +633,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progressDialog.hide();
-
+            try{
+                if(getInvited){
+                    EventDetail detail = hashMapEvent.get(invitedEventid);
+                    Intent iChat = new Intent(MainActivity.this, EventChatFragment.class);
+                    iChat.putExtra("EventDetail", detail);
+                    startActivity(iChat);
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
         }
     }
 

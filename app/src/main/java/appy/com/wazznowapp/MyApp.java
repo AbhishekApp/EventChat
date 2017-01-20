@@ -23,6 +23,7 @@ public class MyApp extends Application {
     public static SharedPreferences preferences;
     public static String MyPREFERENCES = "UserName";
     public static String FIREBASE_BASE_URL =  "https://wazznow-cd155.firebaseio.com";
+    public static String FIREBASE_IMAGE_URL = "gs://wazznow-cd155.appspot.com/EventImage/";
     public static String USER_JOINED_GROUP = "UserJoinedGroup";
     public static String USER_NAME = "UserName";
     public static String USER_LAST_NAME = "UserLastName";

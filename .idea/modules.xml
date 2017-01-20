@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/WazzNowApp.iml" filepath="$PROJECT_DIR$/WazzNowApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WazzNow.iml" filepath="$PROJECT_DIR$/WazzNow.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

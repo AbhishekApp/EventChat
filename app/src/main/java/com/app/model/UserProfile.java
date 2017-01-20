@@ -72,7 +72,7 @@ public class UserProfile {
         String userGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, null);
         if(userGroup != null && !TextUtils.isEmpty(userGroup)){
             if(!userGroup.contains(newGroup)){
-                userGroup = userGroup +", "+ newGroup;
+                userGroup = userGroup +","+ newGroup;
             }else
             {
                 return;
@@ -80,7 +80,9 @@ public class UserProfile {
         }else
         {
             userGroup = newGroup;
+            Toast.makeText(con, "Tuned in successfully", Toast.LENGTH_SHORT).show();
         }
+
         Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
         String deviceID = MyApp.getDeviveID(con);
         Firebase alanRef = usersRef.child("users/"+deviceID+"/0");
@@ -91,7 +93,7 @@ public class UserProfile {
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString(MyApp.USER_JOINED_GROUP, userGroup);
         editor.commit();
-        Toast.makeText(con, "Tuned in successfully", Toast.LENGTH_SHORT).show();
+
     }
 
 }

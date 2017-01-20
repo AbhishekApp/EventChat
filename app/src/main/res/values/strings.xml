@@ -3,6 +3,7 @@
     <string name="setting">setting</string>
     <string name="logout">logout</string>
     <string name="info">Information</string>
+    <string name="noti">Notification</string>
     <string name="mute">Mute</string>
     <string name="signup">Signup</string>
     <string name="more">More</string>
@@ -18,7 +19,8 @@
     <string name="sharewhatsapp">Share via Whatsapp</string>
     <string name="invitation_title">WazzNow</string>
     <string name="invitation_message">Install wazznow app and get updated on our events.</string>
-    <string name="invitation_deep_link">appypie.com</string>
+    <string name="invitation_deep_link">https://ry5a4.app.goo.gl/pGuk</string>
+    <string name="app_code">ry5a4</string>
     <string name="invitation_custom_image">http://media.appypie.com/appypie-slider-video/images/logo_new.png</string>
     <string name="invitation_cta">Call to Action</string>
     <string name="password">Password</string>
@@ -26,12 +28,13 @@
     <string name="notuser_signup">Not a user signup</string>
 
     <string-array name="mycolor">
-        <item>#1D6FF4</item>
-        <item>#F41DA5</item>
+        <item>#24FA08</item>
+        <item>#E51E17</item>
         <item>#FAD945</item>
-        <item>#3FD049</item>
+        <item>#04DEFF</item>
+        <item>#F41DA5</item>
         <item>#C75EF8</item>
         <item>#17D7E5</item>
-        <item>#E51E17</item>
+
     </string-array>
 </resources>

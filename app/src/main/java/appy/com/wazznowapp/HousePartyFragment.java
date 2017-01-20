@@ -26,6 +26,9 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.mylist.adapters.StadiumChatListAdapter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by admin on 8/2/2016.
  */
@@ -64,7 +67,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName+"/ "+EventChatFragment.eventID+"/ "+EventChatFragment.CateName).child("HousePartyChat");
+        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("HousepartyChat");
 
     }
 
@@ -177,7 +180,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                         //     al.add(msg);
                         adapter.notifyDataSetChanged();
                         etMsg.setText("");
-                        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()));
+                        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp());
                         alanRef.push().setValue(alan);
 
                     }else{
@@ -204,5 +207,19 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
 
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public static String getCurrentTimeStamp(){
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String currentDateTime = dateFormat.format(new Date()); // Find todays date
+
+            return currentDateTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
     }
 }

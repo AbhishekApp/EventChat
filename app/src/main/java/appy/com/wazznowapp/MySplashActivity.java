@@ -10,14 +10,13 @@ import android.os.Handler;
 public class MySplashActivity extends Activity{
 
     Handler handler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_splash_activity);
 
         handler = new Handler();
-        handler.postDelayed(runn, 4 * 1000);
+        handler.postDelayed(runn, 5 * 1000);
     }
 
     Runnable runn = new Runnable() {
@@ -30,6 +29,7 @@ public class MySplashActivity extends Activity{
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
+    //super.onBackPressed();
     }
+
 }

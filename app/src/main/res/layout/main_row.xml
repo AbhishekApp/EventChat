@@ -45,13 +45,13 @@
                 android:id="@+id/tvTimeRow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2 Hours to go"
-                android:textSize="12sp"
-                android:gravity="right"
-                android:padding="2dp"
+                android:layout_alignParentRight="true"
                 android:layout_marginLeft="1dp"
                 android:layout_toRightOf="@+id/tvCatRow"
-                android:layout_alignParentRight="true"/>
+                android:gravity="right"
+                android:padding="2dp"
+                android:text="2 Hours to go"
+                android:textSize="10sp" />
 
         </RelativeLayout>
 
@@ -87,7 +87,8 @@
                     android:gravity="center"
                     android:padding="3dp"
                     android:layout_alignParentRight="true"
-                    android:drawableLeft="@mipmap/group_icon"/>
+                    android:drawableLeft="@mipmap/group_icon"
+                    android:drawablePadding="2dp"/>
 
             </LinearLayout>
 

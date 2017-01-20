@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +14,12 @@ import android.widget.TextView;
 
 import com.app.model.EventDetail;
 import com.app.model.MyUtill;
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import appy.com.wazznowapp.MainActivity;
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
 
@@ -35,6 +34,8 @@ public class EventModelAdapter extends BaseAdapter {
     ViewHolder viewHolder;
     SharedPreferences preferences;
     String mycolor[];
+    int colorIndex;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public EventModelAdapter(Context con, ArrayList<EventDetail> alList){
             this.con = con;
@@ -42,6 +43,7 @@ public class EventModelAdapter extends BaseAdapter {
             preferences = MyApp.preferences;
             myUtill = new MyUtill();
             mycolor = con.getResources().getStringArray(R.array.mycolor);
+            colorIndex = 0;
     }
 
     @Override
@@ -81,40 +83,43 @@ public class EventModelAdapter extends BaseAdapter {
         viewHolder.tvCateName.setText(detail.getCategory_name());
         viewHolder.tvEventName.setText(detail.getEvent_title());
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
+        if(!TextUtils.isEmpty(detail.getEvent_image_url()))
+          downloadImageURL(detail.getEvent_id(), viewHolder.img);
         String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time())).trim();
-        System.out.println("Line 79 event Time Difference :"+strTime+":");
+        System.out.println("Line 89 event Time Difference :"+strTime+":");
         if(!TextUtils.isEmpty(strTime)){
             viewHolder.tvHour.setText(strTime);
         }
-        String groupRec = preferences.getString(MyApp.USER_JOINED_GROUP, null);
         if(detail.getSubscribed_user().equalsIgnoreCase("0")) {
                 viewHolder.tvNoOfTune.setVisibility(View.GONE);
         }
         else {
 
             String subscribed_user = detail.getSubscribed_user();
-            if (groupRec != null && detail.getCatergory_id() != null) {
-                if (groupRec.contains(detail.getCatergory_id())) {
+//            if (groupRec != null && detail.getCatergory_id() != null) {
+                if (MyApp.preferences.getBoolean(detail.getCatergory_id(), false)) {
                     try {
                         int iSubscribedUser = Integer.parseInt(subscribed_user);
                         iSubscribedUser--;
                         subscribed_user = new String("You +" + iSubscribedUser);
+                        viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        subscribed_user = new String(" +" + subscribed_user);
+                    //    subscribed_user = new String(" +" + subscribed_user);
                     }
                 }else{
-                    subscribed_user = new String(" +" + subscribed_user);
+                //    subscribed_user = new String(" +" + subscribed_user);
+                    viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
                 }
-            }else{
-                subscribed_user = new String(" +" + subscribed_user);
-            }
+//            }else{
+//            //    subscribed_user = new String(" +" + subscribed_user);
+//            }
             viewHolder.tvNoOfTune.setVisibility(View.VISIBLE);
             viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");
         }
-        try {
+        /*try {
             if (groupRec != null && detail.getCatergory_id() != null) {
-                if (groupRec.contains(detail.getCatergory_id())) {
+                if (MyApp.preferences.getBoolean(detail.getEvent_id (), false)) {
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                 } else {
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
@@ -122,9 +127,36 @@ public class EventModelAdapter extends BaseAdapter {
             }
         }catch (Exception ex){
             viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
+        }*/
+
+        try{
+            if(colorIndex >= mycolor.length-1){
+                colorIndex = 0;
+            }
+            view.setBackgroundColor(Color.parseColor(mycolor[colorIndex++]));
+        }catch (Exception ex){
+            Log.e("EventModelAdapter","Set Background Color ERROR: "+ex.toString());
         }
-        view.setBackgroundColor(Color.parseColor(mycolor[position]));
         return view;
+    }
+
+    String imgURL = "";
+    public void downloadImageURL(String fileName, final ImageView img){
+        try{
+            StorageReference storageRef = storage.getReferenceFromUrl(MyApp.FIREBASE_IMAGE_URL);
+            StorageReference pathReference = storageRef.child(fileName+".jpg");
+
+                Glide.with(con)
+                        .using(new FirebaseImageLoader())
+                        .load(pathReference)
+                        .into(img);
+
+                // Glide.with(con).load(uri).into(img);
+
+//
+        }catch (Exception ex){
+            Log.e("EventModelAdapter", "EventModelAdapter DownloadImageURL ERROR: "+ex.toString());
+        }
     }
 
     class ViewHolder{
