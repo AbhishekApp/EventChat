@@ -138,7 +138,7 @@ public class EventChatFragment extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ChatStadiumFragment(), "STADIUM");
-        adapter.addFragment(new FeatureFragment(), "FEATURED");
+        adapter.addFragment(new FeatureFragment(), "");
         adapter.addFragment(new HousePartyFragment(), "HOUSE PARTY");
         viewPager.setAdapter(adapter);
     }
