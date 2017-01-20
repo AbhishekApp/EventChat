@@ -58,6 +58,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+
+
     ListView listMain;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ConnectDetector connectDetector;
     final String TAG = "MainActivity";
     Handler handler;
+
     boolean getInvited = false;
     String invitedEventid, invitedGroup;
     HashMap<String,EventDetail> hashMapEvent;
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
     int REQUEST_INVITE = 111;
+
     //    static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
 

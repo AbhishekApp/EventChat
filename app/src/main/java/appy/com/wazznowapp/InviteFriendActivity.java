@@ -114,7 +114,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
 
 
-    public class NewShortAsync extends AsyncTask<Void,Void,String> {
+    public class newShortAsync extends AsyncTask<Void,Void,String> {
 
         @Override
         protected void onPreExecute() {
@@ -222,7 +222,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             Log.d("InviteFriendActivity", "onInviteClicked: Exception" + ex.toString());
         }*/
 
-        new NewShortAsync().execute();
+        new newShortAsync().execute();
 
     }
 

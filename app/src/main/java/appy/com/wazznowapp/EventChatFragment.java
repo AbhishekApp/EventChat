@@ -35,11 +35,11 @@ public class EventChatFragment extends AppCompatActivity {
     ConnectDetector connectDetector;
     static String CateName;
     static String SuperCateName;
-    public static String eventID="";
+    public static String eventID = "";
     static EventDetail eventDetail;
     ListView left_drawer;
-    private static final int ID_UP     = 1;
-    private static final int ID_DOWN   = 2;
+    private static final int ID_UP = 1;
+    private static final int ID_DOWN = 2;
     QuickAction quickAction;
 
 
@@ -94,9 +94,11 @@ public class EventChatFragment extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         showPopup(v);
+                        //Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
                     }
                 });
-            }});
+            }
+        });
         return true;
     }
 
@@ -118,7 +120,7 @@ public class EventChatFragment extends AppCompatActivity {
         } else if (id == R.id.menu_more) {
             Toast.makeText(this, "More is coming soon", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.menu_noti) {
-            Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -136,6 +138,7 @@ public class EventChatFragment extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ChatStadiumFragment(), "STADIUM");
+        adapter.addFragment(new FeatureFragment(), "FEATURED");
         adapter.addFragment(new HousePartyFragment(), "HOUSE PARTY");
         viewPager.setAdapter(adapter);
     }
@@ -156,38 +159,49 @@ public class EventChatFragment extends AppCompatActivity {
     }
 
 
+    protected void ActionItemAddText(String str){
+        quickAction.addActionItem(new ActionItem(ID_DOWN, str, null));
+    }
 
-    public void showPopup(View view){
-        ActionItem nextItem = new ActionItem(ID_DOWN, "Mumbai Indians Have Won the toss\nand they elected to bat first.", null);
-        ActionItem prevItem = new ActionItem(ID_UP, "\nPankaj Singh to Dhawan, no run,\nangled across and left alone\nwith angled across an", null);
-        //use setSticky(true) to disable QuickAction dialog being dismissed after an item is clicked
-        prevItem.setSticky(true);
-        nextItem.setSticky(true);
+    protected void ActionItemAddLine(){
+        quickAction.addActionItem(new ActionItem(ID_DOWN, "", getResources().getDrawable(R.drawable.line_new)));
+    }
 
+
+    public void showPopup(View view) {
         //create QuickAction. Use QuickAction.VERTICAL or QuickAction.HORIZONTAL param to define layout
         //orientation
         quickAction = new QuickAction(this, QuickAction.VERTICAL);
 
+        quickAction.addActionItem(new ActionItem(ID_DOWN, "", getResources().getDrawable(R.drawable.ic_launcher)));
+
+        for(int i = 0; i < 5 ; i++){
+            ActionItemAddLine();
+            ActionItemAddText("<br>Mumbai Indians"+i+" Have Won the <br>toss and they elected to bat first.<br><font color='grey'>6:5"+i+" p.m</font><br>");
+        }
+
+        //ActionItem nextItem = new ActionItem(ID_DOWN, "\nMumbai Indians Have Won the toss\nand they elected to bat first.", null);
+        //ActionItem prevItem = new ActionItem(ID_UP, "\nPankaj Singh to Dhawan, no run,\nangled across and left alone\nwith angled across\nan led across as the test match", null);
+        //use setSticky(true) to disable QuickAction dialog being dismissed after an item is clicked
+
+        //prevItem.setSticky(true);
+        //nextItem.setSticky(true);
+
         //add action items into QuickAction
-        quickAction.addActionItem(nextItem);
-        quickAction.addActionItem(prevItem);
+        //quickAction.addActionItem(nextItem);
+        //quickAction.addActionItem(prevItem);
 
         quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
             @Override
             public void onItemClick(QuickAction source, int pos, int actionId) {
                 ActionItem actionItem = quickAction.getActionItem(pos);
-
                 //here we can filter which action item was clicked with pos or actionId parameter
                 if (actionId == ID_DOWN) {
-
                     quickAction.onDismiss();
                     //dismissDialog(actionId);
-                    Toast.makeText(getApplicationContext(), "Let's do some search action", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_SHORT).show();
 
-                } else if (actionId == ID_UP) {
-
-                    Toast.makeText(getApplicationContext(), "I have no info this time", Toast.LENGTH_SHORT).show();
-                } else {
+                }  else {
                     Toast.makeText(getApplicationContext(), actionItem.getTitle() + " selected", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -198,14 +212,13 @@ public class EventChatFragment extends AppCompatActivity {
         quickAction.setOnDismissListener(new QuickAction.OnDismissListener() {
             @Override
             public void onDismiss() {
-                Toast.makeText(getApplicationContext(), "Dismissed", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Dismissed", Toast.LENGTH_SHORT).show();
             }
         });
 
 
         quickAction.show(view);
     }
-
 
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
