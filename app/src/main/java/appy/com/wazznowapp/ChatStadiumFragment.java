@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,17 +46,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 /**
  * Created by admin on 8/2/2016.
  */
 public class ChatStadiumFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
-
     ConnectDetector connectDetector;
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
- //   StadiumChatListAdapter adapter;
+    //StadiumChatListAdapter adapter;
     EditText etMsg;
     static LinearLayout linearCanMsg;
     GridView viewLay;
@@ -83,7 +80,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
         connectDetector = new ConnectDetector(getActivity());
         if(connectDetector.getConnection()) {
 
@@ -133,10 +129,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.e("ChatStadiumFragment", "onChildAdded:" + dataSnapshot.getKey());
-
                 ChatData model = dataSnapshot.getValue(ChatData.class);
                 String key = dataSnapshot.getKey();
-
                 // Insert into the correct location, based on previousChildName
                 if (previousChildName == null) {
                     alList.add(0, model);
@@ -152,7 +146,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         mKeys.add(nextIndex, key);
                     }
                 }
-
                 chatAdapter.notifyDataSetChanged();
             }
 
@@ -165,9 +158,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 String key = dataSnapshot.getKey();
                 ChatData newModel = dataSnapshot.getValue(ChatData.class);
                 int index = mKeys.indexOf(key);
-
                 alList.set(index, newModel);
-
                 chatAdapter.notifyDataSetChanged();
             }
 
@@ -184,24 +175,19 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.d("ChatStadiumFragment", "onChildMoved:" + dataSnapshot.getKey());
-
                 // A comment has changed position, use the key to determine if we are
                 // displaying this comment and if so move it.
                 Comment movedComment = dataSnapshot.getValue(Comment.class);
                 String commentKey = dataSnapshot.getKey();
                 Log.d("ChatStadiumFragment", "onChildMoved:" + movedComment.toString());
                 Log.d("ChatStadiumFragment", "onChildMoved:" + commentKey.toString());
-
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 Log.w("ChatStadiumFragment", "postComments:onCancelled", firebaseError.toException());
-                Toast.makeText(getActivity(), "Failed to load comments.",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Failed to load comments.",Toast.LENGTH_SHORT).show();
             }
-
-
         };
         alanRef.addChildEventListener(childEventListener);
     }
@@ -211,7 +197,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         super.onStart();
         try {
             if (!MyApp.preferences.getBoolean(EventChatFragment.eventDetail.getCatergory_id(), false)) {
-
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
@@ -272,21 +257,19 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }catch (Exception ex){
             Log.e("StadiumFragment", "onStart method ERROR: " + ex.toString());
         }
-
     }
-
 
     private void getAdminSecondMessage(){
         UserProfile profile = new UserProfile();
         profile.updateUserGroup(getActivity(), EventChatFragment.eventDetail.getCatergory_id());
         updateEventList();
-                            /*  Update user, Subscribe this event */
+        /*  Update user, Subscribe this event */
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatFragment.eventDetail.getCatergory_id(), true);
         editor.commit();
         if(!addHousePartyFLAG){
             addHousePartyFLAG = true;
-            //     linearLayout.removeAllViews();
+            //linearLayout.removeAllViews();
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
             View vi = inflater.inflate(R.layout.admin_msg, null);
             linearLayout.addView(vi);
@@ -331,27 +314,22 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         JSONArray jArray = jSon.getJSONArray("Cate");
                         for(int j = 0; j < jArray.length() ; j++) {
                             JSONObject jsonDetail = jArray.getJSONObject(j);
-
                             String subCateID = jsonDetail.optString("event_sub_id");
                             String subscribedUser = jsonDetail.optString("subscribed_user");
-
                             if (EventChatFragment.eventDetail.getCatergory_id().equalsIgnoreCase(subCateID)){
                                 try{
                                     int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
                                     noOfSubscrbedUser++;
                                     jsonDetail.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
                                     eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j;
-
                                     Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
                                     subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
                                     Firebase eventFire =  new Firebase(eventUpdateUrl);
                                     eventFire.updateChildren(subscribeUserMap);
-
                                 }catch (Exception ex){
                                     Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
                                 }
                             }
-
                         }
                     }
                 }
@@ -379,7 +357,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         try {
             View view = getActivity().getCurrentFocus();
             imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        //    adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+            //adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
              if(!(noSend >= 0 && noSend < 3)){
@@ -396,17 +374,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
 
-        }catch (Exception e){}
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         if(!TextUtils.isEmpty(userName)) {
             subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
             if(subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
                 listView.setAdapter(chatAdapter);
                 chatAdapter.notifyDataSetChanged();
             }
-
         }
-
     }
 
 
@@ -422,47 +399,43 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         try{
-        int id = v.getId();
-        View view = getActivity().getCurrentFocus();
-        if (id == R.id.imgEmoji) {
-            if (view != null) {
-//                imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.showSoftInput(etMsg, InputMethodManager.SHOW_IMPLICIT);
-        } else if (id == R.id.etChatMsg) {
-            linearCanMsg.setVisibility(View.GONE);
-        } else if (id == R.id.imgSendChat) {
-
-            if(!TextUtils.isEmpty(userName)) {
-              if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
-                    String msg = etMsg.getText().toString();
-                    subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-                    if (!subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
-                        getAdminSecondMessage();
-                    }
-                      if (!TextUtils.isEmpty(msg)) {
+            int id = v.getId();
+            View view = getActivity().getCurrentFocus();
+            if (id == R.id.imgEmoji) {
+                if (view != null) {
+                    //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                imm.showSoftInput(etMsg, InputMethodManager.SHOW_IMPLICIT);
+            } else if (id == R.id.etChatMsg) {
+                linearCanMsg.setVisibility(View.GONE);
+            } else if (id == R.id.imgSendChat) {
+                if(!TextUtils.isEmpty(userName)) {
+                  if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
+                        String msg = etMsg.getText().toString();
+                        subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
+                        if (!subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
+                            getAdminSecondMessage();
+                        }
+                        if (!TextUtils.isEmpty(msg)) {
                           chatAdapter.notifyDataSetChanged();
                           etMsg.setText("");
-
                           sendMsg(msg);
-                      } else {
+                        } else {
                           Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
-                      }
+                        }
+                    }else{
+                        Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                        startActivityForResult(ii, 111);
+                    }
                 }else{
+                    if (view != null) {
+                      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                     Intent ii = new Intent(getActivity(), SignUpActivity.class);
                     startActivityForResult(ii, 111);
                 }
-
-            }else{
-                if (view != null) {
-                  imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-                Intent ii = new Intent(getActivity(), SignUpActivity.class);
-                startActivityForResult(ii, 111);
             }
-        }
         }catch (Exception ex){
             Log.e("StadiumFrament", "On Click Exception : "+ex.toString());
         }
@@ -474,7 +447,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 111){
             if(resultCode == 101){
-
                 noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
                 if(noSend == -1){
                     noSend++;
@@ -489,7 +461,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
-
                     linearCanMsg.setVisibility(View.VISIBLE);
                 }else{
                     Toast.makeText(getActivity(), "You have already send free messages.", Toast.LENGTH_SHORT).show();
@@ -519,7 +490,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
 
     private void sendMsg(String msg){
-
        String deviceID = MyApp.getDeviveID(getActivity());
        String sender = MyApp.preferences.getString(MyApp.USER_NAME, "");
         if(sender.contains("Guest") || TextUtils.isEmpty(sender)) {
@@ -548,7 +518,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor.putBoolean(EventChatFragment.eventID, true);
 
                 editor.commit();
-                ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp());
+                ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, MyApp.preferences.getString(MyApp.USER_TYPE, "")));
                 alanRef.push().setValue(alan);
 
               //  onRefresh();
@@ -561,7 +531,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
          }
 
         }else{
-            ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp());
+            ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, MyApp.preferences.getString(MyApp.USER_TYPE, "")) );
             alanRef.push().setValue(alan);
      //       onRefresh();
         }
@@ -583,20 +553,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     public String getCurrentTimeStamp(){
         try {
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentDateTime = dateFormat.format(new Date()); // Find todays date
-
             return currentDateTime;
         } catch (Exception e) {
             e.printStackTrace();
-
             return null;
         }
     }
 
     class ChatAdapter extends BaseAdapter{
-
         Context con;
         ArrayList<ChatData> alList;
         TextView tvUser;

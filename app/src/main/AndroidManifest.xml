@@ -22,7 +22,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -43,7 +42,8 @@
         <activity
             android:name=".EventChatFragment"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
 
         <activity
             android:name=".SignUpActivity"

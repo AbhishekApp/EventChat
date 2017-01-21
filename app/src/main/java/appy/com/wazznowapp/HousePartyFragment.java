@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,52 +27,44 @@ import com.mylist.adapters.StadiumChatListAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 /**
  * Created by admin on 8/2/2016.
  */
 public class HousePartyFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
-
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
     StadiumChatListAdapter adapter;
     EditText etMsg;
     GridView viewLay;
-
     String mPhotoUrl;
     Firebase myFirebaseRef;
     Firebase alanRef;
     private SwipeRefreshLayout swipeRefreshLayout;
-
     FragmentActivity activity;
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
 //    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/1/Event_Category/2/HouseParty";
     private ValueEventListener mConnectedListener;
     private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;
-
     String userName="";
     int msgLimit = 10;
     InputMethodManager imm;
 
     public HousePartyFragment() {
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
         myFirebaseRef = new Firebase(firebaseURL);
         alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("HousepartyChat");
 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
@@ -90,13 +81,10 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         viewLay = (GridView) v.findViewById(R.id.viewLay);
         //     al = new ArrayList<String>();
 
-
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -122,7 +110,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         });
 
         adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
-
     }
 
 
@@ -162,12 +149,10 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             if(!TextUtils.isEmpty(userName) || cannedFlag) {
                 if(cannedFlag){
-
                     if (view != null) {
                         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
-
                     if (viewLay.getVisibility() == View.VISIBLE) {
                         viewLay.setVisibility(View.GONE);
                     } else {
@@ -177,48 +162,41 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                 }else if(!TextUtils.isEmpty(userName)){
                     String msg = etMsg.getText().toString();
                     if (!TextUtils.isEmpty(msg)) {
-                        //     al.add(msg);
+                        //al.add(msg);
                         adapter.notifyDataSetChanged();
                         etMsg.setText("");
-                        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp());
+                        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
                         alanRef.push().setValue(alan);
-
                     }else{
                         Toast.makeText(getActivity(),"Blank message not send", Toast.LENGTH_SHORT).show();
                     }
                 }
-
             }else{
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
                 startActivity(ii);
-//                startActivityForResult(ii, 111);
+                //startActivityForResult(ii, 111);
             }
         }
     }
-
 
     @Override
     public void onRefresh() {
         msgLimit+=10;
         alanRef.limit(msgLimit);
-//        alanRef.
+        //alanRef.
         adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         listView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
 
     public static String getCurrentTimeStamp(){
         try {
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentDateTime = dateFormat.format(new Date()); // Find todays date
-
             return currentDateTime;
         } catch (Exception e) {
             e.printStackTrace();
-
             return null;
         }
     }

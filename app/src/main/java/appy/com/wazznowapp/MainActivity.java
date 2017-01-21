@@ -58,7 +58,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-
     ListView listMain;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
@@ -170,15 +169,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
         Intent iChat = new Intent(this, EventChatFragment.class);
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
-
       /*  for(int i = 0; i < arrayListEvent.size() ; i++){
             EventDetail event = arrayListEvent.get(i);
             if(eventName.equals(event.getCategory_name())){
@@ -188,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 break;
             }
         }*/
-
     }
 
     private void init(){

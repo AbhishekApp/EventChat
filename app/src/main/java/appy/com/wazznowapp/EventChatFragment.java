@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -45,7 +43,6 @@ public class EventChatFragment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_chat_fragment);
         connectDetector = new ConnectDetector(this);
-
         try {
             if (getIntent().hasExtra("EventDetail")) {
                 eventDetail = (EventDetail) getIntent().getSerializableExtra("EventDetail");
@@ -102,8 +99,6 @@ public class EventChatFragment extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             View view = this.getCurrentFocus();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             ChatStadiumFragment.linearCanMsg.setVisibility(View.GONE);
             finish();
         } else if (id == R.id.menu_signup) {
@@ -117,8 +112,6 @@ public class EventChatFragment extends AppCompatActivity {
         } else if (id == R.id.menu_noti) {
 //            Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
         }
-
-
         /*ImageButton locButton = (ImageButton) findViewById(R.id.menu_noti);
         locButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +119,6 @@ public class EventChatFragment extends AppCompatActivity {
                 showPopup(v);
             }
         });*/
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -140,17 +132,7 @@ public class EventChatFragment extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        try {
-            if (ChatStadiumFragment.linearCanMsg.getVisibility() == View.VISIBLE) {
-                View view = this.getCurrentFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                ChatStadiumFragment.linearCanMsg.setVisibility(View.GONE);
-            } else {
-                super.onBackPressed();
-            }
-        } catch (Exception ex) {
-        }
+        super.onBackPressed();
     }
 
 
@@ -162,12 +144,10 @@ public class EventChatFragment extends AppCompatActivity {
         quickAction.addActionItem(new ActionItem(ID_DOWN, "", getResources().getDrawable(R.drawable.line_new)));
     }
 
-
     public void showPopup(View view) {
         //create QuickAction. Use QuickAction.VERTICAL or QuickAction.HORIZONTAL param to define layout
         //orientation
         quickAction = new QuickAction(this, QuickAction.VERTICAL);
-
         quickAction.addActionItem(new ActionItem(ID_DOWN, "", getResources().getDrawable(R.drawable.ic_launcher)));
 
         for(int i = 0; i < 5 ; i++){
@@ -175,16 +155,6 @@ public class EventChatFragment extends AppCompatActivity {
             ActionItemAddText("<br>Mumbai Indians"+i+" Have Won the toss and they elected to bat first.<br><font color='grey'>6:5"+i+" p.m</font><br>");
         }
 
-        //ActionItem nextItem = new ActionItem(ID_DOWN, "\nMumbai Indians Have Won the toss\nand they elected to bat first.", null);
-        //ActionItem prevItem = new ActionItem(ID_UP, "\nPankaj Singh to Dhawan, no run,\nangled across and left alone\nwith angled across\nan led across as the test match", null);
-        //use setSticky(true) to disable QuickAction dialog being dismissed after an item is clicked
-
-        //prevItem.setSticky(true);
-        //nextItem.setSticky(true);
-
-        //add action items into QuickAction
-        //quickAction.addActionItem(nextItem);
-        //quickAction.addActionItem(prevItem);
 
         quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
             @Override
@@ -210,8 +180,6 @@ public class EventChatFragment extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Dismissed", Toast.LENGTH_SHORT).show();
             }
         });
-
-
         quickAction.show(view);
     }
 
@@ -244,6 +212,4 @@ public class EventChatFragment extends AppCompatActivity {
             return mFragmentTitleList.get(position);
         }
     }
-
-
 }
