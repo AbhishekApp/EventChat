@@ -11,6 +11,6 @@
         android:layout_height="match_parent"
         android:dividerHeight="1dp"
         android:drawSelectorOnTop="true"
-        android:listSelector="@drawable/ripple_effect"></ListView>
+        android:listSelector="@drawable/ripple_effect" />
 
 </RelativeLayout>

@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,7 +24,6 @@ import com.app.model.QuickAction;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * Created by admin on 8/2/2016.
  */
@@ -41,7 +39,6 @@ public class EventChatFragment extends AppCompatActivity {
     private static final int ID_UP = 1;
     private static final int ID_DOWN = 2;
     QuickAction quickAction;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +59,6 @@ public class EventChatFragment extends AppCompatActivity {
             return;
         }
 
-
         if (MyApp.firebaseFlag && connectDetector.getConnection()) {
             init();
         } else {
@@ -75,7 +71,6 @@ public class EventChatFragment extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(CateName);
-
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -138,7 +133,7 @@ public class EventChatFragment extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ChatStadiumFragment(), "STADIUM");
-        adapter.addFragment(new FeatureFragment(), "#FEATURE");
+        adapter.addFragment(new FeatureFragment(), "FEATURED");
         adapter.addFragment(new HousePartyFragment(), "HOUSE PARTY");
         viewPager.setAdapter(adapter);
     }
@@ -177,7 +172,7 @@ public class EventChatFragment extends AppCompatActivity {
 
         for(int i = 0; i < 5 ; i++){
             ActionItemAddLine();
-            ActionItemAddText("<br>Mumbai Indians"+i+" Have Won the <br>toss and they elected to bat first.<br><font color='grey'>6:5"+i+" p.m</font><br>");
+            ActionItemAddText("<br>Mumbai Indians"+i+" Have Won the toss and they elected to bat first.<br><font color='grey'>6:5"+i+" p.m</font><br>");
         }
 
         //ActionItem nextItem = new ActionItem(ID_DOWN, "\nMumbai Indians Have Won the toss\nand they elected to bat first.", null);

@@ -96,12 +96,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
-
         return view;
     }
 

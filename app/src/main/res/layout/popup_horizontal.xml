@@ -20,7 +20,7 @@
             android:layout_weight="1"
             android:background="@drawable/popup_bg"
             android:orientation="horizontal"
-            android:padding="10dip" />
+            android:padding="1dip" />
     </ScrollView>
 
     <ImageView

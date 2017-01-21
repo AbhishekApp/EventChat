@@ -29,6 +29,7 @@ public class MyApp extends Application {
     public static String USER_LAST_NAME = "UserLastName";
     public static String USER_PHONE = "UserPhone";
     public static String USER_EMAIL = "UserEmail";
+    public static String USER_TYPE = "UserType";
     public static String USER_PASSWORD = "UserPassword";
     public static ArrayList<CannedMessage> alCanMsg;
 

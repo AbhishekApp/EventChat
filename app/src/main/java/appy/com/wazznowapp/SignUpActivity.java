@@ -229,7 +229,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             } else {
                                 Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
                             }
-
                         }
                     });
 
@@ -270,6 +269,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             alanisawesomeMap.put("passKey", password);
             alanisawesomeMap.put("phone", uPhone);
             alanisawesomeMap.put("email", email);
+            //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
+            alanisawesomeMap.put("userType", "false");
             final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
             System.out.println("USER List new length : " );
             System.out.println("USER List new deviceID : " );

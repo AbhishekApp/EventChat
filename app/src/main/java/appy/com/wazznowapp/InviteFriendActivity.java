@@ -49,7 +49,13 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     TextView tvMsg;
     String userName;
     String eventID, eventCategory;
-    String longDeepLink = "https://ry5a4.app.goo.gl/?link=http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk&apn=appy.com.wazznowapp&afl=http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk&st=WazzNow+Title&sd=House+Party+Chat+Invitation&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png&utm_source=";
+    String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
+            "&apn=appy.com.wazznowapp"+
+            "&afl=$"+
+            "&st=WazzNow+Title" +
+            "&sd=House+Party+Chat+Invitation" +
+            "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png"+
+            "&utm_source=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,11 +116,9 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
     public class newShortAsync extends AsyncTask<Void,Void,String> {
 
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
         }
 
         @Override
@@ -122,9 +126,9 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             BufferedReader reader;
             StringBuffer buffer;
             String res=null;
-            String json = "{\"longUrl\": \""+longDeepLink+"\"}";
+            String json = "{\"longUrl\": \""+longDeepLink.replace("$",getResources().getString(R.string.apk_link))+"\"}";
             try {
-                URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyAj6g7L2CVtsUM1pTaQHb6eJW_qIXvoiRs");
+                URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key="+getResources().getString(R.string.google_shortlink_api_key));
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setReadTimeout(40000);
                 con.setConnectTimeout(40000);
@@ -145,17 +149,13 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                     inputStream = con.getErrorStream();
 
                 reader= new BufferedReader(new InputStreamReader(inputStream));
-
                 buffer= new StringBuffer();
-
                 String line="";
                 while((line=reader.readLine())!=null)
                 {
                     buffer.append(line);
                 }
-
                 res= buffer.toString();
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (ProtocolException e) {
@@ -174,7 +174,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             try {
                 JSONObject jsonObject=new JSONObject(response);
                 String id=jsonObject.getString("id");
-
                 Intent sendIntent = new Intent();
                 if(!TextUtils.isEmpty(userName)){
                     if(!userName.contains("user")){
@@ -185,14 +184,12 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 }else{
                     msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
                 }
-                Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
                 //  String dLink = longDeepLink.replace("SenderID", eventID);
-
                 sendIntent.setAction(Intent.ACTION_SEND);
-
                 sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
                 sendIntent.setType("text/plain");
-                sendIntent.setPackage("com.whatsapp");
+                //sendIntent.setPackage("com.whatsapp");
                 try{
                     startActivityForResult(sendIntent, REQUEST_INVITE);
                 }catch (Exception ex){
