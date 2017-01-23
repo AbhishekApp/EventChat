@@ -24,7 +24,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
     TextView tvUser;
     TextView tvMsg;
     TextView btnYes, btnNo;
-    LinearLayout linear, linearBtn;
+    LinearLayout linear;//, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
     ImageView imgIcon;
 
@@ -40,13 +40,13 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvUser = (TextView) v.findViewById(R.id.tvChatUser);
         tvMsg = (TextView) v.findViewById(R.id.tvChat);
         linear = (LinearLayout) v.findViewById(R.id.linearMsgChat);
-        linearBtn = (LinearLayout) v.findViewById(R.id.linearBtn);
+        //linearBtn = (LinearLayout) v.findViewById(linearBtn);
         btnYes = (TextView) v.findViewById(R.id.btnYesTuneOrInvite);
         btnNo = (TextView) v.findViewById(R.id.btnNoThanks);
 
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
-        linearBtn.setVisibility(View.GONE);
+        //linearBtn.setVisibility(View.GONE);
 
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         String sender = model.getAuthor();
@@ -66,7 +66,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                 linear.setLayoutParams(relativeParam);
 //              linear.setBackgroundResource(R.drawable.chat_outgoing_background);
                 linear.setBackgroundResource(R.drawable.outgoing_message_bg);
-                linearBtn.setVisibility(View.GONE);
+                //linearBtn.setVisibility(View.GONE);
 
         }
         else{
@@ -84,7 +84,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
 //            linear.setBackgroundResource(R.drawable.chat_incomin_background);
             linear.setBackgroundResource(R.drawable.incoming_message_bg);
             linear.setPadding(35,5,80,5);
-            linearBtn.setVisibility(View.GONE);
+            //linearBtn.setVisibility(View.GONE);
         }
 
         if(model.getAuthor().equalsIgnoreCase("Admin")) {

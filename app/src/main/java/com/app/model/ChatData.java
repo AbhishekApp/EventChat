@@ -5,12 +5,11 @@ package com.app.model;
  */
 public class ChatData {
 
-
     private String author;
     private String title;
     private String toUser;
     private String timestamp;
-    private String authorType;
+    private String authorType="";
 
 
     public ChatData() {}
@@ -55,7 +54,12 @@ public class ChatData {
     }
 
     public String getAuthorType() {
-        return authorType;
+        if (authorType!=null){
+            return authorType;
+        }else{
+            return "";
+        }
+
     }
 
     public void setAuthorType(String authorType) {

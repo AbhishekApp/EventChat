@@ -29,9 +29,6 @@
     <string name="google_shortlink_api_key">AIzaSyAj6g7L2CVtsUM1pTaQHb6eJW_qIXvoiRs</string>
     <string name="apk_link">http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk</string>
 
-    <string name="google_shortlink_api_key">AIzaSyAj6g7L2CVtsUM1pTaQHb6eJW_qIXvoiRs</string>
-    <string name="apk_link">http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk</string>
-
     <string-array name="mycolor">
         <item>#24FA08</item>
         <item>#E51E17</item>

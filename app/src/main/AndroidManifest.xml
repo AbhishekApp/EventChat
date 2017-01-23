@@ -2,59 +2,62 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="appy.com.wazznowapp">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".MyApp"
         android:theme="@style/MyMaterialTheme">
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:host="https://ry5a4.app.goo.gl/pGuk" android:scheme="wazznow"/>
-                <data android:host="http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk" android:scheme="wazznow"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="https://ry5a4.app.goo.gl/pGuk"
+                    android:scheme="wazznow" />
+                <data
+                    android:host="http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk"
+                    android:scheme="wazznow" />
             </intent-filter>
         </activity>
-        <activity android:name=".MySplashActivity"
+        <activity
+            android:name=".MySplashActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
 
-        <activity android:name=".EventChatFragment"
+        <activity
+            android:name=".EventChatFragment"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+
+        <activity
+            android:name=".SignUpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
 
-        <activity android:name=".SignUpActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".InviteFriendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
 
-        <activity android:name=".InviteFriendActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".InfoActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"></activity>
-
-
-
-
+        <activity
+            android:name=".InfoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
     </application>
-
 </manifest>
