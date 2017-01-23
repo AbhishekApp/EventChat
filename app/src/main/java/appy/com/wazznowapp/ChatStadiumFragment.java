@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 /**
  * Created by admin on 8/2/2016.
  */
@@ -204,7 +203,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
                     btnNo.setText("NO I DON'T WANT TO TUNE IN");
-                    tvAdminMsg.setText("Congrats now you are part of "+ EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
+                    tvAdminMsg.setText("Congrats now you are part of "+EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
 
                     btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -512,7 +511,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor.putString("SendTime: " + EventChatFragment.eventID, String.valueOf(noSend));
                 editor.putBoolean(EventChatFragment.eventID, true);
                 editor.commit();
-                ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(), MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+                ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
                 alanRef.push().setValue(alan);
 
             } else {
@@ -522,7 +521,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
          }
         }else{
-            ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(), MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+            ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
             alanRef.push().setValue(alan);
             onRefresh();
         }
