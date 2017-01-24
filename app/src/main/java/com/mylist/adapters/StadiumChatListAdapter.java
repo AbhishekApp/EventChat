@@ -1,7 +1,6 @@
 package com.mylist.adapters;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,7 +26,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
     LinearLayout linear;//, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
     ImageView imgIcon;
-
+    RelativeLayout comRL;
+    TextView tvComMsg1;
 
     public StadiumChatListAdapter(Query ref, Activity activity, int layout){
         super(ref, ChatData.class, layout, activity);
@@ -36,6 +36,8 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
 
     @Override
     protected void populateView(final View v, ChatData model, int position) {
+        comRL = (RelativeLayout)v.findViewById(R.id.comRL);
+        tvComMsg1 = (TextView)comRL.findViewById(R.id.tvComMsg1);
         imgIcon = (ImageView) v.findViewById(R.id.imgIcon);
         tvUser = (TextView) v.findViewById(R.id.tvChatUser);
         tvMsg = (TextView) v.findViewById(R.id.tvChat);
@@ -46,6 +48,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
 
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
+        tvComMsg1.setText(model.getTitle());
         //linearBtn.setVisibility(View.GONE);
 
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -53,7 +56,17 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         String fromUser = model.getToUser();
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         boolean isEqual = sender.equalsIgnoreCase(userName);
-        if((fromUser.equals(MyApp.getDeviveID(activity)))) {
+
+
+        if(model.getAuthorType().equals("com")){
+            //System.out.println("commmmenttttttaaaatooorrrr");
+            comRL.setVisibility(View.VISIBLE);
+            linear.setVisibility(View.GONE);
+        }
+        else{
+            linear.setVisibility(View.VISIBLE);
+            comRL.setVisibility(View.GONE);
+            if((fromUser.equals(MyApp.getDeviveID(activity)))) {
 //                tvMsg.setGravity(Gravity.RIGHT);
                 tvMsg.setTextColor(activity.getResources().getColor(R.color.white));
                 tvMsg.setPadding(25,15,70,15);
@@ -68,37 +81,37 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                 linear.setBackgroundResource(R.drawable.outgoing_message_bg);
                 //linearBtn.setVisibility(View.GONE);
 
-        }
-        else{
-            tvMsg.setGravity(Gravity.LEFT);
-            tvMsg.setPadding(35,5,10,15);
-            tvUser.setGravity(Gravity.LEFT);
-            tvUser.setVisibility(View.VISIBLE);
-            tvUser.setPadding(35,5,10,5);
+            }
+            else{
+                tvMsg.setGravity(Gravity.LEFT);
+                tvMsg.setPadding(35,5,10,15);
+                tvMsg.setTextColor(activity.getResources().getColor(R.color.chat_text_color));
+                tvUser.setGravity(Gravity.LEFT);
+                tvUser.setVisibility(View.VISIBLE);
+                tvUser.setPadding(35,5,10,5);
+                relativeParam.addRule(Gravity.LEFT);
+                linear.setGravity(Gravity.LEFT);
 
-            relativeParam.addRule(Gravity.LEFT);
-            linear.setGravity(Gravity.LEFT);
-
-            relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            linear.setLayoutParams(relativeParam);
+                relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                linear.setLayoutParams(relativeParam);
 //            linear.setBackgroundResource(R.drawable.chat_incomin_background);
-            linear.setBackgroundResource(R.drawable.incoming_message_bg);
-            linear.setPadding(35,5,80,5);
-            //linearBtn.setVisibility(View.GONE);
+                linear.setBackgroundResource(R.drawable.incoming_message_bg);
+                linear.setPadding(35,5,80,5);
+                //linearBtn.setVisibility(View.GONE);
+            }
+
+            if(model.getAuthor().equalsIgnoreCase("Admin")) {
+                imgIcon.setVisibility(View.VISIBLE);
+
+            }else{
+                imgIcon.setVisibility(View.GONE);
+                //tvMsg.setBackgroundColor(Color.TRANSPARENT);
+
+            }
+            if(model.getAuthor().equalsIgnoreCase("Guest User")) {
+                //   tvUser.setVisibility(View.GONE);
+            }
         }
 
-        if(model.getAuthor().equalsIgnoreCase("Admin")) {
-            imgIcon.setVisibility(View.VISIBLE);
-
-        }else{
-            imgIcon.setVisibility(View.GONE);
-            tvMsg.setBackgroundColor(Color.TRANSPARENT);
-
-        }
-        if(model.getAuthor().equalsIgnoreCase("Guest User")) {
-         //   tvUser.setVisibility(View.GONE);
-        }
     }
-
-
 }

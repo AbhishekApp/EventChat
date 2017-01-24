@@ -35,6 +35,7 @@ import org.w3c.dom.Comment;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 /**
  * Created by admin on 1/20/2017.
  */
@@ -55,11 +56,12 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     ArrayList<ChatData> alList;
     ArrayList<String> mKeys;
     ChatAdapter chatAdapter;
+    TextView headerText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         connectDetector = new ConnectDetector(getActivity());
         if(connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
@@ -74,15 +76,22 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         //Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.featured_chat, container, false);
-        init(view);
+        init(view,savedInstanceState );
         return view;
     }
 
-    private void init(View v) {
+    private void init(View v,Bundle savedInstanceState) {
         linearLayout = (LinearLayout) v.findViewById(R.id.linearTopChat);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         listView = (ListView) v.findViewById(R.id.listMain);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+
+        LayoutInflater inflater = getLayoutInflater(savedInstanceState);
+        View headerV = inflater.inflate(R.layout.header, listView, false);
+        headerText = (TextView)headerV.findViewById(R.id.headerText);
+
+        listView.addHeaderView(headerV, null, false);
+
         swipeRefreshLayout.setOnRefreshListener(this);
         alList = new ArrayList<ChatData>();
         mKeys = new ArrayList<String>();
@@ -272,7 +281,8 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         protected void populateView(final View v, ChatData model) {
             try {
-                tvMsg.setText(new SimpleDateFormat("dd-MMM hh:mm a").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getTimestamp())) + "\n" + model.getTitle().replace("#", ""));
+                headerText.setText(new SimpleDateFormat("dd-MMM hh:mm a").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getTimestamp())) );
+                tvMsg.setText(/*new SimpleDateFormat("dd-MMM hh:mm a").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getTimestamp())) + "\n" +*/ model.getTitle().replace("#", ""));
             }
             catch (Exception e){
                 e.printStackTrace();

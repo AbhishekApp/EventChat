@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="6dp"
     android:background="@color/white"
+    android:focusable="false"
     android:orientation="vertical"
     android:paddingLeft="1dp"
     android:paddingTop="5dp">
@@ -14,6 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/linearMsgChat"
+        android:focusable="false"
         android:scaleType="center"
         android:src="@drawable/icon_admin"
         android:visibility="gone" />
@@ -24,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_toRightOf="@+id/imgIcon"
+        android:focusable="false"
         android:orientation="vertical"
         android:paddingTop="1dp"
         android:visibility="visible">
@@ -33,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
+            android:focusable="false"
             android:padding="1dp"
             android:text=""
             android:textColor="@color/black"
@@ -46,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:ellipsize="end"
+            android:focusable="false"
             android:maxWidth="300dp"
             android:padding="2dp"
             android:text=""

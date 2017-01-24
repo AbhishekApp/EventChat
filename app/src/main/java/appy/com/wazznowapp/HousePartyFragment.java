@@ -1,11 +1,15 @@
 package appy.com.wazznowapp;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +19,13 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.model.ChatData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.mylist.adapters.StadiumChatListAdapter;
 
 import java.text.SimpleDateFormat;
@@ -44,12 +47,15 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     FragmentActivity activity;
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
 //    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/1/Event_Category/2/HouseParty";
-    private ValueEventListener mConnectedListener;
-    private ValueEventListener mDataRetrieveListener;
+    //private ValueEventListener mConnectedListener;
+    //private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;
     String userName="";
     int msgLimit = 10;
     InputMethodManager imm;
+    LinearLayout linearLayout,linearlayChat;
+    static boolean addHousePartyFLAG = false;
+    SharedPreferences.Editor editor;
 
     public HousePartyFragment() {
     }
@@ -60,7 +66,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         myFirebaseRef = new Firebase(firebaseURL);
         alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("HousepartyChat");
-
     }
 
     @Override
@@ -73,6 +78,8 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
 
     private void init(View v) {
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+        linearLayout = (LinearLayout) v.findViewById(R.id.linearTopChat);
+        linearlayChat = (LinearLayout) v.findViewById(R.id.linearlayChat);
         listView = (ListView) v.findViewById(R.id.listMain);
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
@@ -85,31 +92,56 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
+
+        editor = MyApp.preferences.edit();
+        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mConnectedListener = alanRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean connected = (Boolean) dataSnapshot.getValue();
-                if (connected) {
-                    //   Toast.makeText(getActivity(), "Connected to Firebase", Toast.LENGTH_SHORT).show();
-                    System.out.println("Firebase connected");
-                } else {
-                    System.out.println("Firebase not connected");
-                }
+        try {
+            if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
+                //linearLayout.removeAllViews();
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                View vi = inflater.inflate(R.layout.admin_msg,null);
+                linearLayout.removeAllViews();
+                linearLayout.addView(vi);
+                LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
+                linearAdminBtn.setGravity(Gravity.RIGHT);
+                TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
+                TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
+                TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
+                btnYes.setText("INVITE FRIENDS");
+                tvAdminMsg.setText("Invite for House Party. There are most fun.");
+                btnYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        housePartyStarted();
+                    }
+                });
+                btnNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                   linearLayout.removeAllViews();
+                    }
+                });
+            }else{
+                linearLayout.removeAllViews();
             }
+        }catch (Exception ex){
+            Log.e("StadiumFragment", "onStart method ERROR: " + ex.toString());
+        }
+    }
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                //   Toast.makeText(getActivity(), "error: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                System.out.println("Server not connect ERROR : "+firebaseError.getMessage());
-            }
-        });
-
-        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+    private void housePartyStarted(){
+        //editor = MyApp.preferences.edit();
+        //editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
+        //editor.commit();
+        Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
+        ii.putExtra("EventName", EventChatFragment.eventDetail.getCatergory_id());
+        ii.putExtra("EventID", EventChatFragment.eventDetail.getEvent_id());
+        startActivity(ii);
     }
 
 
@@ -117,15 +149,18 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     public void onResume() {
         super.onResume();
         try {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        alanRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
+
     }
 
     @Override
@@ -163,10 +198,20 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                     String msg = etMsg.getText().toString();
                     if (!TextUtils.isEmpty(msg)) {
                         //al.add(msg);
-                        adapter.notifyDataSetChanged();
-                        etMsg.setText("");
-                        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
-                        alanRef.push().setValue(alan);
+                        try {
+                            if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatFragment.eventID, false)) {
+                                //linearlayChat.setVisibility(View.VISIBLE);
+                                adapter.notifyDataSetChanged();
+                                etMsg.setText("");
+                                ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+                                alanRef.push().setValue(alan);
+                            }else{
+                                //linearlayChat.setVisibility(View.GONE);
+                                Toast.makeText(getActivity(),"You are not eligible to this group.", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception ex) {
+                            Log.e("StadiumFragment", "sendMsg ERROR: " + ex.toString());
+                        }
                     }else{
                         Toast.makeText(getActivity(),"Blank message not send", Toast.LENGTH_SHORT).show();
                     }

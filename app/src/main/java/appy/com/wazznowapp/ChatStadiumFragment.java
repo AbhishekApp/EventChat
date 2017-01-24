@@ -1,8 +1,8 @@
 package appy.com.wazznowapp;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -79,7 +79,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         connectDetector = new ConnectDetector(getActivity());
         if(connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
@@ -224,7 +224,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     });
                 }
             }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
-            //    linearLayout.removeAllViews();
+                //linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vi = inflater.inflate(R.layout.admin_msg,null);
                 linearLayout.removeAllViews();
@@ -352,23 +352,24 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onResume() {
         super.onResume();
         try {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             View view = getActivity().getCurrentFocus();
-            imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             //adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
              if(!(noSend >= 0 && noSend < 3)){
                  if(noSend == 0) {
                      linearCanMsg.setVisibility(View.VISIBLE);
-                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                     imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                     //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                     //imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                  }else {
-                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                     //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                      linearCanMsg.setVisibility(View.GONE);
                  }
             }else{
                 linearCanMsg.setVisibility(View.VISIBLE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
 
         }catch (Exception e){
@@ -388,8 +389,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onPause() {
         super.onPause();
         View view = getActivity().getCurrentFocus();
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        //imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
 
@@ -401,9 +402,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             if (id == R.id.imgEmoji) {
                 if (view != null) {
                     //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
-                imm.showSoftInput(etMsg, InputMethodManager.SHOW_IMPLICIT);
+                //imm.showSoftInput(etMsg, InputMethodManager.SHOW_IMPLICIT);
             } else if (id == R.id.etChatMsg) {
                 linearCanMsg.setVisibility(View.GONE);
             } else if (id == R.id.imgSendChat) {
@@ -427,7 +428,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     }
                 }else{
                     if (view != null) {
-                      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                      //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                     Intent ii = new Intent(getActivity(), SignUpActivity.class);
                     startActivityForResult(ii, 111);
@@ -455,8 +456,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 if(noSend < 3) {
                     View view = getActivity().getCurrentFocus();
                     if (view != null) {
-                        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                     linearCanMsg.setVisibility(View.VISIBLE);
                 }else{
@@ -671,7 +672,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     imgIcon.setVisibility(View.VISIBLE);
                 }else{
                     imgIcon.setVisibility(View.GONE);
-                    tvMsg.setBackgroundColor(Color.TRANSPARENT);
+                    //tvMsg.setBackgroundColor(Color.TRANSPARENT);
                 }
             }
         }

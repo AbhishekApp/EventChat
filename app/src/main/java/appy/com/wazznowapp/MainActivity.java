@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 // comment and if so displayed the changed comment.
                 try{
                     EventDtList evList = dataSnapshot.getValue(EventDtList.class);
-                    arrayListEvent = new ArrayList<EventDetail>();
+                    arrayListEvent.clear();
                     EventDetail eventDetail = new EventDetail();
                     for(int i = 0; i < evList.getCate().size(); i++){
                         EventSubCateList subCtList = evList.getCate().get(i);
@@ -403,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     model.Cate = new ArrayList<EventDetail>();
                     JSONArray jArray = jSon.getJSONArray("Cate");
                     EventDetail detail = new EventDetail();
+                    arrayListEvent.clear();
                     for(int j = 0; j <jArray.length() ; j++){
 
                         JSONObject jsonDetail = jArray.getJSONObject(j);
