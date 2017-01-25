@@ -29,8 +29,8 @@ public class EventChatFragment extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     ConnectDetector connectDetector;
-    static String CateName;
-    static String SuperCateName;
+    public static String CateName;
+    public static String SuperCateName;
     public static String eventID = "";
     static EventDetail eventDetail;
     ListView left_drawer;

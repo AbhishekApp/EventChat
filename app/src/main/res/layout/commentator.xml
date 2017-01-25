@@ -43,7 +43,7 @@
 
 
         <RelativeLayout
-            android:id="@+id/linearAdminBtn"
+            android:id="@+id/RLcomlay"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:background="@drawable/chatbody"

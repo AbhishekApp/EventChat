@@ -109,39 +109,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             boolean autoLaunchDeepLink = true;
             AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
-                    .setResultCallback(
-                            new ResultCallback<AppInviteInvitationResult>() {
-                                @Override
-                                public void onResult(AppInviteInvitationResult result) {
-                                    Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
-                                    if (result.getStatus().isSuccess()) {
-                                        // Extract information from the intent
-                                        Intent intent = result.getInvitationIntent();
-                                        String deepLink = AppInviteReferral.getDeepLink(intent);
-                                        String invitationId = AppInviteReferral.getInvitationId(intent);
-                                        String inviterDeviceID = intent.getStringExtra("UserDeviceID");
-                                        Uri uri = intent.getData();
-                                        invitedEventid = uri.getQueryParameter("eventid");
-                                       try{
-                                           Log.e("MainActivity", "get Deep link URL "+deepLink);
-                                           Log.e("MainActivity", "get Deep link uri "+uri.toString());
-                                           invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
-                                           Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
-                                           invitedGroup = deepLink.split("utm_campaign=")[1];
-                                           Log.e("MainActivity", "get Deep link group "+invitedGroup);
-                                           getInvited = true;
+                .setResultCallback(
+                    new ResultCallback<AppInviteInvitationResult>() {
+                        @Override
+                        public void onResult(AppInviteInvitationResult result) {
+                        Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
+                        if (result.getStatus().isSuccess()) {
+                            // Extract information from the intent
+                            Intent intent = result.getInvitationIntent();
+                            String deepLink = AppInviteReferral.getDeepLink(intent);
+                            String invitationId = AppInviteReferral.getInvitationId(intent);
+                            String inviterDeviceID = intent.getStringExtra("UserDeviceID");
+                            Uri uri = intent.getData();
+                            invitedEventid = uri.getQueryParameter("eventid");
+                           try{
+                               Log.e("MainActivity", "get Deep link URL "+deepLink);
+                               Log.e("MainActivity", "get Deep link uri "+uri.toString());
+                               invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
+                               Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
+                               invitedGroup = deepLink.split("utm_campaign=")[1];
+                               Log.e("MainActivity", "get Deep link group "+invitedGroup);
+                               getInvited = true;
 
-                                       }catch (Exception ex){
-                                           Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
-                                           getInvited = false;
-                                       }
-                                        // Because autoLaunchDeepLink = true we don't have to do anything
-                                        // here, but we could set that to false and manually choose
-                                        // an Activity to launch to handle the deep link here.
-                                        // ...
-                                    }
-                                }
-                            });
+                           }catch (Exception ex){
+                               Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
+                               getInvited = false;
+                           }
+                            // Because autoLaunchDeepLink = true we don't have to do anything
+                            // here, but we could set that to false and manually choose
+                            // an Activity to launch to handle the deep link here.
+                            // ...
+                        }
+                        }
+                    });
             init();
         } else{
             Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
@@ -348,7 +348,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onBackPressed();
         firstFlag = false;
     }
-
 
     class EventTask extends AsyncTask<Void, Void, Void>{
         HttpURLConnection urlConnection;

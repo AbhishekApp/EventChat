@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.model.ChatData;
+import com.app.model.MyUtill;
 import com.firebase.client.Firebase;
 import com.mylist.adapters.StadiumChatListAdapter;
 
@@ -205,12 +206,16 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                                 etMsg.setText("");
                                 ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
                                 alanRef.push().setValue(alan);
+                                if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
+                                    MyUtill.addMsgtoFeatured(getActivity(),msg);
+                                }
                             }else{
                                 //linearlayChat.setVisibility(View.GONE);
                                 Toast.makeText(getActivity(),"You are not eligible to this group.", Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception ex) {
                             Log.e("StadiumFragment", "sendMsg ERROR: " + ex.toString());
+
                         }
                     }else{
                         Toast.makeText(getActivity(),"Blank message not send", Toast.LENGTH_SHORT).show();

@@ -14,7 +14,6 @@ public class MySplashActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_splash_activity);
-
         handler = new Handler();
         handler.postDelayed(runn, 5 * 1000);
     }

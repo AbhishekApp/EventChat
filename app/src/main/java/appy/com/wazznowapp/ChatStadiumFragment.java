@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.app.model.ChatData;
 import com.app.model.ConnectDetector;
+import com.app.model.MyUtill;
 import com.app.model.UserProfile;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * Created by admin on 8/2/2016.
  */
@@ -65,7 +67,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     CannedAdapter cannedAdapter;
     static boolean addHousePartyFLAG = false;
     static boolean addTuneFLAG = false;
-    final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
+    public final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
     SharedPreferences.Editor editor;
     String userName="";
     int msgLimit = 3;
@@ -477,7 +479,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         swipeRefreshLayout.setRefreshing(false);
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         msgLimit+=2;
@@ -514,6 +515,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor.commit();
                 ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
                 alanRef.push().setValue(alan);
+                if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
+                    MyUtill.addMsgtoFeatured(getActivity(),msg);
+                }
 
             } else {
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
@@ -525,6 +529,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
             alanRef.push().setValue(alan);
             onRefresh();
+            if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
+                MyUtill.addMsgtoFeatured(getActivity(),msg);
+            }
         }
     }
 
@@ -607,6 +614,31 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 //btnYes = (TextView) view.findViewById(R.id.btnYesTuneOrInvite);
                 //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             }
+
+            RelativeLayout RLcomlay = (RelativeLayout)view.findViewById(R.id.RLcomlay);
+
+            ImageView whatsapp = (ImageView) RLcomlay.findViewById(R.id.whatsapp);
+            ImageView facebook = (ImageView) RLcomlay.findViewById(R.id.facebook);
+
+
+            whatsapp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getActivity(),InviteFriendActivity.class));
+                }
+            });
+
+
+            facebook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(getActivity(), "facebook", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getActivity(),InviteFriendActivity.class));
+                }
+            });
+
+
             if(position < alList.size() && msgLimit < alList.size()) {
                 ChatData model = alList.get(alList.size()-msgLimit+position);
                 try {

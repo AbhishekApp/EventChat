@@ -47,8 +47,7 @@ public class MyApp extends Application {
     }
 
     public static String getDeviveID(Context con){
-        String android_id = Settings.Secure.getString(con.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+        String android_id = Settings.Secure.getString(con.getContentResolver(),Settings.Secure.ANDROID_ID);
         Log.d("Android", "Android ID : " + android_id);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("Android_ID", android_id);

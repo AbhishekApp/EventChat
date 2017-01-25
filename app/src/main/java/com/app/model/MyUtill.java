@@ -1,6 +1,10 @@
 package com.app.model;
 
+import android.app.Activity;
 import android.util.Log;
+
+import com.firebase.client.Firebase;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,19 +18,21 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import appy.com.wazznowapp.EventChatFragment;
+import appy.com.wazznowapp.MyApp;
+
+import static appy.com.wazznowapp.HousePartyFragment.getCurrentTimeStamp;
+import static appy.com.wazznowapp.MyApp.FIREBASE_BASE_URL;
+
 /**
  * Created by admin on 10/17/2016.
  */
 public class MyUtill {
-
     HttpURLConnection urlConnection;
     JSONArray jsonObject;
     URL url = null;
 
-
     public JSONArray getJSONFromServer(String urlStr){
-
-
         try {
             Log.e("MyUtill","getJSONFromServer URL : "+urlStr);
             url = new URL(urlStr);
@@ -57,6 +63,19 @@ public class MyUtill {
 
         return jsonObject;
     }
+
+
+
+    public static void addMsgtoFeatured(Activity act,String msg){
+        Firebase myFirebaseRef = new Firebase(FIREBASE_BASE_URL);
+        Firebase alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("FeatureChat");
+        String userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        alanRef.keepSynced(true);
+        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(act), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+        alanRef.push().setValue(alan);
+    }
+
 
     public String getTimeDifference(String startDate, String startTime){
 /*        String format = "MM/dd/yyyy HH:mm:ss";
