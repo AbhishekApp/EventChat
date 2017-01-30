@@ -51,7 +51,7 @@ public class EventChatFragment extends AppCompatActivity {
                 eventID = eventDetail.getEvent_id();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace(); // for now eat exceptions
             //eventDetail =new EventDetail();
             return;
         }

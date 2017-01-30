@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -38,7 +37,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-
 /**
  * Created by admin on 8/3/2016.
  */
@@ -67,20 +65,19 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         pd = (ProgressBar) findViewById(R.id.pd);
 
         new GoogleApiClient.Builder(this)
-                .addApi(AppInvite.API)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult connectionResult) {
-                        Toast.makeText(InviteFriendActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
-                    }
-                }).build();
+        .addApi(AppInvite.API)
+        .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+            @Override
+            public void onConnectionFailed(ConnectionResult connectionResult) {
+                Toast.makeText(InviteFriendActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
+            }
+        }).build();
         init();
         eventCategory = getIntent().getStringExtra("EventName");
         eventID = getIntent().getStringExtra("EventID");
       //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
         longDeepLink = longDeepLink + eventID+"&utm_medium=Whatsapp&utm_campaign="+eventCategory;
         btnShare.setOnClickListener(this);
-
 
     }
     private void init(){
@@ -166,7 +163,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 }
                 res= buffer.toString();
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                //e.printStackTrace();// for now eat exceptions
             } catch (ProtocolException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -203,6 +200,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 //sendIntent.setPackage("com.whatsapp");
                 try{
                     startActivity(sendIntent);
+                    overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
                 }catch (Exception ex){
                     Toast.makeText(getBaseContext(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
                 }
@@ -254,6 +252,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
            //sendIntent.setPackage("com.whatsapp");
            try{
                startActivity(sendIntent);
+               overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
            }catch (Exception ex){
                Toast.makeText(getBaseContext(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
            }
@@ -326,6 +325,13 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        shortLinkURL="";
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         shortLinkURL="";
     }
 }

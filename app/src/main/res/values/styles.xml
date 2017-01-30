@@ -88,4 +88,12 @@
         <item name="@android:windowExitAnimation">@anim/disappear</item>
     </style>
 
+
+    <style name="AppNoTitleTheme" parent="@android:style/Theme.Translucent">
+        <!-- Customize your theme here. -->
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+
 </resources>

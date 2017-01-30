@@ -35,7 +35,6 @@ import org.w3c.dom.Comment;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 /**
  * Created by admin on 1/20/2017.
  */
@@ -55,7 +54,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     InputMethodManager imm;
     ArrayList<ChatData> alList;
     ArrayList<String> mKeys;
-    ChatAdapter chatAdapter;
+    FeaturedChatAdapter chatAdapter;
     TextView headerText;
 
     @Override
@@ -95,7 +94,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         swipeRefreshLayout.setOnRefreshListener(this);
         alList = new ArrayList<ChatData>();
         mKeys = new ArrayList<String>();
-        chatAdapter = new ChatAdapter(getActivity(), alList);
+        chatAdapter = new FeaturedChatAdapter(getActivity(), alList);
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -177,7 +176,9 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             listView.setAdapter(chatAdapter);
             chatAdapter.notifyDataSetChanged();
         }
-        catch (Exception ex){}
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
 
@@ -220,7 +221,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         }
     }
 
-    class ChatAdapter extends BaseAdapter {
+    class FeaturedChatAdapter extends BaseAdapter {
         Context con;
         ArrayList<ChatData> alList;
         TextView tvUser;
@@ -230,7 +231,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         LinearLayout.LayoutParams relativeParam;
         ImageView imgIcon;
         //  int limit;
-        public ChatAdapter(Context context, ArrayList<ChatData> al){
+        public FeaturedChatAdapter(Context context, ArrayList<ChatData> al){
             con = context;
             alList = al;
             //limit = msgLimit;
@@ -272,9 +273,11 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 //btnYes = (TextView) view.findViewById(R.id.btnYesTuneOrInvite);
                 //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             }
-            if(position < alList.size() && msgLimit < alList.size()) {
+            if(position < alList.size() && msgLimit <= alList.size()) {
                 ChatData model = alList.get(alList.size()-msgLimit+position);
                 populateView(view, model);
+            }else{
+                System.out.println("errorrr");
             }
             return view;
         }
@@ -282,13 +285,12 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         protected void populateView(final View v, ChatData model) {
             try {
                 headerText.setText(new SimpleDateFormat("dd-MMM hh:mm a").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getTimestamp())) );
-                tvMsg.setText(/*new SimpleDateFormat("dd-MMM hh:mm a").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getTimestamp())) + "\n" +*/ model.getTitle().replace("#", ""));
-            }
-            catch (Exception e){
+                tvMsg.setText(model.getTitle().replace("#featured", "").replace("#Featured", "").replace("#FEATURED", ""));
+            }catch (Exception e){
                 e.printStackTrace();
             }
+
             tvUser.setText(model.getAuthor());
-            linearBtn.setVisibility(View.GONE);
             relativeParam = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             String sender = model.getAuthor();
             String fromUser = model.getToUser();
@@ -307,7 +309,6 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             linearBtn.setVisibility(View.GONE);
             if(model.getAuthor().equalsIgnoreCase("Admin")) {
                 imgIcon.setVisibility(View.VISIBLE);
-
             }else{
                 imgIcon.setVisibility(View.GONE);
                 tvMsg.setBackgroundColor(Color.TRANSPARENT);

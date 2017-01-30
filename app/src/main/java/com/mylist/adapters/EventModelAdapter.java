@@ -104,8 +104,9 @@ public class EventModelAdapter extends BaseAdapter {
                         subscribed_user = new String("You +" + iSubscribedUser);
                         viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                     } catch (Exception ex) {
-                        ex.printStackTrace();
-                    //    subscribed_user = new String(" +" + subscribed_user);
+                        //ex.printStackTrace(); // for now eat exceptions
+
+                        //    subscribed_user = new String(" +" + subscribed_user);
                     }
                 }else{
                 //    subscribed_user = new String(" +" + subscribed_user);

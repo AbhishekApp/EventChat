@@ -76,7 +76,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     int noSend;
     ArrayList<ChatData> alList;
     ArrayList<String> mKeys;
-    ChatAdapter chatAdapter;
+    StadiumChatAdapter chatAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,7 +122,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         viewLay.setOnItemClickListener(this);
         alList = new ArrayList<ChatData>();
         mKeys = new ArrayList<String>();
-        chatAdapter = new ChatAdapter(getActivity(), alList);
+        chatAdapter = new StadiumChatAdapter(getActivity(), alList);
     //    listView.setAdapter(chatAdapter);
 
         ChildEventListener childEventListener = new ChildEventListener() {
@@ -474,6 +474,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onRefresh() {
+        //if(alList.size() <= msgLimit+5)
         msgLimit+=5;
         chatAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
@@ -558,7 +559,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    class ChatAdapter extends BaseAdapter{
+    class StadiumChatAdapter extends BaseAdapter{
         Context con;
         ArrayList<ChatData> alList;
         TextView tvUser,tvMsg,tvComMsg1;
@@ -568,7 +569,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         ImageView imgIcon;
         RelativeLayout comRL;
         //int limit;
-        public ChatAdapter(Context context, ArrayList<ChatData> al){
+        public StadiumChatAdapter(Context context, ArrayList<ChatData> al){
             con = context;
             alList = al;
             //limit = msgLimit;

@@ -54,7 +54,7 @@ public class MyUtill {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
-            e.printStackTrace();
+            //e.printStackTrace();// for now eat exceptions
         } catch (Exception ex){
             Log.e("MyUtill", "Get Data From Server ERROR: "+ex.toString());
         }

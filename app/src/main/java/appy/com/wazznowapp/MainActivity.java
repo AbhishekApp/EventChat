@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.app.model.AnalyticsSingleton;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
@@ -39,6 +40,8 @@ import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mylist.adapters.EventAdapter;
 import com.mylist.adapters.EventModelAdapter;
 
@@ -56,6 +59,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     ListView listMain;
@@ -81,11 +85,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     int REQUEST_INVITE = 111;
     //    static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
+    private FirebaseAnalytics firebaseAnalytics;
+    String[] eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // If a notification message is tapped, any data accompanying the notification
+        // message is available in the intent extras. In this sample the launcher
+        // intent is fired when the notification is tapped, so any accompanying data would
+        // be handled here. If you want a different intent fired, set the click_action
+        // field of the notification message to the desired intent. The launcher intent
+        // is used when no click_action is specified.
+        //
+        // Handle possible data accompanying notification message.
+        // [START handle_data_extras]
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(TAG, "Key: " + key + " Value: " + value);
+            }
+        }
+        // [END handle_data_extras]
+
+        // Get token
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        // Log and toast
+        String msg = getString(R.string.msg_token_fmt, token);
+        Log.d(TAG, msg);
+        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+
         connectDetector = new ConnectDetector(this);
         if(connectDetector.getConnection()) {
             if (!firstFlag) {
@@ -186,8 +219,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }*/
     }
 
+
+    private int randomIndex() {
+        int min = 0;
+        int max = eventList.length - 1;
+        Random rand = new Random();
+        return min + rand.nextInt((max - min) + 1);
+    }
+
     private void init(){
             handler = new Handler();
+            // Obtain the Firebase Analytics instance.
+            firebaseAnalytics = FirebaseAnalytics.getInstance(this);
             firebase = new Firebase(firebaseURL);
             firebaseEvent = firebase.child("EventList");
             listMain = (ListView) findViewById(R.id.listMainEvent);
@@ -196,6 +239,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             eventAdapter = new EventModelAdapter(this, arrayListEvent);
             listMain.setAdapter(eventAdapter);
             listMain.setOnItemClickListener(this);
+
+
+            /********************************FIREBASE ANALYTICS CODE*****************************************/
+            eventList = new String[]{"MI vs XXR", "Delhi vs Punjab", "Pune vs Punjab", "KKR vs Pune", "Karnatka vs Telugu"};
+
+            AnalyticsSingleton as = new AnalyticsSingleton();
+            as.setId(1);
+            // choose random food name from the list
+            as.setName(eventList[randomIndex()]);
+
+            Bundle bundle = new Bundle();
+            bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, as.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
+
+            //Logs an app event.
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+            //Sets whether analytics collection is enabled for this app on this device.
+            firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+            //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
+            firebaseAnalytics.setMinimumSessionDuration(20000);
+            //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
+            firebaseAnalytics.setSessionTimeoutDuration(500);
+            //Sets the user ID property.
+            firebaseAnalytics.setUserId(String.valueOf(as.getId()));
+
+            //Sets a user property to a given value.
+            firebaseAnalytics.setUserProperty("eventList", as.getName());
+            /************************************************************************************/
+
+
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
