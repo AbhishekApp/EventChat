@@ -50,7 +50,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
     SharedPreferences.Editor editor;
     String userName="";
-    int msgLimit = 3;
+    int msgLimit = 10;
     InputMethodManager imm;
     ArrayList<ChatData> alList;
     ArrayList<String> mKeys;

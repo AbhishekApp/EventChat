@@ -58,8 +58,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     static boolean addHousePartyFLAG = false;
     SharedPreferences.Editor editor;
 
-    public HousePartyFragment() {
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

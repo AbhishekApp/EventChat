@@ -76,6 +76,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                 linear.setGravity(Gravity.RIGHT);
                 relativeParam.addRule(Gravity.CENTER);
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                relativeParam.setMargins(0,5,105,5);
                 linear.setLayoutParams(relativeParam);
 //              linear.setBackgroundResource(R.drawable.chat_outgoing_background);
                 linear.setBackgroundResource(R.drawable.outgoing_message_bg);
@@ -93,6 +94,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
                 linear.setGravity(Gravity.LEFT);
 
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                relativeParam.setMargins(105,5,0,5);
                 linear.setLayoutParams(relativeParam);
 //            linear.setBackgroundResource(R.drawable.chat_incomin_background);
                 linear.setBackgroundResource(R.drawable.incoming_message_bg);
