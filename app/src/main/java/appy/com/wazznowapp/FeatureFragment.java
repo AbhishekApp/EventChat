@@ -68,7 +68,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
     SharedPreferences.Editor editor;
     String userName = "";
-    int msgLimit = 1;
+    int msgLimit = 3;
     //InputMethodManager imm;
     ArrayList<ChatData> alList;
     ArrayList<String> mKeys;
@@ -315,12 +315,17 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             });
 
 
-            if (position < alList.size() && msgLimit <= alList.size()) {
+          //  if (position < alList.size() && msgLimit <= alList.size()) {
+            try {
                 ChatData model = alList.get(alList.size() - msgLimit + position);
                 populateView(view, model);
-            } else {
-                System.out.println("error");
             }
+            catch(Exception e){
+                // for now eat exceptions
+            }
+           // } else {
+            //    System.out.println("error");
+            //}
             return view;
         }
 
