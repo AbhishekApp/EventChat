@@ -3,6 +3,7 @@ package appy.com.wazznowapp;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -32,6 +33,7 @@ public class MyApp extends Application {
     public static String USER_TYPE = "UserType";
     public static String USER_PASSWORD = "UserPassword";
     public static ArrayList<CannedMessage> alCanMsg;
+    public static Typeface authorFont,authorMsg;
 
     @Override
     public void onCreate() {
@@ -44,11 +46,15 @@ public class MyApp extends Application {
         preferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         getDeviveID(getApplicationContext());
         alCanMsg = new ArrayList<CannedMessage>();
+
+
+        authorFont = Typeface.createFromAsset(getAssets(),"Roboto-Medium.ttf");
+        authorMsg = Typeface.createFromAsset(getAssets(),"Roboto-Light.ttf");
+
     }
 
     public static String getDeviveID(Context con){
-        String android_id = Settings.Secure.getString(con.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+        String android_id = Settings.Secure.getString(con.getContentResolver(),Settings.Secure.ANDROID_ID);
         Log.d("Android", "Android ID : " + android_id);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("Android_ID", android_id);

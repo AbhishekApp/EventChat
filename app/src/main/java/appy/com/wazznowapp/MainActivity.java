@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.app.model.AnalyticsSingleton;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
@@ -39,6 +40,8 @@ import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mylist.adapters.EventAdapter;
 import com.mylist.adapters.EventModelAdapter;
 
@@ -56,9 +59,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-
     ListView listMain;
     private static boolean firstFlag = false;
     GoogleApiClient mGoogleApiClient;
@@ -82,11 +85,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     int REQUEST_INVITE = 111;
     //    static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
+    private FirebaseAnalytics firebaseAnalytics;
+    String[] eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // If a notification message is tapped, any data accompanying the notification
+        // message is available in the intent extras. In this sample the launcher
+        // intent is fired when the notification is tapped, so any accompanying data would
+        // be handled here. If you want a different intent fired, set the click_action
+        // field of the notification message to the desired intent. The launcher intent
+        // is used when no click_action is specified.
+        //
+        // Handle possible data accompanying notification message.
+        // [START handle_data_extras]
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(TAG, "Key: " + key + " Value: " + value);
+            }
+        }
+        // [END handle_data_extras]
+
+        // Get token
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        // Log and toast
+        String msg = getString(R.string.msg_token_fmt, token);
+        Log.d(TAG, msg);
+        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+
         connectDetector = new ConnectDetector(this);
         if(connectDetector.getConnection()) {
             if (!firstFlag) {
@@ -110,39 +142,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             boolean autoLaunchDeepLink = true;
             AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
-                    .setResultCallback(
-                            new ResultCallback<AppInviteInvitationResult>() {
-                                @Override
-                                public void onResult(AppInviteInvitationResult result) {
-                                    Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
-                                    if (result.getStatus().isSuccess()) {
-                                        // Extract information from the intent
-                                        Intent intent = result.getInvitationIntent();
-                                        String deepLink = AppInviteReferral.getDeepLink(intent);
-                                        String invitationId = AppInviteReferral.getInvitationId(intent);
-                                        String inviterDeviceID = intent.getStringExtra("UserDeviceID");
-                                        Uri uri = intent.getData();
-                                        invitedEventid = uri.getQueryParameter("eventid");
-                                       try{
-                                           Log.e("MainActivity", "get Deep link URL "+deepLink);
-                                           Log.e("MainActivity", "get Deep link uri "+uri.toString());
-                                           invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
-                                           Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
-                                           invitedGroup = deepLink.split("utm_campaign=")[1];
-                                           Log.e("MainActivity", "get Deep link group "+invitedGroup);
-                                           getInvited = true;
+                .setResultCallback(
+                    new ResultCallback<AppInviteInvitationResult>() {
+                        @Override
+                        public void onResult(AppInviteInvitationResult result) {
+                        Log.d("MainActivity", "getInvitation:onResult:" + result.getStatus());
+                        if (result.getStatus().isSuccess()) {
+                            // Extract information from the intent
+                            Intent intent = result.getInvitationIntent();
+                            String deepLink = AppInviteReferral.getDeepLink(intent);
+                            String invitationId = AppInviteReferral.getInvitationId(intent);
+                            String inviterDeviceID = intent.getStringExtra("UserDeviceID");
+                            Uri uri = intent.getData();
+                            invitedEventid = uri.getQueryParameter("eventid");
+                           try{
+                               Log.e("MainActivity", "get Deep link URL "+deepLink);
+                               Log.e("MainActivity", "get Deep link uri "+uri.toString());
+                               invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
+                               Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
+                               invitedGroup = deepLink.split("utm_campaign=")[1];
+                               Log.e("MainActivity", "get Deep link group "+invitedGroup);
+                               getInvited = true;
 
-                                       }catch (Exception ex){
-                                           Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
-                                           getInvited = false;
-                                       }
-                                        // Because autoLaunchDeepLink = true we don't have to do anything
-                                        // here, but we could set that to false and manually choose
-                                        // an Activity to launch to handle the deep link here.
-                                        // ...
-                                    }
-                                }
-                            });
+                           }catch (Exception ex){
+                               Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
+                               getInvited = false;
+                           }
+                            // Because autoLaunchDeepLink = true we don't have to do anything
+                            // here, but we could set that to false and manually choose
+                            // an Activity to launch to handle the deep link here.
+                            // ...
+                        }
+                        }
+                    });
             init();
         } else{
             Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
@@ -170,15 +202,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
         Intent iChat = new Intent(this, EventChatFragment.class);
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
-
       /*  for(int i = 0; i < arrayListEvent.size() ; i++){
             EventDetail event = arrayListEvent.get(i);
             if(eventName.equals(event.getCategory_name())){
@@ -188,11 +217,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 break;
             }
         }*/
+    }
 
+
+    private int randomIndex() {
+        int min = 0;
+        int max = eventList.length - 1;
+        Random rand = new Random();
+        return min + rand.nextInt((max - min) + 1);
     }
 
     private void init(){
             handler = new Handler();
+            // Obtain the Firebase Analytics instance.
+            firebaseAnalytics = FirebaseAnalytics.getInstance(this);
             firebase = new Firebase(firebaseURL);
             firebaseEvent = firebase.child("EventList");
             listMain = (ListView) findViewById(R.id.listMainEvent);
@@ -202,10 +240,48 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             listMain.setAdapter(eventAdapter);
             listMain.setOnItemClickListener(this);
 
+
+            /********************************FIREBASE ANALYTICS CODE*****************************************/
+            eventList = new String[]{"MI vs XXR", "Delhi vs Punjab", "Pune vs Punjab", "KKR vs Pune", "Karnatka vs Telugu"};
+
+            AnalyticsSingleton as = new AnalyticsSingleton();
+            as.setId(1);
+            // choose random food name from the list
+            as.setName(eventList[randomIndex()]);
+
+            Bundle bundle = new Bundle();
+            bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, as.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
+
+            //Logs an app event.
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+            //Sets whether analytics collection is enabled for this app on this device.
+            firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+            //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
+            firebaseAnalytics.setMinimumSessionDuration(20000);
+            //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
+            firebaseAnalytics.setSessionTimeoutDuration(500);
+            //Sets the user ID property.
+            firebaseAnalytics.setUserId(String.valueOf(as.getId()));
+
+            //Sets a user property to a given value.
+            firebaseAnalytics.setUserProperty("eventList", as.getName());
+
+
+
+            Bundle params = new Bundle();
+            params.putString("custom_event", "MainActivity.java");
+            params.putString("custom_message", "tracking firebase");
+            firebaseAnalytics.logEvent("share_image", params);
+
+            /************************************************************************************/
+
+
+
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-               Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
+              // Log.e(TAG, "onChildAdded:" + dataSnapshot.getKey());
             }
 
             @Override
@@ -216,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 // comment and if so displayed the changed comment.
                 try{
                     EventDtList evList = dataSnapshot.getValue(EventDtList.class);
-                    arrayListEvent = new ArrayList<EventDetail>();
+                    arrayListEvent.clear();
                     EventDetail eventDetail = new EventDetail();
                     for(int i = 0; i < evList.getCate().size(); i++){
                         EventSubCateList subCtList = evList.getCate().get(i);
@@ -354,7 +430,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         firstFlag = false;
     }
 
-
     class EventTask extends AsyncTask<Void, Void, Void>{
         HttpURLConnection urlConnection;
         JSONArray jsonArray;
@@ -397,6 +472,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 editor.putString("jsonEventData",jsonObject.toString());
                 editor.commit();
                 int length =  jsonObject.length();
+                arrayListEvent.clear();
                 System.out.println("EVENT DATA length : " + length);
                 for(int i = 0 ; i < length; i++){
                     JSONObject jSon = jsonObject.getJSONObject(i);
@@ -408,6 +484,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     model.Cate = new ArrayList<EventDetail>();
                     JSONArray jArray = jSon.getJSONArray("Cate");
                     EventDetail detail = new EventDetail();
+
                     for(int j = 0; j <jArray.length() ; j++){
 
                         JSONObject jsonDetail = jArray.getJSONObject(j);

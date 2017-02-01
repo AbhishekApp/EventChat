@@ -1,102 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="1dp"
-        android:paddingTop="5dp"
-        android:layout_marginLeft="6dp"
-        android:background="@color/white">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="6dp"
+    android:background="@color/white"
+    android:focusable="false"
+    android:orientation="vertical"
+    android:paddingLeft="1dp"
+    android:paddingTop="5dp">
 
     <ImageView
         android:id="@+id/imgIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/icon_admin"
-        android:scaleType="center"
         android:layout_alignBottom="@+id/linearMsgChat"
-        android:visibility="gone"/>
+        android:focusable="false"
+        android:scaleType="center"
+        android:src="@drawable/icon_admin"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/linearMsgChat"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_toRightOf="@+id/imgIcon"
+        android:focusable="false"
         android:orientation="vertical"
         android:paddingTop="1dp"
-        android:layout_gravity="center"
-        android:layout_toRightOf="@+id/imgIcon">
+        android:visibility="visible">
 
-    <TextView
-        android:id="@+id/tvChatUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_small_size"
-        android:textStyle="bold"
-        android:layout_gravity="left"
-        android:padding="1dp"
-        />
-
-    <TextView
-        android:id="@+id/tvChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="300dp"
-        android:text=""
-        android:textSize="@dimen/text_mid_size"
-        android:textColor="@color/chat_text_color"
-        android:padding="2dp"
-        android:layout_gravity="left"
-        android:ellipsize="end"/>
-
-        <LinearLayout
-            android:id="@+id/linearBtn"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvChatUser"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="4dp"
-            android:visibility="gone"
-            android:gravity="center">
+            android:layout_gravity="left"
+            android:focusable="false"
+            android:padding="1dp"
+            android:text=""
+            android:textColor="#605f64"
+            android:textSize="@dimen/text_small_size"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/btnYesTuneOrInvite"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="@dimen/text_small_size"
-                android:text="Yes I want to tune"
-                android:minHeight="15dp"
-                android:maxHeight="15dp"
-                android:layout_marginRight="1dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:layout_weight="0.5"/>
-
-       <!--     <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/white"/>-->
-
-            <TextView
-                android:id="@+id/btnNoThanks"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="@dimen/text_small_size"
-                android:text="No Thanks"
-
-                android:layout_marginLeft="1dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:layout_weight="0.5"/>
-
-
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/tvChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:ellipsize="end"
+            android:focusable="false"
+            android:maxWidth="300dp"
+            android:padding="2dp"
+            android:text=""
+            android:textColor="#595959"
+            android:textSize="@dimen/text_mid_size" />
     </LinearLayout>
 
+    <include layout="@layout/commentator" />
 
 </RelativeLayout>
-<!--</android.support.v7.widget.CardView>-->
