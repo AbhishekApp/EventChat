@@ -10,6 +10,7 @@ import android.util.Log;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.firebase.client.Firebase;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -48,9 +49,24 @@ public class MyApp extends Application {
         alCanMsg = new ArrayList<CannedMessage>();
 
 
+        /*****************************************Firebase Offline Capabilities****************************************/
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true); //Globally set Persistence to all instance of firebase at initialisation level of app
+
+
+        /*************************************Enable Image Caching *************************************************************************/
+
+        //Picasso.Builder builder = new Picasso.Builder(this);
+        //builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));
+        //Picasso built = builder.build();
+        //built.setIndicatorsEnabled(true); //just for testing caching feature of Picasso
+        //built.setloggingEnabled(true); //this feature is depreciated from  2.1.0 & now obsoleted
+        //Picasso.setSingletonInstance(built);
+
+        /**************************************************************************************************************/
+
         authorFont = Typeface.createFromAsset(getAssets(),"Roboto-Medium.ttf");
         authorMsg = Typeface.createFromAsset(getAssets(),"Roboto-Light.ttf");
-
     }
 
     public static String getDeviveID(Context con){

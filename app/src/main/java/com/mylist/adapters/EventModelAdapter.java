@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.app.model.EventDetail;
 import com.app.model.MyUtill;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -91,7 +92,11 @@ public class EventModelAdapter extends BaseAdapter {
             viewHolder.tvHour.setText(strTime);
         }
         if(detail.getSubscribed_user().equalsIgnoreCase("0")) {
-                viewHolder.tvNoOfTune.setVisibility(View.GONE);
+            //viewHolder.tvNoOfTune.setVisibility(View.GONE);
+            String subscribed_user = detail.getSubscribed_user();
+            int iSubscribedUser = Integer.parseInt(subscribed_user);
+            subscribed_user = new String("" + iSubscribedUser);
+            viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");
         }
         else {
 
@@ -99,22 +104,16 @@ public class EventModelAdapter extends BaseAdapter {
 //            if (groupRec != null && detail.getCatergory_id() != null) {
                 if (MyApp.preferences.getBoolean(detail.getCatergory_id(), false)) {
                     try {
+                        viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                         int iSubscribedUser = Integer.parseInt(subscribed_user);
                         iSubscribedUser--;
                         subscribed_user = new String("You +" + iSubscribedUser);
-                        viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                     } catch (Exception ex) {
-                        //ex.printStackTrace(); // for now eat exceptions
-
-                        //    subscribed_user = new String(" +" + subscribed_user);
+                        ex.printStackTrace();
                     }
                 }else{
-                //    subscribed_user = new String(" +" + subscribed_user);
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
                 }
-//            }else{
-//            //    subscribed_user = new String(" +" + subscribed_user);
-//            }
             viewHolder.tvNoOfTune.setVisibility(View.VISIBLE);
             viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");
         }
@@ -146,15 +145,17 @@ public class EventModelAdapter extends BaseAdapter {
         try{
             StorageReference storageRef = storage.getReferenceFromUrl(MyApp.FIREBASE_IMAGE_URL);
             StorageReference pathReference = storageRef.child(fileName+".jpg");
-
-                Glide.with(con)
-                        .using(new FirebaseImageLoader())
-                        .load(pathReference)
-                        .into(img);
-
-                // Glide.with(con).load(uri).into(img);
-
-//
+            Glide.with(con)
+            .using(new FirebaseImageLoader())
+            .load(pathReference)
+            .diskCacheStrategy
+            (DiskCacheStrategy.SOURCE) //Unfortunately there isn't any way to influence the contents of the cache directly.
+                                 // You cannot either remove an item explicitly, or force one to be kept.
+                                 // In practice with an appropriate disk cache size you usually don't need to worry about doing either.
+                                 // If you display your image often enough, it won't be evicted.
+                                 // If you try to cache additional items and run out of space in the cache, older items will be evicted automatically to make space.
+            .into(img);
+           // Glide.with(con).load(uri).into(img);
         }catch (Exception ex){
             Log.e("EventModelAdapter", "EventModelAdapter DownloadImageURL ERROR: "+ex.toString());
         }
@@ -164,6 +165,5 @@ public class EventModelAdapter extends BaseAdapter {
         ImageView img, imgChat;
         TextView tvCateName, tvHour, tvEventName, tvNoOfTune, tvEventPlace;
     }
-
 
 }

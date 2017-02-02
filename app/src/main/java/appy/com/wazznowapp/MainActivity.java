@@ -181,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -267,14 +266,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //Sets a user property to a given value.
             firebaseAnalytics.setUserProperty("eventList", as.getName());
 
-
+        /*****************************************Firebase Custom Events Analytics****************************************/
 
             Bundle params = new Bundle();
             params.putString("custom_event", "MainActivity.java");
             params.putString("custom_message", "tracking firebase");
             firebaseAnalytics.logEvent("share_image", params);
 
-            /************************************************************************************/
+        /*****************************************Firebase Offline Capabilities****************************************/
+
 
 
 
@@ -453,19 +453,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         protected Void doInBackground(Void... params) {
-//            URL url = null;
             try {
-//                url = new URL(eventURL);
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-//                StringBuilder sb = new StringBuilder();
-//                String line;
-//                while ((line = br.readLine()) != null) {
-//                    sb.append(line + "\n");
-//                }
-//                br.close();
-
-//                JSONArray jsonObject = new JSONArray(sb.toString());
                 JSONArray jsonObject = myUtill.getJSONFromServer(eventURL);
                 System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
                 SharedPreferences.Editor editor = MyApp.preferences.edit();

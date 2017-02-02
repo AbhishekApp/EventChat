@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import appy.com.wazznowapp.MyApp;
-import appy.com.wazznowapp.SignUpActivity;
 
 /**
  * Created by admin on 8/12/2016.
@@ -68,7 +67,6 @@ public class UserProfile {
     }
 
     public void updateUserGroup(Context con, String newGroup) {
-
         String userGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, null);
         if(userGroup != null && !TextUtils.isEmpty(userGroup)){
             if(!userGroup.contains(newGroup)){

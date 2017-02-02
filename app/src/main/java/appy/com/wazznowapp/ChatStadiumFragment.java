@@ -36,6 +36,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mylist.adapters.CannedAdapter;
 
@@ -100,8 +101,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     ProgressBar pd;
     String shortLinkURL="";
     String msg;
-
-
+    private DatabaseReference mDatabaseRefrenceSync;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,8 +112,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             myFirebaseRef = new Firebase(firebaseURL);
             alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("StadiumChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-            alanRef.keepSynced(true);
+            alanRef.keepSynced(true); //synk db from live
+
+            mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("StadiumChat");
+            mDatabaseRefrenceSync.keepSynced(true); //sync db from disk
         }
     }
 
@@ -677,7 +679,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
             ImageView share = (ImageView) view.findViewById(R.id.share);
             //ImageView facebook = (ImageView) RLcomlay.findViewById(R.id.facebook);
-
+            if(!share.isShown())
+                share.setVisibility(View.VISIBLE);
 
             share.setOnClickListener(new View.OnClickListener() {
                 @Override

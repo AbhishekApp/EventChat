@@ -43,8 +43,6 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvMsg = (TextView) v.findViewById(R.id.tvChat);
         linear = (LinearLayout) v.findViewById(R.id.linearMsgChat);
         //linearBtn = (LinearLayout) v.findViewById(linearBtn);
-        btnYes = (TextView) v.findViewById(R.id.btnYesTuneOrInvite);
-        btnNo = (TextView) v.findViewById(R.id.btnNoThanks);
 
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
@@ -105,8 +103,6 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
 
             if(model.getAuthor().equalsIgnoreCase("Admin")) {
                 imgIcon.setVisibility(View.VISIBLE);
-
-
 
             }else{
                 imgIcon.setVisibility(View.GONE);

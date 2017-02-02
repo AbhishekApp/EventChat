@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.firebase.client.Firebase;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +40,6 @@ public class MyUtill {
         }
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
-
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line;
@@ -58,19 +56,15 @@ public class MyUtill {
         } catch (Exception ex){
             Log.e("MyUtill", "Get Data From Server ERROR: "+ex.toString());
         }
-
     //    System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
-
         return jsonObject;
     }
-
-
 
     public static void addMsgtoFeatured(Activity act,String msg){
         Firebase myFirebaseRef = new Firebase(FIREBASE_BASE_URL);
         Firebase alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("FeatureChat");
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         alanRef.keepSynced(true);
         ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(act), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
         alanRef.push().setValue(alan);
@@ -78,7 +72,7 @@ public class MyUtill {
 
 
     public String getTimeDifference(String startDate, String startTime){
-/*        String format = "MM/dd/yyyy HH:mm:ss";
+/*      String format = "MM/dd/yyyy HH:mm:ss";
         System.out.println("event Time Difference : "+startDate+" "+startTime);
         String date1 = startDate;
         String time1 = startTime;

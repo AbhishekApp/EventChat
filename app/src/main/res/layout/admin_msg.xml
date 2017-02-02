@@ -38,7 +38,7 @@
         <LinearLayout
             android:id="@+id/linearAdminBtn"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="35dp"
             android:background="@drawable/admin_bg"
             android:gravity="center"
             android:orientation="horizontal"
@@ -49,6 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border"
+                android:gravity="center"
                 android:padding="3dp">
 
                 <TextView
@@ -60,12 +61,13 @@
                     android:layout_marginRight="2dp"
                     android:gravity="left|center_vertical"
                     android:padding="2dp"
-                    android:textSize="8sp"
+                    android:textSize="9sp"
                     android:textStyle="bold" />
 
-                <ImageView android:id="@+id/like"
+                <ImageView
+                    android:id="@+id/like"
                     android:layout_width="15dp"
-                    android:layout_height="15dp"/>
+                    android:layout_height="15dp" />
 
             </LinearLayout>
 
@@ -82,6 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border"
+                android:gravity="center"
                 android:padding="3dp">
 
                 <TextView
@@ -93,12 +96,13 @@
                     android:gravity="right|center_vertical"
                     android:maxLines="1"
                     android:padding="2dp"
-                    android:textSize="8sp"
+                    android:textSize="9sp"
                     android:textStyle="bold" />
 
-                <ImageView android:id="@+id/dislike"
+                <ImageView
+                    android:id="@+id/dislike"
                     android:layout_width="15dp"
-                    android:layout_height="15dp"/>
+                    android:layout_height="15dp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

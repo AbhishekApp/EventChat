@@ -86,5 +86,6 @@
         android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/linearAdmin"
         android:scaleType="fitXY"
-        android:src="@drawable/share" />
+        android:src="@drawable/share"
+        android:visibility="visible" />
 </RelativeLayout>

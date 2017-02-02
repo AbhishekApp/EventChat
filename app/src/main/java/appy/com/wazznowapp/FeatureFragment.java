@@ -32,7 +32,6 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,7 +94,6 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             myFirebaseRef = new Firebase(firebaseURL);
             alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("FeatureChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             alanRef.keepSynced(true);
         }
     }
@@ -256,7 +254,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         TextView tvUser;
         TextView tvMsg;
         //TextView btnYes, btnNo;
-        LinearLayout linear, linearBtn;
+        LinearLayout linear;
         LinearLayout.LayoutParams relativeParam;
         ImageView imgIcon;
         ImageView share;
@@ -292,7 +290,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 tvUser = (TextView) view.findViewById(R.id.tvChatUser);
                 tvMsg = (TextView) view.findViewById(R.id.tvChat);
                 linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
-                linearBtn = (LinearLayout) view.findViewById(R.id.linearBtn);
+
                 //btnYes = (TextView) view.findViewById(R.id.btnYesTuneOrInvite);
                 //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             } else {
@@ -300,7 +298,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 tvUser = (TextView) view.findViewById(R.id.tvChatUser);
                 tvMsg = (TextView) view.findViewById(R.id.tvChat);
                 linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
-                linearBtn = (LinearLayout) view.findViewById(R.id.linearBtn);
+
                 //btnYes = (TextView) view.findViewById(R.id.btnYesTuneOrInvite);
                 //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             }
@@ -333,6 +331,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             try {
                 headerText.setText(new SimpleDateFormat("dd-MMM hh:mm a").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getTimestamp())));
                 tvMsg.setText(model.getTitle().replace("#featured", "").replace("#Featured", "").replace("#FEATURED", ""));
+                if (tvMsg.getText().toString().trim().length()>1)
                 share.setVisibility(View.VISIBLE);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -345,16 +344,14 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
             boolean isEqual = sender.equalsIgnoreCase(userName);
             tvMsg.setGravity(Gravity.LEFT);
-            tvMsg.setPadding(35, 5, 10, 15);
+            tvMsg.setPadding(5, 5, 10, 15);
             tvUser.setGravity(Gravity.LEFT);
             tvUser.setVisibility(View.VISIBLE);
             tvUser.setPadding(35, 5, 10, 5);
             linear.setGravity(Gravity.LEFT);
             linear.setLayoutParams(relativeParam);
-            //linear.setBackgroundResource(R.drawable.chat_incomin_background);
-            linear.setBackgroundResource(R.drawable.chat_incomin_background);
+            linear.setVisibility(View.VISIBLE);
             linear.setPadding(35, 5, 80, 5);
-            linearBtn.setVisibility(View.GONE);
             if (model.getAuthor().equalsIgnoreCase("Admin")) {
                 imgIcon.setVisibility(View.VISIBLE);
             } else {

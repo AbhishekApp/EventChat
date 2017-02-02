@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
         android:gravity="left"
         android:orientation="vertical"
-        android:paddingLeft="1dp"
-        android:paddingTop="5dp"
-        android:id="@+id/linearLayout">
+        android:paddingLeft="1dp">
 
         <ImageView
             android:id="@+id/imgIcon"
@@ -27,10 +27,13 @@
             android:id="@+id/linearMsgChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="30dp"
             android:layout_toRightOf="@+id/imgIcon"
+            android:background="@drawable/chat_incomin_background"
             android:orientation="vertical"
-            android:paddingTop="1dp">
+            android:paddingTop="1dp"
+            android:visibility="gone">
 
 
             <TextView
@@ -39,46 +42,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:ellipsize="end"
-                android:maxWidth="300dp"
                 android:padding="2dp"
+                android:singleLine="true"
                 android:textColor="@color/chat_text_color"
                 android:textSize="@dimen/text_mid_size" />
 
-            <LinearLayout
-                android:id="@+id/linearBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="4dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                android:weightSum="1">
-
-                <TextView
-                    android:id="@+id/btnYesTuneOrInvite"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="1dp"
-                    android:layout_weight="0.5"
-                    android:maxHeight="15dp"
-                    android:minHeight="15dp"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:text="Yes I want to tune"
-                    android:textSize="@dimen/text_small_size" />
-
-                <TextView
-                    android:id="@+id/btnNoThanks"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="1dp"
-                    android:layout_weight="0.5"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:text="No Thanks"
-                    android:textSize="@dimen/text_small_size" />
-            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -92,8 +60,6 @@
             android:layout_marginLeft="12dp"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
-
-
     </LinearLayout>
 
 
@@ -101,10 +67,12 @@
         android:id="@+id/share"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp" android:visibility="gone"
+        android:layout_centerVertical="false"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="7dp"
         android:layout_toEndOf="@+id/linearLayout"
         android:layout_toRightOf="@+id/linearLayout"
         android:scaleType="fitXY"
-        android:src="@drawable/share" />
+        android:src="@drawable/share"
+        android:visibility="gone" />
 </RelativeLayout>
