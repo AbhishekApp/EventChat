@@ -52,6 +52,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static appy.com.wazznowapp.MyApp.FeaturedMsgLimit;
+
 /**
  * Created by admin on 1/20/2017.
  */
@@ -67,7 +69,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
     SharedPreferences.Editor editor;
     String userName = "";
-    int msgLimit = 3;
+    
     //InputMethodManager imm;
     ArrayList<ChatData> alList;
     ArrayList<String> mKeys;
@@ -92,7 +94,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         connectDetector = new ConnectDetector(getActivity());
         if (connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
-            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("FeatureChat");
+            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.eventDetail.getCategory_name()).child("FeatureChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             alanRef.keepSynced(true);
         }
@@ -135,6 +137,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 if (previousChildName == null) {
                     alList.add(0, model);
                     mKeys.add(0, key);
+                    FeaturedMsgLimit++;
                 } else {
                     int previousIndex = mKeys.indexOf(previousChildName);
                     int nextIndex = previousIndex + 1;
@@ -145,6 +148,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                         alList.add(nextIndex, model);
                         mKeys.add(nextIndex, key);
                     }
+                    FeaturedMsgLimit++;
                 }
                 chatAdapter.notifyDataSetChanged();
             }
@@ -216,14 +220,15 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onRefresh() {
-        msgLimit += 5;
+        if(alList.size() > FeaturedMsgLimit)
+            FeaturedMsgLimit = alList.size()-1;
         chatAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        msgLimit += 2;
+        FeaturedMsgLimit += 2;
 
     }
 
@@ -235,6 +240,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatFragment.eventID + "HouseParty", false);
         editor.commit();
+        MyApp.FeaturedMsgLimit=0;
     }
 
     public String getCurrentTimeStamp() {
@@ -263,12 +269,12 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         public FeaturedChatAdapter(Context context, ArrayList<ChatData> al) {
             con = context;
             alList = al;
-            //limit = msgLimit;
+            //limit = FeaturedMsgLimit;
         }
 
         @Override
         public int getCount() {
-            return msgLimit;
+            return FeaturedMsgLimit;
         }
 
         @Override
@@ -313,9 +319,9 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             });
 
 
-          //  if (position < alList.size() && msgLimit <= alList.size()) {
+          //  if (position < alList.size() && FeaturedMsgLimit <= alList.size()) {
             try {
-                ChatData model = alList.get(alList.size() - msgLimit + position);
+                ChatData model = alList.get(alList.size() - FeaturedMsgLimit + position);
                 populateView(view, model);
             }
             catch(Exception e){

@@ -62,6 +62,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
+
 /**
  * Created by admin on 8/2/2016.
  */
@@ -84,7 +86,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
     SharedPreferences.Editor editor;
     String userName="";
-    int msgLimit = 3;
+
     InputMethodManager imm;
     String subscribedGroup;
     int noSend;
@@ -102,6 +104,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     String shortLinkURL="";
     String msg;
     private DatabaseReference mDatabaseRefrenceSync;
+    View v;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,7 +113,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         connectDetector = new ConnectDetector(getActivity());
         if(connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
-            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("StadiumChat");
+            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.eventDetail.getCategory_name() + "/ " + EventChatFragment.eventDetail.getEvent_title() + "/ " + EventChatFragment.eventID).child("StadiumChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             alanRef.keepSynced(true); //synk db from live
 
@@ -169,6 +172,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 if (previousChildName == null) {
                     alList.add(0, model);
                     mKeys.add(0, key);
+                    StadiumMsgLimit++;
                 } else {
                     int previousIndex = mKeys.indexOf(previousChildName);
                     int nextIndex = previousIndex + 1;
@@ -178,6 +182,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     } else {
                         alList.add(nextIndex, model);
                         mKeys.add(nextIndex, key);
+                    }
+                    if(StadiumMsgLimit < 3){
+                        StadiumMsgLimit++;
                     }
                 }
                 chatAdapter.notifyDataSetChanged();
@@ -233,8 +240,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-                    View v = inflater.inflate(R.layout.admin_msg,null);
-                    linearLayout.addView(v);
+                    v = inflater.inflate(R.layout.admin_msg,null);
+                    listView.addHeaderView(v);
+                    listView.setAdapter(null);
+
+                    //linearLayout.addView(v);
                     TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
@@ -270,16 +280,19 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
                 //linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-                View vi = inflater.inflate(R.layout.admin_msg,null);
-                linearLayout.removeAllViews();
-                linearLayout.addView(vi);
-                LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
-                TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
-                TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
-                TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
+                View vii = inflater.inflate(R.layout.admin_msg,null);
+                //linearLayout.removeAllViews();
+                //linearLayout.addView(vi);
+                if(v!=null)
+                listView.removeHeaderView(v);
+                listView.addHeaderView(vii);
+                LinearLayout linearAdminBtn = (LinearLayout) vii.findViewById(R.id.linearAdminBtn);
+                TextView tvAdminMsg = (TextView) vii.findViewById(R.id.tvAdminMsg1);
+                TextView btnYes = (TextView) vii.findViewById(R.id.btnAdminMsgYes);
+                TextView btnNo = (TextView) vii.findViewById(R.id.btnAdminMsgNo);
 
-                ImageView like = (ImageView) vi.findViewById(R.id.like);
-                ImageView dislike = (ImageView) vi.findViewById(R.id.dislike);
+                ImageView like = (ImageView) vii.findViewById(R.id.like);
+                ImageView dislike = (ImageView) vii.findViewById(R.id.dislike);
 
                 like.setImageResource(R.drawable.add);
                 dislike.setImageResource(R.drawable.nothanks);
@@ -302,6 +315,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }else{
                 linearLayout.removeAllViews();
             }
+
+
+            if (MyApp.StadiumMsgLimit>1){
+                chatAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
         }catch (Exception ex){
             Log.e("StadiumFragment", "onStart method ERROR: " + ex.toString());
         }
@@ -320,7 +340,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             //linearLayout.removeAllViews();
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
             View vi = inflater.inflate(R.layout.admin_msg, null);
-            linearLayout.addView(vi);
+            //linearLayout.addView(vi);
+            listView.addHeaderView(vi);
             LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
             linearAdminBtn.setGravity(Gravity.CENTER);
             TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
@@ -434,13 +455,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }catch (Exception e){
             e.printStackTrace();
         }
-        if(!TextUtils.isEmpty(userName)) {
+        //if(!TextUtils.isEmpty(userName)) {
             subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
             if(subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
                 listView.setAdapter(chatAdapter);
                 chatAdapter.notifyDataSetChanged();
             }
-        }
+        //}
     }
 
 
@@ -531,15 +552,15 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onRefresh() {
-        //if(alList.size() <= msgLimit+5)
-        msgLimit+=5;
+        if(alList.size() > StadiumMsgLimit)
+            StadiumMsgLimit = alList.size()-1;
         chatAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        msgLimit+=2;
+        StadiumMsgLimit+=2;
         String msg = MyApp.alCanMsg.get(position).getCanned_message();
         sendMsg(msg);
     }
@@ -601,6 +622,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatFragment.eventID + "HouseParty", false);
         editor.commit();
+        MyApp.StadiumMsgLimit=0;
     }
 
 
@@ -633,7 +655,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
         @Override
         public int getCount() {
-            return msgLimit;
+            return StadiumMsgLimit;
         }
 
         @Override
@@ -700,8 +722,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             });*/
 
 
-            if(position < alList.size() && msgLimit < alList.size()) {
-                ChatData model = alList.get(alList.size()-msgLimit+position);
+            if(position < alList.size() && StadiumMsgLimit < alList.size()) {
+                ChatData model = alList.get(alList.size()-StadiumMsgLimit+position);
                 try {
                     populateView(view, model);
                 }
@@ -715,7 +737,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         protected void populateView(final View v, ChatData model) {
             tvMsg.setText(model.getTitle());
             tvUser.setText(model.getAuthor());
-
             tvUser.setTypeface(MyApp.authorFont);
             tvMsg.setTypeface(MyApp.authorMsg);
 
@@ -778,7 +799,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
 
         public class newShortAsync extends AsyncTask<Void,Void,String> {
-
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();

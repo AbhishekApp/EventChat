@@ -4,12 +4,15 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.app.model.AnalyticsSingleton;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.firebase.client.Firebase;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
@@ -35,6 +38,9 @@ public class MyApp extends Application {
     public static String USER_PASSWORD = "UserPassword";
     public static ArrayList<CannedMessage> alCanMsg;
     public static Typeface authorFont,authorMsg;
+    public static int FeaturedMsgLimit = 0;
+    public static int StadiumMsgLimit = 0;
+    private FirebaseAnalytics firebaseAnalytics;
 
     @Override
     public void onCreate() {
@@ -67,6 +73,11 @@ public class MyApp extends Application {
 
         authorFont = Typeface.createFromAsset(getAssets(),"Roboto-Medium.ttf");
         authorMsg = Typeface.createFromAsset(getAssets(),"Roboto-Light.ttf");
+
+
+
+        // Obtain the Firebase Analytics instance.
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     public static String getDeviveID(Context con){
@@ -77,4 +88,75 @@ public class MyApp extends Application {
         editor.commit();
         return android_id;
     }
+
+
+
+    public void DefinedEvent(String AnalyticsName){
+        /********************************FIREBASE ANALYTICS CODE*****************************************/
+
+        /*String typeOfDay;
+        switch (AnalyticsName) {
+            case "Monday":
+                typeOfDay = "work";
+                break;
+            case "Tuesday":
+                typeOfDay = "work";
+                break;
+            case "Wednesday":
+                typeOfDay = "work";
+                break;
+            case "Thursday":
+                typeOfDay = "Midweek";
+                break;
+            case "Friday":
+                typeOfDay = "End of work";
+                break;
+            case "Saturday":
+                typeOfDay = "work";
+                break;
+            case "Sunday":
+                typeOfDay = "Weekend";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid data: " + AnalyticsName);
+        }
+        return typeOfDay;*/
+
+
+
+        AnalyticsSingleton as = new AnalyticsSingleton();
+        as.setId(1);
+        // choose random food name from the list
+        as.setName(AnalyticsName);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, as.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
+        //Logs an app event.
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        //Sets whether analytics collection is enabled for this app on this device.
+        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
+        firebaseAnalytics.setMinimumSessionDuration(20000);
+        //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
+        firebaseAnalytics.setSessionTimeoutDuration(500);
+        //Sets the user ID property.
+        firebaseAnalytics.setUserId(String.valueOf(as.getId()));
+        //Sets a user property to a given value.
+        firebaseAnalytics.setUserProperty("eventList", as.getName());
+    }
+
+
+
+
+    public void CustomEventAnalytics(String customEventName,String custom){
+        /*****************************************Firebase Custom Events Analytics****************************************/
+        Bundle params = new Bundle();
+        params.putString("custom_event", "MainActivity.java");
+        params.putString("custom_message", "tracking firebase");
+        firebaseAnalytics.logEvent("share_image", params);
+    }
+
+
+
 }

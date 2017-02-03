@@ -16,8 +16,7 @@ public class ConnectDetector {
     }
 
     public boolean getConnection(){
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) con.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) con.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }

@@ -64,7 +64,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("HousepartyChat");
+        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.eventDetail.getCategory_name()  + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("HousepartyChat");
     }
 
     @Override
@@ -105,7 +105,8 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vi = inflater.inflate(R.layout.admin_msg,null);
                 linearLayout.removeAllViews();
-                linearLayout.addView(vi);
+                //linearLayout.addView(vi);
+                listView.addHeaderView(vi);
                 LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
                 linearAdminBtn.setGravity(Gravity.CENTER);
                 TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
@@ -168,6 +169,11 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     public void onStop() {
         super.onStop();
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

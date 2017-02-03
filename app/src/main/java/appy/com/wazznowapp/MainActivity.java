@@ -20,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.app.model.AnalyticsSingleton;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
@@ -85,8 +84,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     int REQUEST_INVITE = 111;
     //    static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
-    private FirebaseAnalytics firebaseAnalytics;
-    String[] eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,7 +172,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         }
                         }
                     });
-            init();
+                        try {
+                            init();
+                        }catch (Exception e){
+                            // for now eat exceptions
+                        }
         } else{
             Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
         }
@@ -219,64 +220,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private int randomIndex() {
-        int min = 0;
-        int max = eventList.length - 1;
-        Random rand = new Random();
-        return min + rand.nextInt((max - min) + 1);
-    }
 
     private void init(){
-            handler = new Handler();
-            // Obtain the Firebase Analytics instance.
-            firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-            firebase = new Firebase(firebaseURL);
-            firebaseEvent = firebase.child("EventList");
-            listMain = (ListView) findViewById(R.id.listMainEvent);
-            alModel = new ArrayList<EventModel>();
-            arrayListEvent = new ArrayList<EventDetail>();
-            eventAdapter = new EventModelAdapter(this, arrayListEvent);
-            listMain.setAdapter(eventAdapter);
-            listMain.setOnItemClickListener(this);
-
-
-            /********************************FIREBASE ANALYTICS CODE*****************************************/
-            eventList = new String[]{"MI vs XXR", "Delhi vs Punjab", "Pune vs Punjab", "KKR vs Pune", "Karnatka vs Telugu"};
-
-            AnalyticsSingleton as = new AnalyticsSingleton();
-            as.setId(1);
-            // choose random food name from the list
-            as.setName(eventList[randomIndex()]);
-
-            Bundle bundle = new Bundle();
-            bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, as.getId());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
-
-            //Logs an app event.
-            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-            //Sets whether analytics collection is enabled for this app on this device.
-            firebaseAnalytics.setAnalyticsCollectionEnabled(true);
-            //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
-            firebaseAnalytics.setMinimumSessionDuration(20000);
-            //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
-            firebaseAnalytics.setSessionTimeoutDuration(500);
-            //Sets the user ID property.
-            firebaseAnalytics.setUserId(String.valueOf(as.getId()));
-
-            //Sets a user property to a given value.
-            firebaseAnalytics.setUserProperty("eventList", as.getName());
-
-        /*****************************************Firebase Custom Events Analytics****************************************/
-
-            Bundle params = new Bundle();
-            params.putString("custom_event", "MainActivity.java");
-            params.putString("custom_message", "tracking firebase");
-            firebaseAnalytics.logEvent("share_image", params);
-
-        /*****************************************Firebase Offline Capabilities****************************************/
-
-
-
+        handler = new Handler();
+        firebase = new Firebase(firebaseURL);
+        firebaseEvent = firebase.child("EventList");
+        listMain = (ListView) findViewById(R.id.listMainEvent);
+        alModel = new ArrayList<EventModel>();
+        arrayListEvent = new ArrayList<EventDetail>();
+        eventAdapter = new EventModelAdapter(this, arrayListEvent);
+        listMain.setAdapter(eventAdapter);
+        listMain.setOnItemClickListener(this);
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -330,7 +284,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 // comment and if so remove it.
                 String commentKey = dataSnapshot.getKey();
                 Log.d(TAG, "onChildRemoved:" + commentKey.toString());
-
             }
 
             @Override
@@ -378,11 +331,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Runnable runEventTimer = new Runnable() {
         @Override
         public void run() {
-            if(connectDetector.getConnection()) {
-                eventAdapter.notifyDataSetChanged();
-                handler.removeCallbacks(runEventTimer);
-                handler.postDelayed(runEventTimer, 80 * 1000);
-            }
+        if(connectDetector.getConnection()) {
+            eventAdapter.notifyDataSetChanged();
+            handler.removeCallbacks(runEventTimer);
+            handler.postDelayed(runEventTimer, 80 * 1000);
+        }
         }
     };
 
@@ -474,7 +427,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     EventDetail detail = new EventDetail();
 
                     for(int j = 0; j <jArray.length() ; j++){
-
                         JSONObject jsonDetail = jArray.getJSONObject(j);
                         String subCateName = jsonDetail.optString("event_category");
                         String subCateID = jsonDetail.optString("event_sub_id");

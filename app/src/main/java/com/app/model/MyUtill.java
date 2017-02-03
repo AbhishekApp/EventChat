@@ -62,7 +62,7 @@ public class MyUtill {
 
     public static void addMsgtoFeatured(Activity act,String msg){
         Firebase myFirebaseRef = new Firebase(FIREBASE_BASE_URL);
-        Firebase alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("FeatureChat");
+        Firebase alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.eventDetail.getCategory_name()).child("FeatureChat");
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
 
         alanRef.keepSynced(true);

@@ -32,7 +32,7 @@ public class EventChatFragment extends AppCompatActivity {
     public static String CateName;
     public static String SuperCateName;
     public static String eventID = "";
-    static EventDetail eventDetail;
+    public static EventDetail eventDetail;
     ListView left_drawer;
     private static final int ID_UP = 1;
     private static final int ID_DOWN = 2;
@@ -62,6 +62,8 @@ public class EventChatFragment extends AppCompatActivity {
             Toast.makeText(this, "Please check internet connection. Server Error.", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        //init();
     }
 
     private void init() {
