@@ -66,8 +66,9 @@ public class MyUtill {
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
 
         alanRef.keepSynced(true);
-        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(act), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(act), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),"normal");
         alanRef.push().setValue(alan);
+        MyApp.CustomEventAnalytics("featured_sent",EventChatFragment.SuperCateName , EventChatFragment.eventDetail.getCategory_name());
     }
 
 

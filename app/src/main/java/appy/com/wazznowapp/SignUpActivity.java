@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.HashMap;
 import java.util.Map;
 
+import static appy.com.wazznowapp.EventChatFragment.eventDetail;
 import static appy.com.wazznowapp.R.id.progressBar2;
 
 
@@ -74,6 +75,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         progressBar = (ProgressBar) findViewById(progressBar2);
         btnSign.setOnClickListener(this);
         tvNahGuestUser.setOnClickListener(this);
+
+        MyApp.CustomEventAnalytics("signup_activity_loaded",EventChatFragment.SuperCateName , eventDetail.getCategory_name());
+
+
     }
 
 
@@ -187,6 +192,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             setResult(102);
                             finish();
                         }else if(task.isSuccessful()){
+
+                            MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title()+" :"+ EventChatFragment.eventID);
+
+                            MyApp.PreDefinedEventAnalytics("sign_up",email);
                             Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
                             userUpdateOnServer(uName, uLastName, uPhone, email, password);
                             setResult(102);
@@ -196,8 +205,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
 
                 });
-
-
             }else{
                 Toast.makeText(con, "Please fill all the required field", Toast.LENGTH_SHORT).show();
             }

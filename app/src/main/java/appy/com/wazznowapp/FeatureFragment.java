@@ -52,6 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static appy.com.wazznowapp.EventChatFragment.eventDetail;
 import static appy.com.wazznowapp.MyApp.FeaturedMsgLimit;
 
 /**
@@ -94,7 +95,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         connectDetector = new ConnectDetector(getActivity());
         if (connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
-            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.eventDetail.getCategory_name()).child("FeatureChat");
+            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + eventDetail.getCategory_name()).child("FeatureChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             alanRef.keepSynced(true);
         }
@@ -314,12 +315,12 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
+                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name()); //no message ID as all will be in same sub-category
                     new newShortAsync().execute();
                 }
             });
 
-
-          //  if (position < alList.size() && FeaturedMsgLimit <= alList.size()) {
+            //if (position < alList.size() && FeaturedMsgLimit <= alList.size()) {
             try {
                 ChatData model = alList.get(alList.size() - FeaturedMsgLimit + position);
                 populateView(view, model);

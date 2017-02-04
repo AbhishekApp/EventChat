@@ -62,6 +62,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static appy.com.wazznowapp.EventChatFragment.eventDetail;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
 
 /**
@@ -86,7 +87,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
     SharedPreferences.Editor editor;
     String userName="";
-
     InputMethodManager imm;
     String subscribedGroup;
     int noSend;
@@ -113,7 +113,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         connectDetector = new ConnectDetector(getActivity());
         if(connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
-            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.eventDetail.getCategory_name() + "/ " + EventChatFragment.eventDetail.getEvent_title() + "/ " + EventChatFragment.eventID).child("StadiumChat");
+            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatFragment.eventID).child("StadiumChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             alanRef.keepSynced(true); //synk db from live
 
@@ -160,7 +160,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         //eventCategory = getIntent().getStringExtra("EventName");
         //eventID = getIntent().getStringExtra("EventID");
         //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
-        longDeepLink = longDeepLink + EventChatFragment.eventDetail.getEvent_id()+"&utm_medium=Whatsapp&utm_campaign="+EventChatFragment.eventDetail.getEvent_title();
+        longDeepLink = longDeepLink + eventDetail.getEvent_id()+"&utm_medium=Whatsapp&utm_campaign="+ eventDetail.getEvent_title();
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -236,7 +236,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onStart() {
         super.onStart();
         try {
-            if (!MyApp.preferences.getBoolean(EventChatFragment.eventDetail.getCatergory_id(), false)) {
+            if (!MyApp.preferences.getBoolean(eventDetail.getCatergory_id(), false)) {
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
@@ -257,7 +257,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
                     btnYes.setText("Yes I want to tune In");
                     btnNo.setText("No, I don't want to tune In");
-                    tvAdminMsg.setText("Congrats now you are part of "+EventChatFragment.eventDetail.getSubscribed_user()+"+ in stadium following the match");
+                    tvAdminMsg.setText("Congrats now you are part of "+ eventDetail.getSubscribed_user()+"+ in stadium following the match");
 
                     btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -269,8 +269,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     btnYes.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
+                            MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name());
                             editor = MyApp.preferences.edit();
-                            editor.putBoolean(EventChatFragment.eventDetail.getCatergory_id(), true);
+                            editor.putBoolean(eventDetail.getCatergory_id(), true);
                             editor.commit();
                             /*  Update user, Subscribe this event */
                             getAdminSecondMessage();
@@ -329,11 +331,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     private void getAdminSecondMessage(){
         UserProfile profile = new UserProfile();
-        profile.updateUserGroup(getActivity(), EventChatFragment.eventDetail.getCatergory_id());
+        profile.updateUserGroup(getActivity(), eventDetail.getCatergory_id());
         updateEventList();
         /*  Update user, Subscribe this event */
         SharedPreferences.Editor editor = MyApp.preferences.edit();
-        editor.putBoolean(EventChatFragment.eventDetail.getCatergory_id(), true);
+        editor.putBoolean(eventDetail.getCatergory_id(), true);
         editor.commit();
         if(!addHousePartyFLAG){
             addHousePartyFLAG = true;
@@ -393,19 +395,19 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                             JSONObject jsonDetail = jArray.getJSONObject(j);
                             String subCateID = jsonDetail.optString("event_sub_id");
                             String subscribedUser = jsonDetail.optString("subscribed_user");
-                            if (EventChatFragment.eventDetail.getCatergory_id().equalsIgnoreCase(subCateID)){
-                                try{
-                                    int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
-                                    noOfSubscrbedUser++;
-                                    jsonDetail.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
-                                    eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j;
-                                    Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
-                                    subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
-                                    Firebase eventFire =  new Firebase(eventUpdateUrl);
-                                    eventFire.updateChildren(subscribeUserMap);
-                                }catch (Exception ex){
-                                    Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
-                                }
+                            if (eventDetail.getCatergory_id().equalsIgnoreCase(subCateID)){
+                            try{
+                                int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
+                                noOfSubscrbedUser++;
+                                jsonDetail.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
+                                eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j;
+                                Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
+                                subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
+                                Firebase eventFire =  new Firebase(eventUpdateUrl);
+                                eventFire.updateChildren(subscribeUserMap);
+                            }catch (Exception ex){
+                                Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
+                            }
                             }
                         }
                     }
@@ -422,8 +424,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
         editor.commit();
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
-        ii.putExtra("EventName", EventChatFragment.eventDetail.getCatergory_id());
-        ii.putExtra("EventID", EventChatFragment.eventDetail.getEvent_id());
+        ii.putExtra("EventName", eventDetail.getCatergory_id());
+        ii.putExtra("EventID", eventDetail.getEvent_id());
         startActivity(ii);
     }
 
@@ -457,7 +459,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }
         //if(!TextUtils.isEmpty(userName)) {
             subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-            if(subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
+            if(subscribedGroup.contains(eventDetail.getCatergory_id())) {
                 listView.setAdapter(chatAdapter);
                 chatAdapter.notifyDataSetChanged();
             }
@@ -492,13 +494,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                   if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
                         String msg = etMsg.getText().toString();
                         subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-                        if (!subscribedGroup.contains(EventChatFragment.eventDetail.getCatergory_id())) {
+                        if (!subscribedGroup.contains(eventDetail.getCatergory_id())) {
                             getAdminSecondMessage();
                         }
                         if (!TextUtils.isEmpty(msg)) {
                           chatAdapter.notifyDataSetChanged();
                           etMsg.setText("");
-                          sendMsg(msg);
+                          sendMsg(msg,"normal");
                         } else {
                           Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
@@ -562,10 +564,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         StadiumMsgLimit+=2;
         String msg = MyApp.alCanMsg.get(position).getCanned_message();
-        sendMsg(msg);
+        sendMsg(msg,"canned"); //cannned message click
     }
 
-    private void sendMsg(String msg){
+    private void sendMsg(String msg,String messageType){
        String deviceID = MyApp.getDeviveID(getActivity());
        String sender = MyApp.preferences.getString(MyApp.USER_NAME, "");
         if(sender.contains("Guest") || TextUtils.isEmpty(sender)) {
@@ -592,8 +594,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor.putString("SendTime: " + EventChatFragment.eventID, String.valueOf(noSend));
                 editor.putBoolean(EventChatFragment.eventID, true);
                 editor.commit();
-                ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+                ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
                 alanRef.push().setValue(alan);
+
+                if (messageType.equals("normal")) {
+                    MyApp.CustomEventAnalytics("chat_sent", EventChatFragment.SuperCateName, EventChatFragment.eventDetail.getCategory_name());
+                }
+                else if (messageType.equals("canned")){
+                    MyApp.CustomEventAnalytics("canned_sent", EventChatFragment.SuperCateName, EventChatFragment.eventDetail.getCategory_name());
+                }
+
                 if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                     MyUtill.addMsgtoFeatured(getActivity(),msg);
                 }
@@ -605,8 +615,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
          }
         }else{
-            ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+            ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
             alanRef.push().setValue(alan);
+            MyApp.CustomEventAnalytics("chat_sent ",EventChatFragment.SuperCateName , EventChatFragment.eventDetail.getCategory_name());
+
             onRefresh();
             if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                 MyUtill.addMsgtoFeatured(getActivity(),msg);
@@ -708,6 +720,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
+                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title()+" :"+ EventChatFragment.eventID);
                     new newShortAsync().execute();
                 }
             });

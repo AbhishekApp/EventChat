@@ -1,5 +1,4 @@
 package com.mylist.adapters;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,12 +12,10 @@ import com.app.model.CannedMessage;
 import java.util.ArrayList;
 
 import appy.com.wazznowapp.R;
-
 /**
  * Created by admin on 10/21/2016.
  */
 public class CannedAdapter extends BaseAdapter {
-
     Context con;
     ArrayList<CannedMessage> alList;
     TextView tvCanMsg;

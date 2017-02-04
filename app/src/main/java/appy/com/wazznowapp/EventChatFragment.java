@@ -179,7 +179,7 @@ public class EventChatFragment extends AppCompatActivity {
         quickAction.setOnDismissListener(new QuickAction.OnDismissListener() {
             @Override
             public void onDismiss() {
-                //Toast.makeText(getApplicationContext(), "Dismissed", Toast.LENGTH_SHORT).show();
+           //Toast.makeText(getApplicationContext(), "Dismissed", Toast.LENGTH_SHORT).show();
             }
         });
         quickAction.show(view);

@@ -216,8 +216,10 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                                 //linearlayChat.setVisibility(View.VISIBLE);
                                 adapter.notifyDataSetChanged();
                                 etMsg.setText("");
-                                ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+                                ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),"normal");
                                 alanRef.push().setValue(alan);
+                                MyApp.CustomEventAnalytics("chat_sent",EventChatFragment.SuperCateName , " : House Party : "+EventChatFragment.eventDetail.getCategory_name());
+
                                 if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                                     MyUtill.addMsgtoFeatured(getActivity(),msg);
                                 }

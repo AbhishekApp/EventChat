@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-
 import com.app.model.AnalyticsSingleton;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
@@ -21,10 +20,9 @@ import java.util.ArrayList;
  * Created by admin on 8/9/2016.
  */
 public class MyApp extends Application {
-
     ConnectDetector connectDetector;
     public static boolean firebaseFlag = false;
-  //  public static boolean USER_LOGIN = false;
+    //public static boolean USER_LOGIN = false;
     public static SharedPreferences preferences;
     public static String MyPREFERENCES = "UserName";
     public static String FIREBASE_BASE_URL =  "https://wazznow-cd155.firebaseio.com";
@@ -40,7 +38,14 @@ public class MyApp extends Application {
     public static Typeface authorFont,authorMsg;
     public static int FeaturedMsgLimit = 0;
     public static int StadiumMsgLimit = 0;
-    private FirebaseAnalytics firebaseAnalytics;
+    public static FirebaseAnalytics firebaseAnalytics;
+
+    public static final String CHAT_SENT="chat_sent";
+    public static final String CANNED_SENT = "canned_sent";
+    public static final String FEATURED_SENT = "featured_sent";
+    public static final String FRAGMENT_SELECTED = "fragment_selected";
+    public static final String SIGNUP_ACTIVITY_LOADED = "signup_activity_loaded";
+
 
     @Override
     public void onCreate() {
@@ -59,7 +64,6 @@ public class MyApp extends Application {
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true); //Globally set Persistence to all instance of firebase at initialisation level of app
 
-
         /*************************************Enable Image Caching *************************************************************************/
 
         //Picasso.Builder builder = new Picasso.Builder(this);
@@ -70,12 +74,8 @@ public class MyApp extends Application {
         //Picasso.setSingletonInstance(built);
 
         /**************************************************************************************************************/
-
         authorFont = Typeface.createFromAsset(getAssets(),"Roboto-Medium.ttf");
         authorMsg = Typeface.createFromAsset(getAssets(),"Roboto-Light.ttf");
-
-
-
         // Obtain the Firebase Analytics instance.
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
@@ -90,73 +90,80 @@ public class MyApp extends Application {
     }
 
 
-
-    public void DefinedEvent(String AnalyticsName){
+    public static void PreDefinedEventAnalytics(String AnalyticsName,String AnalyticsValue){
         /********************************FIREBASE ANALYTICS CODE*****************************************/
-
-        /*String typeOfDay;
+        String eventName;
         switch (AnalyticsName) {
-            case "Monday":
-                typeOfDay = "work";
+            case FirebaseAnalytics.Event.SELECT_CONTENT:
+                eventName = "select_content";
                 break;
-            case "Tuesday":
-                typeOfDay = "work";
+            case FirebaseAnalytics.Event.JOIN_GROUP:
+                eventName = "join_group";
                 break;
-            case "Wednesday":
-                typeOfDay = "work";
+            case FirebaseAnalytics.Event.SHARE:
+                eventName = "share";
                 break;
-            case "Thursday":
-                typeOfDay = "Midweek";
+            case FirebaseAnalytics.Event.SIGN_UP:
+                eventName = "sign_up";
                 break;
-            case "Friday":
-                typeOfDay = "End of work";
-                break;
-            case "Saturday":
-                typeOfDay = "work";
-                break;
-            case "Sunday":
-                typeOfDay = "Weekend";
+            case FirebaseAnalytics.Event.VIEW_ITEM_LIST:
+                eventName = "view_item_list";
                 break;
             default:
                 throw new IllegalArgumentException("Invalid data: " + AnalyticsName);
         }
-        return typeOfDay;*/
 
-
-
-        AnalyticsSingleton as = new AnalyticsSingleton();
-        as.setId(1);
-        // choose random food name from the list
-        as.setName(AnalyticsName);
-
-        Bundle bundle = new Bundle();
-        bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, as.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
-        //Logs an app event.
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-        //Sets whether analytics collection is enabled for this app on this device.
-        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
-        //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
-        firebaseAnalytics.setMinimumSessionDuration(20000);
-        //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
-        firebaseAnalytics.setSessionTimeoutDuration(500);
-        //Sets the user ID property.
-        firebaseAnalytics.setUserId(String.valueOf(as.getId()));
-        //Sets a user property to a given value.
-        firebaseAnalytics.setUserProperty("eventList", as.getName());
+        if (eventName!=null) {
+            AnalyticsSingleton as = new AnalyticsSingleton();
+            as.setId(1);
+            // choose random food name from the list
+            as.setName(AnalyticsValue);
+            Bundle bundle = new Bundle();
+            bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, as.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
+            //Logs an app event.
+            firebaseAnalytics.logEvent(eventName, bundle);
+            //Sets whether analytics collection is enabled for this app on this device.
+            firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+            //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
+            firebaseAnalytics.setMinimumSessionDuration(20000);
+            //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
+            firebaseAnalytics.setSessionTimeoutDuration(500);
+            //Sets the user ID property.
+            firebaseAnalytics.setUserId(String.valueOf(as.getId()));
+            //Sets a user property to a given value.
+            firebaseAnalytics.setUserProperty("eventList", as.getName());
+        }
     }
 
 
-
-
-    public void CustomEventAnalytics(String customEventName,String custom){
+    public static void CustomEventAnalytics(String EventLogName, String customEventName,String customEventMessage){
         /*****************************************Firebase Custom Events Analytics****************************************/
+        String eventName;
+        switch (EventLogName) {
+            case CHAT_SENT:
+                eventName = "chat_sent";
+                break;
+            case CANNED_SENT:
+                eventName = "canned_sent";
+                break;
+            case FEATURED_SENT:
+                eventName = "featured_sent";
+                break;
+            case FRAGMENT_SELECTED:
+                eventName = "fragment_selected";
+                break;
+            case SIGNUP_ACTIVITY_LOADED:
+                eventName = "signup_activity_loaded";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid data: " +EventLogName );
+        }
+
         Bundle params = new Bundle();
-        params.putString("custom_event", "MainActivity.java");
-        params.putString("custom_message", "tracking firebase");
-        firebaseAnalytics.logEvent("share_image", params);
+        params.putString("custom_event", customEventName);
+        params.putString("custom_message", customEventMessage);
+        firebaseAnalytics.logEvent(eventName, params);
     }
-
-
 
 }

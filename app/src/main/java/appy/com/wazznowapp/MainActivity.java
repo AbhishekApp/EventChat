@@ -39,7 +39,6 @@ import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.mylist.adapters.EventAdapter;
 import com.mylist.adapters.EventModelAdapter;
@@ -58,7 +57,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     ListView listMain;
@@ -104,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Object value = getIntent().getExtras().get(key);
                 Log.d(TAG, "Key: " + key + " Value: " + value);
             }
+            //System.out.println("from notification: "+getIntent().getStringExtra("data").toString());
+            Toast.makeText(MainActivity.this,"from notification: "+getIntent().getStringExtra("data").toString(),Toast.LENGTH_LONG).show();
         }
         // [END handle_data_extras]
 
@@ -205,9 +205,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
+
+        MyApp.PreDefinedEventAnalytics("select_content",eventDetail.getCategory_name());
+
+
         Intent iChat = new Intent(this, EventChatFragment.class);
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
+
+
+
       /*  for(int i = 0; i < arrayListEvent.size() ; i++){
             EventDetail event = arrayListEvent.get(i);
             if(eventName.equals(event.getCategory_name())){

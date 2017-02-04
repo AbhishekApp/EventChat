@@ -10,6 +10,8 @@ public class ChatData {
     private String toUser;
     private String timestamp;
     private String authorType="";
+    private String messageType;
+
 
 
     public ChatData() {}
@@ -17,13 +19,14 @@ public class ChatData {
    {
        this(author, title, " ");
    }*/
-    public ChatData(String author, String title, String toUser, String timestamp, String authorType)
+    public ChatData(String author, String title, String toUser, String timestamp, String authorType, String messageType)
     {
         this.author = author;
         this.title = title;
         this.toUser = toUser;
         this.timestamp = timestamp;
         this.authorType = authorType;
+        this.messageType = messageType;
     }
 
     public void setAuthor(String author) {
@@ -60,6 +63,13 @@ public class ChatData {
             return "";
         }
 
+    }
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
     }
 
     public void setAuthorType(String authorType) {
