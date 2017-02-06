@@ -62,7 +62,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static appy.com.wazznowapp.EventChatFragment.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
 
 /**
@@ -113,11 +113,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         connectDetector = new ConnectDetector(getActivity());
         if(connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
-            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatFragment.eventID).child("StadiumChat");
+            alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             alanRef.keepSynced(true); //synk db from live
 
-            mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("StadiumChat");
+            mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("StadiumChat");
             mDatabaseRefrenceSync.keepSynced(true); //sync db from disk
         }
     }
@@ -279,7 +279,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         }
                     });
                 }
-            }else if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
+            }else if(!MyApp.preferences.getBoolean(EventChatActivity.eventID+"HouseParty", false) && !addHousePartyFLAG){
                 //linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vii = inflater.inflate(R.layout.admin_msg,null);
@@ -385,11 +385,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             if(!TextUtils.isEmpty(jsonArray.toString())){
                 String eventUpdateUrl = MyApp.FIREBASE_BASE_URL;
                 for(int i = 0; i < jsonArray.length() ; i++){
-                    //EventChatFragment.eventID;
+                    //EventChatActivity.eventID;
                     JSONObject jSon = jsonArray.getJSONObject(i);
                     String superCate = jSon.optString("event_superCategory");
                     String cateID = jSon.optString("event_super_id");
-                    if(superCate.equalsIgnoreCase(EventChatFragment.SuperCateName)){
+                    if(superCate.equalsIgnoreCase(EventChatActivity.SuperCateName)){
                         JSONArray jArray = jSon.getJSONArray("Cate");
                         for(int j = 0; j < jArray.length() ; j++) {
                             JSONObject jsonDetail = jArray.getJSONObject(j);
@@ -421,7 +421,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     private void housePartyStarted(){
         editor = MyApp.preferences.edit();
-        editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
+        editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
         editor.commit();
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
         ii.putExtra("EventName", eventDetail.getCatergory_id());
@@ -439,7 +439,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             //adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-            noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
+            noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatActivity.eventID, "-1"));
              if(!(noSend >= 0 && noSend < 3)){
                  if(noSend == 0) {
                      linearCanMsg.setVisibility(View.VISIBLE);
@@ -527,12 +527,12 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 111){
             if(resultCode == 101){
-                noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatFragment.eventID, "-1"));
+                noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatActivity.eventID, "-1"));
                 if(noSend == -1){
                     noSend++;
                     SharedPreferences.Editor editor = MyApp.preferences.edit();
-                    editor.putString("SendTime: " + EventChatFragment.eventID, String.valueOf(noSend));
-                    editor.putBoolean(EventChatFragment.eventID, true);
+                    editor.putString("SendTime: " + EventChatActivity.eventID, String.valueOf(noSend));
+                    editor.putBoolean(EventChatActivity.eventID, true);
                     editor.commit();
                 }
                 if(noSend < 3) {
@@ -576,9 +576,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 startActivityForResult(ii, 111);
             } else {
             try {
-                if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatFragment.eventID, false)) {
+                if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatActivity.eventID, false)) {
                     SharedPreferences.Editor editor = MyApp.preferences.edit();
-                    editor.putBoolean("HousePartyMessage" + EventChatFragment.eventID, true);
+                    editor.putBoolean("HousePartyMessage" + EventChatActivity.eventID, true);
                     editor.commit();
                     //sendHousePartyMsg();
                 }
@@ -591,17 +591,17 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
                 noSend++;
                 SharedPreferences.Editor editor = MyApp.preferences.edit();
-                editor.putString("SendTime: " + EventChatFragment.eventID, String.valueOf(noSend));
-                editor.putBoolean(EventChatFragment.eventID, true);
+                editor.putString("SendTime: " + EventChatActivity.eventID, String.valueOf(noSend));
+                editor.putBoolean(EventChatActivity.eventID, true);
                 editor.commit();
                 ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
                 alanRef.push().setValue(alan);
 
                 if (messageType.equals("normal")) {
-                    MyApp.CustomEventAnalytics("chat_sent", EventChatFragment.SuperCateName, EventChatFragment.eventDetail.getCategory_name());
+                    MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, EventChatActivity.eventDetail.getCategory_name());
                 }
                 else if (messageType.equals("canned")){
-                    MyApp.CustomEventAnalytics("canned_sent", EventChatFragment.SuperCateName, EventChatFragment.eventDetail.getCategory_name());
+                    MyApp.CustomEventAnalytics("canned_sent", EventChatActivity.SuperCateName, EventChatActivity.eventDetail.getCategory_name());
                 }
 
                 if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
@@ -617,7 +617,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }else{
             ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
             alanRef.push().setValue(alan);
-            MyApp.CustomEventAnalytics("chat_sent ",EventChatFragment.SuperCateName , EventChatFragment.eventDetail.getCategory_name());
+            MyApp.CustomEventAnalytics("chat_sent ", EventChatActivity.SuperCateName , EventChatActivity.eventDetail.getCategory_name());
 
             onRefresh();
             if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
@@ -632,7 +632,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         addTuneFLAG = false;
         addHousePartyFLAG = false;
         editor = MyApp.preferences.edit();
-        editor.putBoolean(EventChatFragment.eventID + "HouseParty", false);
+        editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
         editor.commit();
         MyApp.StadiumMsgLimit=0;
     }
@@ -720,7 +720,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
-                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title()+" :"+ EventChatFragment.eventID);
+                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title()+" :"+ EventChatActivity.eventID);
                     new newShortAsync().execute();
                 }
             });

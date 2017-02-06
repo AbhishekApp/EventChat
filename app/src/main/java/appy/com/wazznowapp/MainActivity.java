@@ -103,7 +103,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Log.d(TAG, "Key: " + key + " Value: " + value);
             }
             //System.out.println("from notification: "+getIntent().getStringExtra("data").toString());
-            Toast.makeText(MainActivity.this,"from notification: "+getIntent().getStringExtra("data").toString(),Toast.LENGTH_LONG).show();
+            try {
+                Toast.makeText(MainActivity.this, "from notification: " + getIntent().getStringExtra("data").toString(), Toast.LENGTH_LONG).show();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         // [END handle_data_extras]
 
@@ -208,8 +212,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         MyApp.PreDefinedEventAnalytics("select_content",eventDetail.getCategory_name());
 
-
-        Intent iChat = new Intent(this, EventChatFragment.class);
+        Intent iChat = new Intent(this, EventChatActivity.class);
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
 
@@ -218,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
       /*  for(int i = 0; i < arrayListEvent.size() ; i++){
             EventDetail event = arrayListEvent.get(i);
             if(eventName.equals(event.getCategory_name())){
-                Intent iChat = new Intent(this, EventChatFragment.class);
+                Intent iChat = new Intent(this, EventChatActivity.class);
                 iChat.putExtra("EventDetail", event);
                 startActivity(iChat);
                 break;
@@ -638,7 +641,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             try{
                 if(getInvited){
                     EventDetail detail = hashMapEvent.get(invitedEventid);
-                    Intent iChat = new Intent(MainActivity.this, EventChatFragment.class);
+                    Intent iChat = new Intent(MainActivity.this, EventChatActivity.class);
                     iChat.putExtra("EventDetail", detail);
                     startActivity(iChat);
                 }

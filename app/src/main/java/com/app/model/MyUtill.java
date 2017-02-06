@@ -17,7 +17,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import appy.com.wazznowapp.EventChatFragment;
+import appy.com.wazznowapp.EventChatActivity;
 import appy.com.wazznowapp.MyApp;
 
 import static appy.com.wazznowapp.HousePartyFragment.getCurrentTimeStamp;
@@ -62,13 +62,13 @@ public class MyUtill {
 
     public static void addMsgtoFeatured(Activity act,String msg){
         Firebase myFirebaseRef = new Firebase(FIREBASE_BASE_URL);
-        Firebase alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.eventDetail.getCategory_name()).child("FeatureChat");
+        Firebase alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.eventDetail.getCategory_name()).child("FeatureChat");
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
 
         alanRef.keepSynced(true);
         ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(act), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),"normal");
         alanRef.push().setValue(alan);
-        MyApp.CustomEventAnalytics("featured_sent",EventChatFragment.SuperCateName , EventChatFragment.eventDetail.getCategory_name());
+        MyApp.CustomEventAnalytics("featured_sent", EventChatActivity.SuperCateName , EventChatActivity.eventDetail.getCategory_name());
     }
 
 

@@ -52,7 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static appy.com.wazznowapp.EventChatFragment.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.MyApp.FeaturedMsgLimit;
 
 /**
@@ -95,7 +95,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         connectDetector = new ConnectDetector(getActivity());
         if (connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
-            alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + eventDetail.getCategory_name()).child("FeatureChat");
+            alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child("FeatureChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             alanRef.keepSynced(true);
         }
@@ -239,7 +239,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         addTuneFLAG = false;
         addHousePartyFLAG = false;
         editor = MyApp.preferences.edit();
-        editor.putBoolean(EventChatFragment.eventID + "HouseParty", false);
+        editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
         editor.commit();
         MyApp.FeaturedMsgLimit=0;
     }

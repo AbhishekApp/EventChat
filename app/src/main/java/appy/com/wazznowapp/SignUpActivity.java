@@ -32,7 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.HashMap;
 import java.util.Map;
 
-import static appy.com.wazznowapp.EventChatFragment.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.R.id.progressBar2;
 
 
@@ -76,7 +76,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         btnSign.setOnClickListener(this);
         tvNahGuestUser.setOnClickListener(this);
 
-        MyApp.CustomEventAnalytics("signup_activity_loaded",EventChatFragment.SuperCateName , eventDetail.getCategory_name());
+        MyApp.CustomEventAnalytics("signup_activity_loaded", EventChatActivity.SuperCateName , eventDetail.getCategory_name());
 
 
     }
@@ -193,7 +193,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             finish();
                         }else if(task.isSuccessful()){
 
-                            MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title()+" :"+ EventChatFragment.eventID);
+                            MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title()+" :"+ EventChatActivity.eventID);
 
                             MyApp.PreDefinedEventAnalytics("sign_up",email);
                             Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();

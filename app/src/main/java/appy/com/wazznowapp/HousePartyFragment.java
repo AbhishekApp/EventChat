@@ -64,7 +64,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatFragment.SuperCateName + "/ " + EventChatFragment.eventDetail.getCategory_name()  + "/ " + EventChatFragment.CateName + "/ " + EventChatFragment.eventID).child("HousepartyChat");
+        alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.eventDetail.getCategory_name()  + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("HousepartyChat");
     }
 
     @Override
@@ -100,7 +100,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     public void onStart() {
         super.onStart();
         try {
-            if(!MyApp.preferences.getBoolean(EventChatFragment.eventID+"HouseParty", false) && !addHousePartyFLAG){
+            if(!MyApp.preferences.getBoolean(EventChatActivity.eventID+"HouseParty", false) && !addHousePartyFLAG){
                 //linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vi = inflater.inflate(R.layout.admin_msg,null);
@@ -144,11 +144,11 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
 
     private void housePartyStarted(){
         //editor = MyApp.preferences.edit();
-        //editor.putBoolean(EventChatFragment.eventID + "HouseParty", true);
+        //editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
         //editor.commit();
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
-        ii.putExtra("EventName", EventChatFragment.eventDetail.getCatergory_id());
-        ii.putExtra("EventID", EventChatFragment.eventDetail.getEvent_id());
+        ii.putExtra("EventName", EventChatActivity.eventDetail.getCatergory_id());
+        ii.putExtra("EventID", EventChatActivity.eventDetail.getEvent_id());
         startActivity(ii);
     }
 
@@ -212,13 +212,13 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                     if (!TextUtils.isEmpty(msg)) {
                         //al.add(msg);
                         try {
-                            if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatFragment.eventID, false)) {
+                            if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatActivity.eventID, false)) {
                                 //linearlayChat.setVisibility(View.VISIBLE);
                                 adapter.notifyDataSetChanged();
                                 etMsg.setText("");
                                 ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),"normal");
                                 alanRef.push().setValue(alan);
-                                MyApp.CustomEventAnalytics("chat_sent",EventChatFragment.SuperCateName , " : House Party : "+EventChatFragment.eventDetail.getCategory_name());
+                                MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName , " : House Party : "+ EventChatActivity.eventDetail.getCategory_name());
 
                                 if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                                     MyUtill.addMsgtoFeatured(getActivity(),msg);

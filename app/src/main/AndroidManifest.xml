@@ -56,7 +56,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name=".EventChatFragment"
+            android:name=".EventChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -82,10 +82,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoTitleTheme" />
 
-
         <!-- [START firebase_service] -->
         <service
-            android:name=".MyFirebaseMessagingService">
+            android:name="com.pushnotification.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
@@ -93,12 +92,11 @@
         <!-- [END firebase_service] -->
         <!-- [START firebase_iid_service] -->
         <service
-            android:name=".MyFirebaseInstanceIDService">
+            android:name="com.pushnotification.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->
-
     </application>
 </manifest>

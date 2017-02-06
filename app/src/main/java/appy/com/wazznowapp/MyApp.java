@@ -60,11 +60,11 @@ public class MyApp extends Application {
         alCanMsg = new ArrayList<CannedMessage>();
 
 
-        /*****************************************Firebase Offline Capabilities****************************************/
+        /*************************************Firebase Offline Capabilities****************************************/
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true); //Globally set Persistence to all instance of firebase at initialisation level of app
 
-        /*************************************Enable Image Caching *************************************************************************/
+        /*************************************Enable Image Caching ************************************************/
 
         //Picasso.Builder builder = new Picasso.Builder(this);
         //builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));
@@ -91,7 +91,7 @@ public class MyApp extends Application {
 
 
     public static void PreDefinedEventAnalytics(String AnalyticsName,String AnalyticsValue){
-        /********************************FIREBASE ANALYTICS CODE*****************************************/
+        /********************************FIREBASE_ANALYTICS_CODE*****************************************/
         String eventName;
         switch (AnalyticsName) {
             case FirebaseAnalytics.Event.SELECT_CONTENT:
@@ -112,7 +112,6 @@ public class MyApp extends Application {
             default:
                 throw new IllegalArgumentException("Invalid data: " + AnalyticsName);
         }
-
         if (eventName!=null) {
             AnalyticsSingleton as = new AnalyticsSingleton();
             as.setId(1);
@@ -138,7 +137,7 @@ public class MyApp extends Application {
 
 
     public static void CustomEventAnalytics(String EventLogName, String customEventName,String customEventMessage){
-        /*****************************************Firebase Custom Events Analytics****************************************/
+        /*************************************Firebase Custom Events Analytics*********************************/
         String eventName;
         switch (EventLogName) {
             case CHAT_SENT:
@@ -159,11 +158,9 @@ public class MyApp extends Application {
             default:
                 throw new IllegalArgumentException("Invalid data: " +EventLogName );
         }
-
         Bundle params = new Bundle();
         params.putString("custom_event", customEventName);
         params.putString("custom_message", customEventMessage);
         firebaseAnalytics.logEvent(eventName, params);
     }
-
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package appy.com.wazznowapp;
+package com.pushnotification;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,6 +27,9 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import appy.com.wazznowapp.MainActivity;
+import appy.com.wazznowapp.R;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
