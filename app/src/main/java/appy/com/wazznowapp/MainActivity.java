@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
     int REQUEST_INVITE = 111;
-    //    static boolean eventFLAG = false;
+    //static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
 
     @Override
@@ -119,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d(TAG, msg);
         //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
 
-
         connectDetector = new ConnectDetector(this);
         if(connectDetector.getConnection()) {
             if (!firstFlag) {
@@ -133,13 +131,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             getInvited = false;
             hashMapEvent = new HashMap<String,EventDetail>();
             mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(AppInvite.API)
-                    .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(ConnectionResult connectionResult) {
-                            Toast.makeText(MainActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }).build();
+            .addApi(AppInvite.API)
+            .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                @Override
+                public void onConnectionFailed(ConnectionResult connectionResult) {
+                    Toast.makeText(MainActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
+                }
+            }).build();
 
             boolean autoLaunchDeepLink = true;
             AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
@@ -176,11 +174,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         }
                         }
                     });
-                        try {
-                            init();
-                        }catch (Exception e){
-                            // for now eat exceptions
-                        }
+                    try {
+                        init();
+                    }catch (Exception e){
+                        // for now eat exceptions
+                    }
         } else{
             Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
         }
@@ -190,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("InviteFriendActivity", "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-
         if (requestCode == REQUEST_INVITE) {
             if (resultCode == RESULT_OK) {
                 // Get the invitation IDs of all sent messages
@@ -201,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             } else {
                 // Sending failed or it was canceled, show failure message to the user
-                // ...
             }
         }
     }
@@ -209,14 +205,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
-
         MyApp.PreDefinedEventAnalytics("select_content",eventDetail.getCategory_name());
-
         Intent iChat = new Intent(this, EventChatActivity.class);
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
-
-
 
       /*  for(int i = 0; i < arrayListEvent.size() ; i++){
             EventDetail event = arrayListEvent.get(i);
@@ -228,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }*/
     }
-
 
 
     private void init(){

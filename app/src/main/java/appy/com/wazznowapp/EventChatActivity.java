@@ -29,14 +29,17 @@ import com.firebase.client.FirebaseError;
 
 import org.w3c.dom.Comment;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
-
-import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
 
 /**
  * Created by admin on 8/2/2016.
  */
+
 public class EventChatActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -49,11 +52,11 @@ public class EventChatActivity extends AppCompatActivity {
     private static final int ID_UP = 1;
     private static final int ID_DOWN = 2;
     QuickAction quickAction;
-    private Firebase mDatabaseRefrenceSync;
+    private Firebase mDatabaseRefrenceSync,mDatabaseRefrenceSync1;
     ArrayList<ChatData> alList = new ArrayList<ChatData>();
-    ChildEventListener childEventListener;
+    ChildEventListener childEventListener,childEventListener1;
     ArrayList<String> mKeys = new ArrayList<>();
-
+    boolean moreThanDay=false;
 
 
     @Override
@@ -78,112 +81,25 @@ public class EventChatActivity extends AppCompatActivity {
             init();
 
 
-            /*mDatabaseRefrenceSync.orderByChild("authorType").equalTo("com").addListenerForSingleValueEvent(new ValueEventListener(){
+            /**************************************************Fetching Commentator from Stadium ***********************************************************/
 
 
-                @Override
-                public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-               public void onCancelled(FirebaseError firebaseError) {
-
-               }
-           });*/
-
-
-            /*mDatabaseRefrenceSync.addValueEventListener(new ValueEventListener() {
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot itemDataSnapshot : dataSnapshot.getChildren()) {
-                        Toast.makeText(getApplicationContext(), "XXXXXX", Toast.LENGTH_LONG).show();
-                    }
-                    for (DataSnapshot itemDataSnapshot : dataSnapshot.getChildren()) {
-                        fb.addListenerForSingleValueEvent(new ValueEventListener() {
-                            public void onDataChange(DataSnapshot xdataSnapshot) {
-                                Toast.makeText(getApplicationContext(), "YYYYYYY", Toast.LENGTH_LONG).show();
-                            }
-                            public void onCancelled(FirebaseError firebaseError) {
-
-                            }
-                        });
-                    }
-                }
-                public void onCancelled(FirebaseError firebaseError) {
-                }
-            });*/
-
-            /*for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                Schedule msg = postSnapshot.getValue(Schedule.class);
-                System.out.println(msg.getHall().getId());
-            }*/
-
-            /*mDatabaseRefrenceSync.orderByChild("authorType").equalTo("com").addChildEventListener(new com.google.firebase.database.ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Log.e("EventChatActivity:::::", "onChildAdded:" + dataSnapshot.getKey());
-                    *//*ChatData model = dataSnapshot.getValue(ChatData.class);
-                    String key = dataSnapshot.getKey();
-                    // Insert into the correct location, based on previousChildName
-                    if (previousChildName == null) {
-                        alList.add(0, model);
-                        mKeys.add(0, key);
-                        StadiumMsgLimit++;
-                    } else {
-                        int previousIndex = mKeys.indexOf(previousChildName);
-                        int nextIndex = previousIndex + 1;
-                        if (nextIndex == alList.size()) {
-                            alList.add(model);
-                            mKeys.add(key);
-                        } else {
-                            alList.add(nextIndex, model);
-                            mKeys.add(nextIndex, key);
-                        }
-                        if(StadiumMsgLimit < 3){
-                            StadiumMsgLimit++;
-                        }
-                    }*//*
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });*/
+            alList.clear();
 
             mDatabaseRefrenceSync = new Firebase(MyApp.FIREBASE_BASE_URL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
             //DatabaseReference myRef = database.getReference("users");
             mDatabaseRefrenceSync.keepSynced(true);
-
             childEventListener = new ChildEventListener(){
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                    // Insert into the correct location, based on previousChildName
+                    //Insert into the correct location, based on previousChildName
                     ChatData model = dataSnapshot.getValue(ChatData.class);
-
                     if(model.getAuthorType().equals("com")){
-                        Log.e("EventChatFragment", "onChildAdded:" + model.getAuthorType());
                     String key = dataSnapshot.getKey();
                     // Insert into the correct location, based on previousChildName
                     if (previousChildName == null) {
                         alList.add(0, model);
                         mKeys.add(0, key);
-                        StadiumMsgLimit++;
                     } else {
                         int previousIndex = mKeys.indexOf(previousChildName);
                         int nextIndex = previousIndex + 1;
@@ -195,7 +111,7 @@ public class EventChatActivity extends AppCompatActivity {
                             mKeys.add(nextIndex, key);
                         }
                     }
-                        System.out.println(alList.toString());
+                        //System.out.println(alList.toString());
                     }
                 }
 
@@ -207,8 +123,6 @@ public class EventChatActivity extends AppCompatActivity {
                     // comment and if so displayed the changed comment.
                     String key = dataSnapshot.getKey();
                     ChatData newModel = dataSnapshot.getValue(ChatData.class);
-
-
                 }
 
                 @Override
@@ -217,7 +131,7 @@ public class EventChatActivity extends AppCompatActivity {
                     // A comment has changed, use the key to determine if we are displaying this
                     // comment and if so remove it.
                     String commentKey = dataSnapshot.getKey();
-                    Log.d("ChatStadiumFragment", "onChildRemoved:" + commentKey.toString());
+                    //Log.d("ChatStadiumFragment", "onChildRemoved:" + commentKey.toString());
                 }
 
                 @Override
@@ -227,28 +141,148 @@ public class EventChatActivity extends AppCompatActivity {
                     // displaying this comment and if so move it.
                     Comment movedComment = dataSnapshot.getValue(Comment.class);
                     String commentKey = dataSnapshot.getKey();
-                    Log.d("ChatStadiumFragment", "onChildMoved:" + movedComment.toString());
-                    Log.d("ChatStadiumFragment", "onChildMoved:" + commentKey.toString());
+                    //Log.d("ChatStadiumFragment", "onChildMoved:" + movedComment.toString());
+                    //Log.d("ChatStadiumFragment", "onChildMoved:" + commentKey.toString());
                 }
 
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
-                    Log.w("ChatStadiumFragment", "postComments:onCancelled", firebaseError.toException());
+                    //Log.w("ChatStadiumFragment", "postComments:onCancelled", firebaseError.toException());
                     Toast.makeText(EventChatActivity.this, "Failed to load comments.",Toast.LENGTH_SHORT).show();
                 }
             };
-
             mDatabaseRefrenceSync.addChildEventListener(childEventListener);
 
+
+
+
+            /**************************************************Fetching Commentator from House Party ***********************************************************/
+
+            mDatabaseRefrenceSync1 = new Firebase(MyApp.FIREBASE_BASE_URL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("HousepartyChat");
+            //DatabaseReference myRef = database.getReference("users");
+            mDatabaseRefrenceSync1.keepSynced(true);
+            childEventListener1 = new ChildEventListener(){
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                    //Insert into the correct location, based on previousChildName
+                    ChatData model = dataSnapshot.getValue(ChatData.class);
+                    if(model.getAuthorType().equals("com")){
+                        String key = dataSnapshot.getKey();
+                        // Insert into the correct location, based on previousChildName
+                        if (previousChildName == null) {
+                            alList.add(0, model);
+                            mKeys.add(0, key);
+                        } else {
+                            int previousIndex = mKeys.indexOf(previousChildName);
+                            int nextIndex = previousIndex + 1;
+                            if (nextIndex == alList.size()) {
+                                alList.add(model);
+                                mKeys.add(key);
+                            } else {
+                                alList.add(nextIndex, model);
+                                mKeys.add(nextIndex, key);
+                            }
+                        }
+                    }
+
+
+                    //System.out.println(alList.toString());
+
+                    Collections.sort(alList, new CustomComparator());
+
+                    //System.out.println(alList.toString());
+
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                    //Log.d("ChatStadiumFragment", "onChildChanged:" + dataSnapshot.getKey());
+                    //Log.d("ChatStadiumFragment", "onChildChanged previousChildName :" + previousChildName);
+                    // A comment has changed, use the key to determine if we are displaying this
+                    // comment and if so displayed the changed comment.
+                    String key = dataSnapshot.getKey();
+                    ChatData newModel = dataSnapshot.getValue(ChatData.class);
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    //Log.d("ChatStadiumFragment", "onChildRemoved:" + dataSnapshot.getKey());
+                    // A comment has changed, use the key to determine if we are displaying this
+                    // comment and if so remove it.
+                    String commentKey = dataSnapshot.getKey();
+                    //Log.d("ChatStadiumFragment", "onChildRemoved:" + commentKey.toString());
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                    //Log.d("ChatStadiumFragment", "onChildMoved:" + dataSnapshot.getKey());
+                    // A comment has changed position, use the key to determine if we are
+                    // displaying this comment and if so move it.
+                    Comment movedComment = dataSnapshot.getValue(Comment.class);
+                    String commentKey = dataSnapshot.getKey();
+                    //Log.d("ChatStadiumFragment", "onChildMoved:" + movedComment.toString());
+                    //Log.d("ChatStadiumFragment", "onChildMoved:" + commentKey.toString());
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    //Log.w("ChatStadiumFragment", "postComments:onCancelled", firebaseError.toException());
+                    Toast.makeText(EventChatActivity.this, "Failed to load comments.",Toast.LENGTH_SHORT).show();
+                }
+            };
+            mDatabaseRefrenceSync1.addChildEventListener(childEventListener1);
+
+
+
+            /*Collections.sort(alList, new Comparator<ChatData> {
+                public int compare(ChatData o1, ChatData o2) {
+                    DateTime a = o1.getDateTime();
+                    DateTime b = o2.getDateTime();
+                    if (a.lt(b))
+                        return -1;
+                    else if (a.lteq(b)) // it's equals
+                        return 0;
+                    else
+                        return 1;
+                }
+            });*/
 
 
         } else {
             Toast.makeText(this, "Please check internet connection. Server Error.", Toast.LENGTH_SHORT).show();
             finish();
         }
-
         //init();
     }
+
+    public class CustomComparator implements Comparator<ChatData> {
+        @Override
+        public int compare(ChatData o1, ChatData o2) {
+            return o1.getTimestamp().compareTo(o2.getTimestamp());
+        }
+    }
+
+
+    public static class MyObject implements Comparable<MyObject> {
+
+        private Date dateTime;
+
+        public Date getDateTime() {
+            return dateTime;
+        }
+
+        public void setDateTime(Date datetime) {
+            this.dateTime = datetime;
+        }
+
+        @Override
+        public int compareTo(MyObject o) {
+            return getDateTime().compareTo(o.getDateTime());
+        }
+    }
+
+
+
 
     private void init() {
         ActionBar actionBar = getSupportActionBar();
@@ -271,11 +305,8 @@ public class EventChatActivity extends AppCompatActivity {
                 menuItemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         //asdad
-
                         showPopup(v);
-
                         //Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -300,7 +331,7 @@ public class EventChatActivity extends AppCompatActivity {
         } else if (id == R.id.menu_more) {
             Toast.makeText(this, "More is coming soon", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.menu_noti) {
-//            Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
         }
         /*ImageButton locButton = (ImageButton) findViewById(R.id.menu_noti);
         locButton.setOnClickListener(new View.OnClickListener() {
@@ -330,6 +361,31 @@ public class EventChatActivity extends AppCompatActivity {
         quickAction.addActionItem(new ActionItem(ID_DOWN, str, null));
     }
 
+    public String toTitleCase(String str) {
+        if (str == null) {
+            return null;
+        }
+        boolean space = true;
+        StringBuilder builder = new StringBuilder(str);
+        final int len = builder.length();
+        for (int i = 0; i < len; ++i) {
+            char c = builder.charAt(i);
+            if (space) {
+                if (!Character.isWhitespace(c)) {
+                    // Convert to title case and switch out of whitespace mode.
+                    builder.setCharAt(i, Character.toTitleCase(c));
+                    space = false;
+                }
+            } else if (Character.isWhitespace(c)) {
+                space = true;
+            } else {
+                builder.setCharAt(i, Character.toLowerCase(c));
+            }
+        }
+        return builder.toString();
+    }
+
+
     protected void ActionItemAddLine(){
         quickAction.addActionItem(new ActionItem(ID_DOWN, "", getResources().getDrawable(R.drawable.line_new)));
     }
@@ -339,10 +395,61 @@ public class EventChatActivity extends AppCompatActivity {
         //orientation
         quickAction = new QuickAction(this, QuickAction.VERTICAL);
         quickAction.addActionItem(new ActionItem(ID_DOWN, "", getResources().getDrawable(R.drawable.ic_launcher)));
-
-        for(int i = 0; i < 5 ; i++){
+        for(int i = 0; i < alList.size() ; i++){
             ActionItemAddLine();
-            ActionItemAddText("<br>Mumbai Indians"+i+" Have Won the toss and they elected to bat first.<br><font color='grey'>6:5"+i+" p.m</font><br>");
+            String time="";
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date sDate = sdf.parse(alList.get(i).getTimestamp());
+                //Date myDate = new java.util.Date();
+
+                String sDates = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(sDate);
+                //String myDates = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(myDate);
+
+                System.out.println(" ------- "+sDates);
+
+                long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
+
+                //SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy");
+                //Date strDate = sdfs.parse(valid_until);
+                if (new Date().after(sDate)) {
+                    System.out.println("future date");
+                    //future date
+
+                    moreThanDay = Math.abs(new Date().getTime() - sDate.getTime()) > MILLIS_PER_DAY;
+
+                    System.out.println("date is more than a Day:  "+moreThanDay);
+
+                    if (moreThanDay){
+
+                        Date ssDate = sdf.parse(alList.get(i).getTimestamp());
+                        String newDate= new SimpleDateFormat("hh:mm a dd-MMM-yyyy").format(ssDate);
+
+                        String[] parts = newDate.split(" ");
+
+                        ActionItemAddText("<br>"+/*toTitleCase(*/alList.get(i).getTitle()/*)*/+"<br><font color='grey'>"+parts[0]+" "+parts[1].toLowerCase()+" "+parts[2] +"</font><br>");
+                        //put content here
+                    }else
+                    {
+                        time = new SimpleDateFormat("hh:mm a").format(new Date(sDate.getTime())) ;
+                        ActionItemAddText("<br>"+/*toTitleCase(*/alList.get(i).getTitle()/*)*/+"<br><font color='grey'>"+time.toLowerCase()+"</font><br>");
+                    }
+
+                }
+                else{
+
+                    //back date
+                    System.out.println("back date");
+                }
+
+
+
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
 
 
@@ -355,7 +462,6 @@ public class EventChatActivity extends AppCompatActivity {
                     quickAction.onDismiss();
                     //dismissDialog(actionId);
                     Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_SHORT).show();
-
                 }  else {
                     Toast.makeText(getApplicationContext(), actionItem.getTitle() + " selected", Toast.LENGTH_SHORT).show();
                 }

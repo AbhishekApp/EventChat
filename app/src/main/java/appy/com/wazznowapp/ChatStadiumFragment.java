@@ -383,35 +383,35 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         try {
             JSONArray jsonArray = new JSONArray(MyApp.preferences.getString("jsonEventData", null));
             if(!TextUtils.isEmpty(jsonArray.toString())){
-                String eventUpdateUrl = MyApp.FIREBASE_BASE_URL;
-                for(int i = 0; i < jsonArray.length() ; i++){
-                    //EventChatActivity.eventID;
-                    JSONObject jSon = jsonArray.getJSONObject(i);
-                    String superCate = jSon.optString("event_superCategory");
-                    String cateID = jSon.optString("event_super_id");
-                    if(superCate.equalsIgnoreCase(EventChatActivity.SuperCateName)){
-                        JSONArray jArray = jSon.getJSONArray("Cate");
-                        for(int j = 0; j < jArray.length() ; j++) {
-                            JSONObject jsonDetail = jArray.getJSONObject(j);
-                            String subCateID = jsonDetail.optString("event_sub_id");
-                            String subscribedUser = jsonDetail.optString("subscribed_user");
-                            if (eventDetail.getCatergory_id().equalsIgnoreCase(subCateID)){
-                            try{
-                                int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
-                                noOfSubscrbedUser++;
-                                jsonDetail.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
-                                eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j;
-                                Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
-                                subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
-                                Firebase eventFire =  new Firebase(eventUpdateUrl);
-                                eventFire.updateChildren(subscribeUserMap);
-                            }catch (Exception ex){
-                                Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
-                            }
-                            }
+            String eventUpdateUrl = MyApp.FIREBASE_BASE_URL;
+            for(int i = 0; i < jsonArray.length() ; i++){
+                //EventChatActivity.eventID;
+                JSONObject jSon = jsonArray.getJSONObject(i);
+                String superCate = jSon.optString("event_superCategory");
+                String cateID = jSon.optString("event_super_id");
+                if(superCate.equalsIgnoreCase(EventChatActivity.SuperCateName)){
+                    JSONArray jArray = jSon.getJSONArray("Cate");
+                    for(int j = 0; j < jArray.length() ; j++) {
+                        JSONObject jsonDetail = jArray.getJSONObject(j);
+                        String subCateID = jsonDetail.optString("event_sub_id");
+                        String subscribedUser = jsonDetail.optString("subscribed_user");
+                        if (eventDetail.getCatergory_id().equalsIgnoreCase(subCateID)){
+                        try{
+                            int noOfSubscrbedUser = Integer.parseInt(subscribedUser);
+                            noOfSubscrbedUser++;
+                            jsonDetail.put("subscribed_user", String.valueOf(noOfSubscrbedUser));
+                            eventUpdateUrl = eventUpdateUrl + "/EventList/" +i+ "/Cate/" + j;
+                            Map<String, Object> subscribeUserMap = new HashMap<String, Object>();
+                            subscribeUserMap.put("subscribed_user", noOfSubscrbedUser);
+                            Firebase eventFire =  new Firebase(eventUpdateUrl);
+                            eventFire.updateChildren(subscribeUserMap);
+                        }catch (Exception ex){
+                            Log.i("StadiumFragment", "Subscribed user ERROR: "+ex.toString());
+                        }
                         }
                     }
                 }
+            }
             }
         } catch (JSONException e) {
             Log.i("StadiumFragment", "Subscribed user Data ERROR: " + e.toString());
@@ -501,6 +501,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                           chatAdapter.notifyDataSetChanged();
                           etMsg.setText("");
                           sendMsg(msg,"normal");
+
+                          if(MyApp.preferences.getString(MyApp.USER_TYPE, "").equals("com")){
+                              System.out.println("com");
+                          }else{
+                              System.out.println("user");
+                          }
+
                         } else {
                           Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
@@ -515,6 +522,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     Intent ii = new Intent(getActivity(), SignUpActivity.class);
                     startActivityForResult(ii, 111);
                 }
+
+
+
+
             }
         }catch (Exception ex){
             Log.e("StadiumFrament", "On Click Exception : "+ex.toString());
@@ -634,7 +645,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
         editor.commit();
-        MyApp.StadiumMsgLimit=0;
+        //MyApp.StadiumMsgLimit=0;
     }
 
 
@@ -725,7 +736,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
             });
 
-
             /*facebook.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -734,10 +744,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
             });*/
 
-
-            if(position < alList.size() && StadiumMsgLimit < alList.size()) {
-                ChatData model = alList.get(alList.size()-StadiumMsgLimit+position);
+            if(position < alList.size() || StadiumMsgLimit < alList.size()) {
                 try {
+                    ChatData model = alList.get(alList.size()-StadiumMsgLimit+position);
                     populateView(view, model);
                 }
                 catch (Exception e){
