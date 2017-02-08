@@ -47,7 +47,7 @@ public class MyUtill {
                 sb.append(line + "\n");
             }
             br.close();
-            System.out.println(sb.toString());
+            //System.out.println(sb.toString());
              jsonObject = new JSONArray(sb.toString());
         } catch (IOException e) {
             e.printStackTrace();

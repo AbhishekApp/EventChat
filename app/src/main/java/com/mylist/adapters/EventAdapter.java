@@ -33,10 +33,8 @@ public class EventAdapter extends FirebaseListAdapter<EventData> {
         viewHolder.tvNoOfTune = (TextView) view.findViewById(R.id.tvEventTunedRow);
         viewHolder.tvEventPlace = (TextView) view.findViewById(R.id.tvEventLocRow);
         viewHolder.imgChat = (ImageView) view.findViewById(R.id.imgChatRow);
-
-
-        System.out.println("data.getevent_super_cate_name() "+model.getEvent_super_cate_name());
-        System.out.println("data.getevent_cate_name() "+model.getEvent_cate_name());
+        //System.out.println("data.getevent_super_cate_name() "+model.getEvent_super_cate_name());
+        //System.out.println("data.getevent_cate_name() "+model.getEvent_cate_name());
         viewHolder.tvCateName.setText(model.getEvent_super_cate_name());
         viewHolder.tvEventName.setText(model.getEvent_cate_name());
     }

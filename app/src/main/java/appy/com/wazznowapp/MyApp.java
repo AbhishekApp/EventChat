@@ -36,16 +36,14 @@ public class MyApp extends Application {
     public static String USER_PASSWORD = "UserPassword";
     public static ArrayList<CannedMessage> alCanMsg;
     public static Typeface authorFont,authorMsg;
-    public static int FeaturedMsgLimit = 0;
-    public static int StadiumMsgLimit = 0;
+    public static int FeaturedMsgLimit = 3;
+    public static int StadiumMsgLimit = 3;
     public static FirebaseAnalytics firebaseAnalytics;
-
     public static final String CHAT_SENT="chat_sent";
     public static final String CANNED_SENT = "canned_sent";
     public static final String FEATURED_SENT = "featured_sent";
     public static final String FRAGMENT_SELECTED = "fragment_selected";
     public static final String SIGNUP_ACTIVITY_LOADED = "signup_activity_loaded";
-
 
     @Override
     public void onCreate() {

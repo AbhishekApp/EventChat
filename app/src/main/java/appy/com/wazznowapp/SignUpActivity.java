@@ -75,10 +75,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         progressBar = (ProgressBar) findViewById(progressBar2);
         btnSign.setOnClickListener(this);
         tvNahGuestUser.setOnClickListener(this);
-
-        MyApp.CustomEventAnalytics("signup_activity_loaded", EventChatActivity.SuperCateName , eventDetail.getCategory_name());
-
-
+        try {
+            MyApp.CustomEventAnalytics("signup_activity_loaded", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+        }
+        catch (Exception e){}
     }
 
 
@@ -99,6 +99,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 userSignup.userSignup(SignUpActivity.this, uName, uLastName, uPhone, uEmail, uPass);
             }else{
                 progressBar.setVisibility(View.GONE);
+                Toast.makeText(this, "Credentials can't be validated", Toast.LENGTH_SHORT).show();
             }
 
         } else if (id == R.id.tvNahGuestUser) {
@@ -192,9 +193,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             setResult(102);
                             finish();
                         }else if(task.isSuccessful()){
-
                             MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title()+" :"+ EventChatActivity.eventID);
-
                             MyApp.PreDefinedEventAnalytics("sign_up",email);
                             Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
                             userUpdateOnServer(uName, uLastName, uPhone, email, password);
@@ -281,8 +280,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
             alanisawesomeMap.put("userType", "user");
             final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-            System.out.println("USER List new length : " );
-            System.out.println("USER List new deviceID : " );
+            //System.out.println("USER List new length : " );
+            //System.out.println("USER List new deviceID : " );
             users.put("0", alanisawesomeMap);
             firebase.child("users/" + password).setValue(users);
         }

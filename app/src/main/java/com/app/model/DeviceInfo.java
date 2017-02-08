@@ -635,7 +635,7 @@ public class DeviceInfo {
     public static String getDataType(Context activity) {
         String type = "Mobile Data";
         TelephonyManager tm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-        System.out.println("tm.getNetworkType(): " + tm.getNetworkType());
+        //System.out.println("tm.getNetworkType(): " + tm.getNetworkType());
         switch (tm.getNetworkType()) {
             case TelephonyManager.NETWORK_TYPE_HSDPA:
                 type = "Mobile Data 3G";

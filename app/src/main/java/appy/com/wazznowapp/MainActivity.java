@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             try {
                 Toast.makeText(MainActivity.this, "from notification: " + getIntent().getStringExtra("data").toString(), Toast.LENGTH_LONG).show();
             }catch (Exception e){
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
         // [END handle_data_extras]
@@ -318,13 +318,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 }
-
+                eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
+                listMain.setAdapter(eventAdapter);
+                handler.postDelayed(runEventTimer, 200);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
-            listMain.setAdapter(eventAdapter);
-            handler.postDelayed(runEventTimer, 200);
+
         }
     }
 
@@ -409,13 +409,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected Void doInBackground(Void... params) {
             try {
                 JSONArray jsonObject = myUtill.getJSONFromServer(eventURL);
-                System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+                //System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
                 SharedPreferences.Editor editor = MyApp.preferences.edit();
                 editor.putString("jsonEventData",jsonObject.toString());
                 editor.commit();
                 int length =  jsonObject.length();
                 arrayListEvent.clear();
-                System.out.println("EVENT DATA length : " + length);
+                //System.out.println("EVENT DATA length : " + length);
                 for(int i = 0 ; i < length; i++){
                     JSONObject jSon = jsonObject.getJSONObject(i);
                     EventModel model = new EventModel();
@@ -459,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                     alModel.add(model);
                 }
-                System.out.println("EVENT DETAIL : "+alModel.toString());
+                //System.out.println("EVENT DETAIL : "+alModel.toString());
             }catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -486,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alanisawesomeMap.put("phone", MyApp.preferences.getString(MyApp.USER_PHONE, null));
         alanisawesomeMap.put("email", MyApp.preferences.getString(MyApp.USER_EMAIL, null));
         alanisawesomeMap.put("userType", MyApp.preferences.getString(MyApp.USER_TYPE, null));
-        System.out.println("User Name " + MyApp.preferences.getString(MyApp.USER_NAME, null));
+        //System.out.println("User Name " + MyApp.preferences.getString(MyApp.USER_NAME, null));
 //        UserDetailTask task = new UserDetailTask();
 //        task.execute();
     }
@@ -503,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             super.onPreExecute();
             deviceID =  MyApp.getDeviveID(MainActivity.this);
             addUserDetail();
-            System.out.println("EVENT DATA deviceID : " + deviceID);
+            //System.out.println("EVENT DATA deviceID : " + deviceID);
         }
 
         @Override
@@ -520,9 +520,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                     br.close();
                     JSONObject jsonObject = new JSONObject(sb.toString());
-                System.out.println("EVENT DATA JSONOBJECT : " + jsonObject.toString());
+                //System.out.println("EVENT DATA JSONOBJECT : " + jsonObject.toString());
                 flagExist = jsonObject.has(deviceID);
-                System.out.println("EVENT DATA  Found : "+flagExist);
+                //System.out.println("EVENT DATA  Found : "+flagExist);
           //    jUser = jsonObject.getJSONObject(deviceID);
                 jsonArray = jsonObject.getJSONArray(deviceID);
                 jUser = jsonArray.getJSONObject(0);
@@ -535,7 +535,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 editor.commit();
                 if(devID.equalsIgnoreCase(deviceID)){
-                    System.out.println("EVENT DATA Device Id found : " + devID.toString());
+                    //System.out.println("EVENT DATA Device Id found : " + devID.toString());
                     flagExist = true;
                 }
             } catch (MalformedURLException e) {
@@ -554,9 +554,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Firebase usersRef = firebase.child("users");//.child(""+length);
+           super.onPostExecute(aVoid);
            try {
+               Firebase usersRef = firebase.child("users");//.child(""+length);
                if (flagExist) {
                     //Toast.makeText(MainActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                    System.out.println("EVENT DATA User Already Registered");
@@ -580,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                    String email = MyApp.preferences.getString(MyApp.USER_EMAIL, null);
                    if (!TextUtils.isEmpty(email)) {
                        final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
-                       System.out.println("USER List new deviceID : " + deviceID);
+                       //System.out.println("USER List new deviceID : " + deviceID);
                        users.put("0", alanisawesomeMap);
                        firebase.child("users/" + deviceID).setValue(users);
                    }

@@ -23,6 +23,11 @@ android {
         exclude 'META-INF/LICENSE-FIREBASE.txt'
         exclude 'META-INF/NOTICE'
     }
+
+    aaptOptions {
+        cruncherEnabled = false
+    }
+
 }
 
 dependencies {

@@ -1,10 +1,10 @@
 package appy.com.wazznowapp;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -64,7 +64,6 @@ import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
-
 /**
  * Created by admin on 8/2/2016.
  */
@@ -119,6 +118,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
             mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("StadiumChat");
             mDatabaseRefrenceSync.keepSynced(true); //sync db from disk
+
+            if (PreferenceManager.getDefaultSharedPreferences(getActivity()).contains(eventDetail.getEvent_id())){
+                StadiumMsgLimit=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(eventDetail.getEvent_id(),"3"));
+                System.out.println("onCreate~~~~~~~~~~"+EventChatActivity.eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
+            }else{
+                StadiumMsgLimit=3;
+            }
         }
     }
 
@@ -144,7 +150,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
         viewLay.setAdapter(cannedAdapter);
  //     al = new ArrayList<String>();
-//        adapter = new MyChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+//      adapter = new MyChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         linearCanMsg.setVisibility(View.GONE);
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
@@ -155,8 +161,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         mKeys = new ArrayList<String>();
         chatAdapter = new StadiumChatAdapter(getActivity(), alList);
     //    listView.setAdapter(chatAdapter);
-
-
         //eventCategory = getIntent().getStringExtra("EventName");
         //eventID = getIntent().getStringExtra("EventID");
         //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
@@ -172,7 +176,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 if (previousChildName == null) {
                     alList.add(0, model);
                     mKeys.add(0, key);
-                    StadiumMsgLimit++;
+                    //StadiumMsgLimit++;
                 } else {
                     int previousIndex = mKeys.indexOf(previousChildName);
                     int nextIndex = previousIndex + 1;
@@ -183,11 +187,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         alList.add(nextIndex, model);
                         mKeys.add(nextIndex, key);
                     }
-                    if(StadiumMsgLimit < 3){
+                    /*if(StadiumMsgLimit < 3){
                         StadiumMsgLimit++;
-                    }
+                    }*/
                 }
                 chatAdapter.notifyDataSetChanged();
+
+
             }
 
             @Override
@@ -230,6 +236,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
         };
         alanRef.addChildEventListener(childEventListener);
+        if (StadiumMsgLimit >alList.size()&& alList.size()>3){
+            System.out.println("previous :"+StadiumMsgLimit);
+            StadiumMsgLimit= alList.size();
+            System.out.println("new size :"+StadiumMsgLimit);
+        }
     }
 
     @Override
@@ -453,7 +464,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 linearCanMsg.setVisibility(View.VISIBLE);
                 //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -522,10 +532,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     Intent ii = new Intent(getActivity(), SignUpActivity.class);
                     startActivityForResult(ii, 111);
                 }
-
-
-
-
             }
         }catch (Exception ex){
             Log.e("StadiumFrament", "On Click Exception : "+ex.toString());
@@ -565,8 +571,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onRefresh() {
+//        if(alList.size() > StadiumMsgLimit)
+        //StadiumMsgLimit = alList.size()-1;
         if(alList.size() > StadiumMsgLimit)
-            StadiumMsgLimit = alList.size()-1;
+        StadiumMsgLimit=StadiumMsgLimit+5;
         chatAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
@@ -644,10 +652,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         addHousePartyFLAG = false;
         editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~"+EventChatActivity.eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
         editor.commit();
-        //MyApp.StadiumMsgLimit=0;
-    }
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(EventChatActivity.eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
 
+    }
 
     public String getCurrentTimeStamp(){
         try {
@@ -717,10 +726,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             }
 
-
-
-
-            RelativeLayout RLcomlay = (RelativeLayout)view.findViewById(R.id.RLcomlay);
+            //RelativeLayout RLcomlay = (RelativeLayout)view.findViewById(R.id.RLcomlay);
 
             ImageView share = (ImageView) view.findViewById(R.id.share);
             //ImageView facebook = (ImageView) RLcomlay.findViewById(R.id.facebook);
@@ -750,7 +756,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     populateView(view, model);
                 }
                 catch (Exception e){
-                    e.printStackTrace();
+                    //e.printStackTrace(); eats exceptions for now
                 }
             }
             return view;
@@ -878,7 +884,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                System.out.println("JSON RESP:" + s);
+                //System.out.println("JSON RESP:" + s);
                 String response=s;
                 try {
                     JSONObject jsonObject=new JSONObject(response);

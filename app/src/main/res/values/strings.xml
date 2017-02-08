@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">WazzNow</string>
+    <string name="element_text">Element</string>
+    <string name="grid_layout_manager">Grid Layout Manager</string>
+    <string name="linear_layout_manager">Linear Layout Manager</string>
     <string name="setting">setting</string>
     <string name="logout">logout</string>
     <string name="info">Information</string>

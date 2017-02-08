@@ -430,7 +430,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            System.out.println("JSON RESP:" + s);
+            //System.out.println("JSON RESP:" + s);
             String response = s;
             try {
                 JSONObject jsonObject = new JSONObject(response);

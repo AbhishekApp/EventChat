@@ -63,8 +63,8 @@ public class AdapterMainFirst extends BaseAdapter {
         }
 
         EventData data = alList.get(position);
-        System.out.println("data.getevent_super_cate_name() "+data.getEvent_super_cate_name());
-        System.out.println("data.getevent_cate_name() "+data.getEvent_cate_name());
+        //System.out.println("data.getevent_super_cate_name() "+data.getEvent_super_cate_name());
+        //System.out.println("data.getevent_cate_name() "+data.getEvent_cate_name());
         viewHolder.tvCateName.setText(data.getEvent_super_cate_name());
         viewHolder.tvEventName.setText(data.getEvent_cate_name());
 

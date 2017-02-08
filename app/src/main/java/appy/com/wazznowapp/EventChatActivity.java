@@ -79,10 +79,7 @@ public class EventChatActivity extends AppCompatActivity {
 
         if (MyApp.firebaseFlag && connectDetector.getConnection()) {
             init();
-
-
             /**************************************************Fetching Commentator from Stadium ***********************************************************/
-
 
             alList.clear();
 
@@ -406,19 +403,19 @@ public class EventChatActivity extends AppCompatActivity {
                 String sDates = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(sDate);
                 //String myDates = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(myDate);
 
-                System.out.println(" ------- "+sDates);
+                //System.out.println(" ------- "+sDates);
 
                 long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
 
                 //SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy");
                 //Date strDate = sdfs.parse(valid_until);
                 if (new Date().after(sDate)) {
-                    System.out.println("future date");
+                    //System.out.println("future date");
                     //future date
 
                     moreThanDay = Math.abs(new Date().getTime() - sDate.getTime()) > MILLIS_PER_DAY;
 
-                    System.out.println("date is more than a Day:  "+moreThanDay);
+                    //System.out.println("date is more than a Day:  "+moreThanDay);
 
                     if (moreThanDay){
 
