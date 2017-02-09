@@ -13,10 +13,9 @@
             android:id="@+id/listMain"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:divider="@android:color/transparent" android:scrollbars="none"
+            android:divider="@android:color/transparent"
             android:listSelector="@drawable/ripple_effect"
             android:transcriptMode="alwaysScroll">
-
         </ListView>
 
     </android.support.v4.widget.SwipeRefreshLayout>

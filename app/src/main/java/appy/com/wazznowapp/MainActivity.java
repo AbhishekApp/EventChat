@@ -97,16 +97,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Handle possible data accompanying notification message.
         // [START handle_data_extras]
         if (getIntent().getExtras() != null) {
+            Object value;
             for (String key : getIntent().getExtras().keySet()) {
-                Object value = getIntent().getExtras().get(key);
-                Log.d(TAG, "Key: " + key + " Value: " + value);
+                value = getIntent().getExtras().get(key);
+                //Log.d(TAG, "Key: " + key + " Value: " + value);
+                try {
+
+                    String string_value = value.toString();
+
+                    //Toast.makeText(MainActivity.this, "title: " + string_value.split(" $")[0], Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this, "message : " + string_value.split(" $")[1], Toast.LENGTH_LONG).show();
+
+                    System.out.println(string_value);
+                    //System.out.println(string_value.split(" $")[0]);
+                    //xxxSystem.out.println(string_value.split(" $")[1]);
+
+                    //Toast.makeText(MainActivity.this, "from notification: custom message: " + getIntent().getStringExtra("data").toString().split("$")[1], Toast.LENGTH_LONG).show();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
             //System.out.println("from notification: "+getIntent().getStringExtra("data").toString());
-            try {
-                Toast.makeText(MainActivity.this, "from notification: " + getIntent().getStringExtra("data").toString(), Toast.LENGTH_LONG).show();
-            }catch (Exception e){
-                //e.printStackTrace();
-            }
+
         }
         // [END handle_data_extras]
 

@@ -292,7 +292,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
             }else if(!MyApp.preferences.getBoolean(EventChatActivity.eventID+"HouseParty", false) && !addHousePartyFLAG){
                 //linearLayout.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+               /* LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 View vii = inflater.inflate(R.layout.admin_msg,null);
                 //linearLayout.removeAllViews();
                 //linearLayout.addView(vi);
@@ -324,7 +324,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     public void onClick(View v) {
                         linearLayout.removeAllViews();
                     }
-                });
+                });*/
+                getAdminSecondMessage();
             }else{
                 linearLayout.removeAllViews();
             }
@@ -354,6 +355,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
             View vi = inflater.inflate(R.layout.admin_msg, null);
             //linearLayout.addView(vi);
+            //listView.removeHeaderView(vi);
             listView.addHeaderView(vi);
             LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
             linearAdminBtn.setGravity(Gravity.CENTER);

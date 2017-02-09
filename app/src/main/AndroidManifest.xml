@@ -59,7 +59,7 @@
             android:name=".EventChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <activity
             android:name=".SignUpActivity"
