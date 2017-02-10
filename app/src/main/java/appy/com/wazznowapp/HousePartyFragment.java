@@ -57,7 +57,8 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     LinearLayout linearLayout,linearlayChat;
     static boolean addHousePartyFLAG = false;
     SharedPreferences.Editor editor;
-
+    int mPageEndOffset = 0;
+    int mPageLimit = 10;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         myFirebaseRef = new Firebase(firebaseURL);
         alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.eventDetail.getCategory_name()  + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("HousepartyChat");
+        alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
     }
 
     @Override

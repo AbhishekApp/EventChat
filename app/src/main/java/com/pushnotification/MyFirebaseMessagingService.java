@@ -74,14 +74,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 value = entry.getValue();
                 Log.d(TAG, "key, '" + key + "' value '" + value+"'");
             }
-
             //This is where you get your click_action
             //Log.d(TAG, "Notification Click Action: " + remoteMessage.getNotification().getClickAction());  //commented as not working
             //put code here to navigate based on click_action
-
             sendNotification(remoteMessage.getNotification().getBody(),key,value);
         }
-
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }

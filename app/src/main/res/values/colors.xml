@@ -12,5 +12,6 @@
     <color name="chat_text_color">#5C5B5B</color>
     <color name="btncolor">#574561</color>
     <color name="orange">#FAA24A</color>
-
+    <color name="grey_100">#F5F5F5</color>
+    <color name="grey_300">#E0E0E0</color>
 </resources>

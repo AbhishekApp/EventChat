@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 try {
 
                     String string_value = value.toString();
-
                     //Toast.makeText(MainActivity.this, "title: " + string_value.split(" $")[0], Toast.LENGTH_LONG).show();
                     //Toast.makeText(MainActivity.this, "message : " + string_value.split(" $")[1], Toast.LENGTH_LONG).show();
 

@@ -78,8 +78,8 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
       //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
         longDeepLink = longDeepLink + eventID+"&utm_medium=Whatsapp&utm_campaign="+eventCategory;
         btnShare.setOnClickListener(this);
-
     }
+
     private void init(){
         actionBar = getSupportActionBar();
         actionBar.setTitle("Invite Friends");

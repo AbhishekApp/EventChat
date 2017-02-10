@@ -1,4 +1,5 @@
 package appy.com.wazznowapp;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -64,6 +65,7 @@ import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
+
 /**
  * Created by admin on 8/2/2016.
  */
@@ -104,6 +106,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     String msg;
     private DatabaseReference mDatabaseRefrenceSync;
     View v;
+    int mPageEndOffset = 0;
+    int mPageLimit = 10;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,6 +119,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         if(connectDetector.getConnection()) {
             myFirebaseRef = new Firebase(firebaseURL);
             alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
+            alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             alanRef.keepSynced(true); //synk db from live
 
@@ -617,18 +624,15 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor.commit();
                 ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
                 alanRef.push().setValue(alan);
-
                 if (messageType.equals("normal")) {
-                    MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, EventChatActivity.eventDetail.getCategory_name());
+                    MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
                 }
                 else if (messageType.equals("canned")){
-                    MyApp.CustomEventAnalytics("canned_sent", EventChatActivity.SuperCateName, EventChatActivity.eventDetail.getCategory_name());
+                    MyApp.CustomEventAnalytics("canned_sent", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
                 }
-
                 if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                     MyUtill.addMsgtoFeatured(getActivity(),msg);
                 }
-
             } else {
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), SignUpActivity.class);
@@ -638,8 +642,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }else{
             ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
             alanRef.push().setValue(alan);
-            MyApp.CustomEventAnalytics("chat_sent ", EventChatActivity.SuperCateName , EventChatActivity.eventDetail.getCategory_name());
-
+            MyApp.CustomEventAnalytics("chat_sent ", EventChatActivity.SuperCateName , eventDetail.getCategory_name());
             onRefresh();
             if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                 MyUtill.addMsgtoFeatured(getActivity(),msg);
@@ -654,9 +657,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         addHousePartyFLAG = false;
         editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~"+EventChatActivity.eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~"+ eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
         editor.commit();
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(EventChatActivity.eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
 
     }
 
@@ -690,6 +693,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         @Override
         public int getCount() {
             return StadiumMsgLimit;
+            //return alList.size();
         }
 
         @Override
@@ -758,7 +762,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     populateView(view, model);
                 }
                 catch (Exception e){
-                    //e.printStackTrace(); eats exceptions for now
+                    e.printStackTrace(); //eats exceptions for now
                 }
             }
             return view;

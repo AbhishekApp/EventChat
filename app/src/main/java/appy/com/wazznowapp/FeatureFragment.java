@@ -86,6 +86,8 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     ProgressBar pd;
     String shortLinkURL = "";
     String msg;
+    int mPageEndOffset = 0;
+    int mPageLimit = 10;
 
 
     @Override
@@ -97,6 +99,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             myFirebaseRef = new Firebase(firebaseURL);
             alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child("FeatureChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+            alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
             alanRef.keepSynced(true);
         }
     }
