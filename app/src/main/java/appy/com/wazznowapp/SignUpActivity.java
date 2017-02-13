@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.R.id.progressBar2;
 
 
@@ -193,8 +194,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             setResult(102);
                             finish();
                         }else if(task.isSuccessful()){
-                            MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title()+" :"+ EventChatActivity.eventID);
-                            MyApp.PreDefinedEventAnalytics("sign_up",email);
+                            MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
                             Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
                             userUpdateOnServer(uName, uLastName, uPhone, email, password);
                             setResult(102);
@@ -284,6 +284,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             //System.out.println("USER List new deviceID : " );
             users.put("0", alanisawesomeMap);
             firebase.child("users/" + password).setValue(users);
+
+            MyApp.PreDefinedEventAnalytics("sign_up",email,eventID);
         }
     }
 }

@@ -1,5 +1,6 @@
 package appy.com.wazznowapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -57,7 +59,7 @@ public class EventChatActivity extends AppCompatActivity {
     ChildEventListener childEventListener,childEventListener1;
     ArrayList<String> mKeys = new ArrayList<>();
     boolean moreThanDay=false;
-
+    private String NotificationMessageToShow="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class EventChatActivity extends AppCompatActivity {
                 SuperCateName = eventDetail.getSuper_category_name();
                 CateName = eventDetail.getEvent_title();
                 eventID = eventDetail.getEvent_id();
+                NotificationMessageToShow = getIntent().getStringExtra("NotificationMessageToShow");
             }
         } catch (Exception e) {
             //e.printStackTrace(); // for now eat exceptions
@@ -289,6 +292,25 @@ public class EventChatActivity extends AppCompatActivity {
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+
+
+        new AlertDialog.Builder(EventChatActivity.this)
+                .setTitle("WazzNow")
+                .setMessage(NotificationMessageToShow)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+                /*.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })*/
+                .setIcon(R.drawable.ic_dialog_alert_holo_light)
+                .show();
+
     }
 
     @Override

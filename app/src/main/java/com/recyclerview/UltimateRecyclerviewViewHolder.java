@@ -7,9 +7,6 @@ import android.util.SparseArray;
 import android.view.View;
 
 
-import appy.com.wazznowapp.R;
-
-
 /**
  * Created by MarshalChen on 15-6-2.
  * adding by Hesk 2016-2-29
@@ -30,7 +27,7 @@ public class UltimateRecyclerviewViewHolder<T> extends RecyclerView.ViewHolder i
 
     public UltimateRecyclerviewViewHolder(View itemView) {
         super(itemView);
-        swipeLayout= (SwipeLayout) itemView.findViewById(R.id.ad_in_progress_label);
+       // swipeLayout = (SwipeLayout) itemView.findViewById(R.id.ad_label);
         mView = itemView;
     }
 

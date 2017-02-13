@@ -64,6 +64,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
 
 /**
@@ -143,7 +144,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         return view;
     }
 
-    private void init(View v) {
+    private void init(final View v) {
         pd = (ProgressBar) v.findViewById(R.id.pd);
         linearLayout = (LinearLayout) v.findViewById(R.id.linearTopChat);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
@@ -151,13 +152,22 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
+        /*Snackbar snackbar = Snackbar.make(v.findViewById(R.id.etChatMsg), "Loading Messages.", Snackbar.LENGTH_LONG)
+        .setAction("OK", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar snackbar1 = Snackbar.make(v.findViewById(android.R.id.content), "Loading in Background", Snackbar.LENGTH_SHORT);
+                snackbar1.show();
+            }
+        });
+        snackbar.show();*/
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
         viewLay = (GridView) v.findViewById(R.id.viewLay);
         cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
         viewLay.setAdapter(cannedAdapter);
- //     al = new ArrayList<String>();
-//      adapter = new MyChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+        //al = new ArrayList<String>();
+        //adapter = new MyChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         linearCanMsg.setVisibility(View.GONE);
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
@@ -288,7 +298,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         @Override
                         public void onClick(View v) {
 
-                            MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name());
+                            MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name(),eventID);
                             editor = MyApp.preferences.edit();
                             editor.putBoolean(eventDetail.getCatergory_id(), true);
                             editor.commit();
@@ -743,7 +753,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
-                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title()+" :"+ EventChatActivity.eventID);
+                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
                     new newShortAsync().execute();
                 }
             });

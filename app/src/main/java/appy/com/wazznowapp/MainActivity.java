@@ -57,6 +57,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static appy.com.wazznowapp.EventChatActivity.eventID;
+
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     ListView listMain;
     private static boolean firstFlag = false;
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     int REQUEST_INVITE = 111;
     //static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
+    private String NotificationMessageToShow = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // be handled here. If you want a different intent fired, set the click_action
         // field of the notification message to the desired intent. The launcher intent
         // is used when no click_action is specified.
-        //
         // Handle possible data accompanying notification message.
         // [START handle_data_extras]
         if (getIntent().getExtras() != null) {
@@ -102,15 +104,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 value = getIntent().getExtras().get(key);
                 //Log.d(TAG, "Key: " + key + " Value: " + value);
                 try {
-
                     String string_value = value.toString();
                     //Toast.makeText(MainActivity.this, "title: " + string_value.split(" $")[0], Toast.LENGTH_LONG).show();
                     //Toast.makeText(MainActivity.this, "message : " + string_value.split(" $")[1], Toast.LENGTH_LONG).show();
 
-                    System.out.println(string_value);
+                    System.out.println(key +":"+ string_value);
                     //System.out.println(string_value.split(" $")[0]);
                     //xxxSystem.out.println(string_value.split(" $")[1]);
 
+                    if (key.equals("click_action")){
+                        NotificationMessageToShow = string_value;
+                    }
+
+                    if (key.equals("eventID")){
+                        //UserDetailTask task = new UserDetailTask();
+                        //task.execute();
+                        invitedEventid = string_value;
+                        getInvited = true;
+                    }
                     //Toast.makeText(MainActivity.this, "from notification: custom message: " + getIntent().getStringExtra("data").toString().split("$")[1], Toast.LENGTH_LONG).show();
                 }catch (Exception e){
                     e.printStackTrace();
@@ -118,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
             //System.out.println("from notification: "+getIntent().getStringExtra("data").toString());
 
+        }else{
+            getInvited = false;
         }
         // [END handle_data_extras]
 
@@ -139,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent ii = new Intent(this, MySplashActivity.class);
                 startActivity(ii);
             }
-            getInvited = false;
+
             hashMapEvent = new HashMap<String,EventDetail>();
             mGoogleApiClient = new GoogleApiClient.Builder(this)
             .addApi(AppInvite.API)
@@ -216,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         EventDetail eventDetail = arrayListEvent.get(position);
-        MyApp.PreDefinedEventAnalytics("select_content",eventDetail.getCategory_name());
+        MyApp.PreDefinedEventAnalytics("select_content",eventDetail.getCategory_name(),eventID);
         Intent iChat = new Intent(this, EventChatActivity.class);
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
@@ -643,9 +656,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             try{
                 if(getInvited){
                     EventDetail detail = hashMapEvent.get(invitedEventid);
-                    Intent iChat = new Intent(MainActivity.this, EventChatActivity.class);
-                    iChat.putExtra("EventDetail", detail);
-                    startActivity(iChat);
+                    if(detail.getEvent_id().length()>0){
+                        Intent iChat = new Intent(MainActivity.this, EventChatActivity.class);
+                        iChat.putExtra("EventDetail", detail);
+                        iChat.putExtra("NotificationMessageToShow",NotificationMessageToShow);
+                        startActivity(iChat);
+                    }else{
+                        Toast.makeText(MainActivity.this, "Event not exist anymore!!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }catch (Exception ex){
                 ex.printStackTrace();

@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -53,12 +52,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.FeaturedMsgLimit;
-
 /**
  * Created by admin on 1/20/2017.
  */
 public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
+
     ConnectDetector connectDetector;
     ListView listView;
     LinearLayout linearLayout;
@@ -70,7 +70,6 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
     SharedPreferences.Editor editor;
     String userName = "";
-    
     //InputMethodManager imm;
     ArrayList<ChatData> alList;
     ArrayList<String> mKeys;
@@ -318,7 +317,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
-                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name()); //no message ID as all will be in same sub-category
+                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name(),eventID); //no message ID as all will be in same sub-category
                     new newShortAsync().execute();
                 }
             });

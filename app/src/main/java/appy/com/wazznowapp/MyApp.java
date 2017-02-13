@@ -88,7 +88,7 @@ public class MyApp extends Application {
     }
 
 
-    public static void PreDefinedEventAnalytics(String AnalyticsName,String AnalyticsValue){
+    public static void PreDefinedEventAnalytics(String AnalyticsName,String AnalyticsValue, String Item_ID){
         /********************************FIREBASE_ANALYTICS_CODE*****************************************/
         String eventName;
         switch (AnalyticsName) {
@@ -112,11 +112,11 @@ public class MyApp extends Application {
         }
         if (eventName!=null) {
             AnalyticsSingleton as = new AnalyticsSingleton();
-            as.setId(1);
+            //as.setId();
             // choose random food name from the list
             as.setName(AnalyticsValue);
             Bundle bundle = new Bundle();
-            bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, as.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, Item_ID);
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
             //Logs an app event.
             firebaseAnalytics.logEvent(eventName, bundle);
@@ -125,9 +125,9 @@ public class MyApp extends Application {
             //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
             firebaseAnalytics.setMinimumSessionDuration(20000);
             //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
-            firebaseAnalytics.setSessionTimeoutDuration(500);
+            firebaseAnalytics.setSessionTimeoutDuration(500); // in milli-seconds
             //Sets the user ID property.
-            firebaseAnalytics.setUserId(String.valueOf(as.getId()));
+            firebaseAnalytics.setUserId(String.valueOf(/*as.getId()*/Item_ID));
             //Sets a user property to a given value.
             firebaseAnalytics.setUserProperty("eventList", as.getName());
         }
