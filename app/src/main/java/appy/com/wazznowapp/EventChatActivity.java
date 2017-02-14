@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,12 +36,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
 /**
  * Created by admin on 8/2/2016.
  */
-
 public class EventChatActivity extends AppCompatActivity {
+
     private TabLayout tabLayout;
     private ViewPager viewPager;
     ConnectDetector connectDetector;
@@ -73,16 +71,17 @@ public class EventChatActivity extends AppCompatActivity {
                 CateName = eventDetail.getEvent_title();
                 eventID = eventDetail.getEvent_id();
                 NotificationMessageToShow = getIntent().getStringExtra("NotificationMessageToShow");
+
             }
         } catch (Exception e) {
-            //e.printStackTrace(); // for now eat exceptions
+             e.printStackTrace(); // for now eat exceptions
             //eventDetail =new EventDetail();
             return;
         }
 
         if (MyApp.firebaseFlag && connectDetector.getConnection()) {
             init();
-            /**************************************************Fetching Commentator from Stadium ***********************************************************/
+            /**************************************************Fetching Commentator from Stadium***********************************************************/
 
             alList.clear();
 
@@ -293,9 +292,7 @@ public class EventChatActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-
-
-        new AlertDialog.Builder(EventChatActivity.this)
+        AlertDialog.Builder alert = new AlertDialog.Builder(EventChatActivity.this)
                 .setTitle("WazzNow")
                 .setMessage(NotificationMessageToShow)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -308,9 +305,17 @@ public class EventChatActivity extends AppCompatActivity {
                         // do nothing
                     }
                 })*/
-                .setIcon(R.drawable.ic_dialog_alert_holo_light)
-                .show();
+                .setIcon(R.drawable.ic_dialog_alert_holo_light);
 
+        try {
+            if (NotificationMessageToShow != null) {
+                if (NotificationMessageToShow.length() > 0) {
+                    alert.show();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -318,18 +323,18 @@ public class EventChatActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                final View menuItemView = findViewById(R.id.menu_noti);
-                menuItemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //asdad
-                        showPopup(v);
-                        //Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+        @Override
+        public void run() {
+            final View menuItemView = findViewById(R.id.menu_noti);
+            menuItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //asdad
+                    showPopup(v);
+                    //Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
         });
         return true;
     }

@@ -110,8 +110,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     int mPageEndOffset = 0;
     int mPageLimit = 10;
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -209,8 +207,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     }*/
                 }
                 chatAdapter.notifyDataSetChanged();
-
-
             }
 
             @Override
