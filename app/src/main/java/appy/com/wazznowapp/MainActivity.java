@@ -471,14 +471,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_time(jOBJ.optString("event_time"));
                             detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
                             detail.setSubscribed_user(subscribedUser);
+
+                            model.Cate.add(detail);
+                            arrayListEvent.add(detail);
+                            hashMapEvent.put(detail.getEvent_id(), detail);
+
                             String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
-                            if(!TextUtils.isEmpty(strTime)) {
+                            /*if(!TextUtils.isEmpty(strTime)) {
                                 model.Cate.add(detail);
                                 arrayListEvent.add(detail);
                                 hashMapEvent.put(detail.getEvent_id(), detail);
                             }else{
                                 System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
-                            }
+                            }*/
                         }
                     }
                     alModel.add(model);

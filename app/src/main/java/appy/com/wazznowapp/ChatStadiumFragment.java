@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -66,7 +65,6 @@ import java.util.Map;
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
-
 /**
  * Created by admin on 8/2/2016.
  */
@@ -75,7 +73,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
-    //StadiumChatListAdapter adapter;
     EditText etMsg;
     static LinearLayout linearCanMsg;
     GridView viewLay;
@@ -150,22 +147,12 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
-        /*Snackbar snackbar = Snackbar.make(v.findViewById(R.id.etChatMsg), "Loading Messages.", Snackbar.LENGTH_LONG)
-        .setAction("OK", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar snackbar1 = Snackbar.make(v.findViewById(android.R.id.content), "Loading in Background", Snackbar.LENGTH_SHORT);
-                snackbar1.show();
-            }
-        });
-        snackbar.show();*/
+
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
         viewLay = (GridView) v.findViewById(R.id.viewLay);
         cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
         viewLay.setAdapter(cannedAdapter);
-        //al = new ArrayList<String>();
-        //adapter = new MyChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         linearCanMsg.setVisibility(View.GONE);
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
@@ -175,10 +162,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         alList = new ArrayList<ChatData>();
         mKeys = new ArrayList<String>();
         chatAdapter = new StadiumChatAdapter(getActivity(), alList);
-    //    listView.setAdapter(chatAdapter);
-        //eventCategory = getIntent().getStringExtra("EventName");
-        //eventID = getIntent().getStringExtra("EventID");
-        //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
         longDeepLink = longDeepLink + eventDetail.getEvent_id()+"&utm_medium=Whatsapp&utm_campaign="+ eventDetail.getEvent_title();
 
         ChildEventListener childEventListener = new ChildEventListener() {
@@ -293,51 +276,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     btnYes.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
-                            MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name(),eventID);
-                            editor = MyApp.preferences.edit();
-                            editor.putBoolean(eventDetail.getCatergory_id(), true);
-                            editor.commit();
-                            /*  Update user, Subscribe this event */
-                            getAdminSecondMessage();
+                        MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name(),eventID);
+                        editor = MyApp.preferences.edit();
+                        editor.putBoolean(eventDetail.getCatergory_id(), true);
+                        editor.commit();
+                        /*  Update user, Subscribe this event */
+                        getAdminSecondMessage();
                         }
                     });
                 }
             }else if(!MyApp.preferences.getBoolean(EventChatActivity.eventID+"HouseParty", false) && !addHousePartyFLAG){
-                //linearLayout.removeAllViews();
-               /* LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-                View vii = inflater.inflate(R.layout.admin_msg,null);
-                //linearLayout.removeAllViews();
-                //linearLayout.addView(vi);
-                if(v!=null)
-                listView.removeHeaderView(v);
-                listView.addHeaderView(vii);
-                LinearLayout linearAdminBtn = (LinearLayout) vii.findViewById(R.id.linearAdminBtn);
-                TextView tvAdminMsg = (TextView) vii.findViewById(R.id.tvAdminMsg1);
-                TextView btnYes = (TextView) vii.findViewById(R.id.btnAdminMsgYes);
-                TextView btnNo = (TextView) vii.findViewById(R.id.btnAdminMsgNo);
-
-                ImageView like = (ImageView) vii.findViewById(R.id.like);
-                ImageView dislike = (ImageView) vii.findViewById(R.id.dislike);
-
-                like.setImageResource(R.drawable.add);
-                dislike.setImageResource(R.drawable.nothanks);
-
-                btnYes.setText("Invite Friends");
-                btnNo.setText("No, Thanks");
-                tvAdminMsg.setText("Start a House Party. There are most fun.");
-                btnYes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        housePartyStarted();
-                    }
-                });
-                btnNo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        linearLayout.removeAllViews();
-                    }
-                });*/
                 getAdminSecondMessage();
             }else{
                 linearLayout.removeAllViews();
@@ -462,33 +410,25 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         try {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             View view = getActivity().getCurrentFocus();
-            //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            //adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatActivity.eventID, "-1"));
              if(!(noSend >= 0 && noSend < 3)){
                  if(noSend == 0) {
                      linearCanMsg.setVisibility(View.VISIBLE);
-                     //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                     //imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                  }else {
-                     //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                      linearCanMsg.setVisibility(View.GONE);
                  }
             }else{
                 linearCanMsg.setVisibility(View.VISIBLE);
-                //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-        //if(!TextUtils.isEmpty(userName)) {
             subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
             if(subscribedGroup.contains(eventDetail.getCatergory_id())) {
                 listView.setAdapter(chatAdapter);
                 chatAdapter.notifyDataSetChanged();
             }
-        //}
     }
 
 
@@ -568,11 +508,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     editor.commit();
                 }
                 if(noSend < 3) {
-                    View view = getActivity().getCurrentFocus();
-                    if (view != null) {
-                        //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
                     linearCanMsg.setVisibility(View.VISIBLE);
                 }else{
                     Toast.makeText(getActivity(), "You have already send free messages.", Toast.LENGTH_SHORT).show();
@@ -586,8 +521,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onRefresh() {
-//        if(alList.size() > StadiumMsgLimit)
-        //StadiumMsgLimit = alList.size()-1;
         if(alList.size() > StadiumMsgLimit)
         StadiumMsgLimit=StadiumMsgLimit+5;
         chatAdapter.notifyDataSetChanged();
@@ -614,7 +547,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     SharedPreferences.Editor editor = MyApp.preferences.edit();
                     editor.putBoolean("HousePartyMessage" + EventChatActivity.eventID, true);
                     editor.commit();
-                    //sendHousePartyMsg();
                 }
             } catch (Exception ex) {
                 Log.e("StadiumFragment", "sendMsg ERROR: " + ex.toString());
@@ -663,7 +595,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         addHousePartyFLAG = false;
         editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~"+ eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~"+ eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
         editor.commit();
         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
 
@@ -684,22 +616,18 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         Context con;
         ArrayList<ChatData> alList;
         TextView tvUser,tvMsg,tvComMsg1;
-        //TextView btnYes, btnNo;
         LinearLayout linear;//, linearBtn;
         RelativeLayout.LayoutParams relativeParam;
         ImageView imgIcon;
         RelativeLayout comRL;
-        //int limit;
         public StadiumChatAdapter(Context context, ArrayList<ChatData> al){
             con = context;
             alList = al;
-            //limit = msgLimit;
         }
 
         @Override
         public int getCount() {
             return StadiumMsgLimit;
-            //return alList.size();
         }
 
         @Override
@@ -723,9 +651,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 tvUser = (TextView) view.findViewById(R.id.tvChatUser);
                 tvMsg = (TextView) view.findViewById(R.id.tvChat);
                 linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
-                //linearBtn = (LinearLayout) view.findViewById(R.id.linearBtn);
-                //btnYes = (TextView) view.findViewById(R.id.btnYesTuneOrInvite);
-                //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             }else{
                 imgIcon = (ImageView) view.findViewById(R.id.imgIcon);
                 tvUser = (TextView) view.findViewById(R.id.tvChatUser);
@@ -733,22 +658,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
                 comRL = (RelativeLayout)view.findViewById(R.id.comRL);
                 tvComMsg1 = (TextView)comRL.findViewById(R.id.tvComMsg1);
-                //linearBtn = (LinearLayout) view.findViewById(R.id.linearBtn);
-                //btnYes = (TextView) view.findViewById(R.id.btnYesTuneOrInvite);
-                //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             }
 
-            //RelativeLayout RLcomlay = (RelativeLayout)view.findViewById(R.id.RLcomlay);
 
             ImageView share = (ImageView) view.findViewById(R.id.share);
-            //ImageView facebook = (ImageView) RLcomlay.findViewById(R.id.facebook);
             if(!share.isShown())
                 share.setVisibility(View.VISIBLE);
 
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
                     MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
                     new newShortAsync().execute();
                 }
@@ -775,29 +694,25 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }
 
         protected void populateView(final View v, ChatData model) {
-            tvMsg.setText(model.getTitle());
-            tvUser.setText(model.getAuthor());
+
             tvUser.setTypeface(MyApp.authorFont);
             tvMsg.setTypeface(MyApp.authorMsg);
-
             tvComMsg1.setText(model.getTitle());
-            //linearBtn.setVisibility(View.GONE);
             relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             String sender = model.getAuthor();
             String fromUser = model.getToUser();
             String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
             boolean isEqual = sender.equalsIgnoreCase(userName);
+            tvMsg.setText(model.getTitle());
+            tvUser.setText(model.getAuthor());
 
             if(model.getAuthorType().equals("com")){
-                //System.out.println("commmmenttttttaaaatooorrrr");
                 comRL.setVisibility(View.VISIBLE);
                 linear.setVisibility(View.GONE);
             }else {
-                //System.out.println("model.getAuthor: "+model.getAuthorType());
                 linear.setVisibility(View.VISIBLE);
                 comRL.setVisibility(View.GONE);
                 if((fromUser.equals(MyApp.getDeviveID(con)))) {
-                    //tvMsg.setGravity(Gravity.RIGHT);
                     tvMsg.setTextColor(con.getResources().getColor(R.color.white));
                     tvMsg.setPadding(25,15,70,15);
                     tvUser.setGravity(Gravity.RIGHT);
@@ -807,9 +722,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     relativeParam.setMargins(0,5,105,5);
                     linear.setLayoutParams(relativeParam);
-                    //linear.setBackgroundResource(R.drawable.chat_outgoing_background);
                     linear.setBackgroundResource(R.drawable.outgoing_message_bg);
-                    //linearBtn.setVisibility(View.GONE);
                 }
                 else{
                     tvMsg.setGravity(Gravity.LEFT);
@@ -823,16 +736,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                     relativeParam.setMargins(105,5,0,5);
                     linear.setLayoutParams(relativeParam);
-                    //linear.setBackgroundResource(R.drawable.chat_incomin_background);
                     linear.setBackgroundResource(R.drawable.chat_new);
                     linear.setPadding(35,5,80,5);
-                    //linearBtn.setVisibility(View.GONE);
                 }
                 if(model.getAuthor().equalsIgnoreCase("Admin")) {
                     imgIcon.setVisibility(View.VISIBLE);
                 }else{
                     imgIcon.setVisibility(View.GONE);
-                    //tvMsg.setBackgroundColor(Color.TRANSPARENT);
                 }
             }
         }

@@ -300,17 +300,13 @@ public class EventChatActivity extends AppCompatActivity {
                         // continue with delete
                     }
                 })
-                /*.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })*/
-                .setIcon(R.drawable.ic_dialog_alert_holo_light);
+                .setIcon(R.drawable.ic_launcher);
 
         try {
             if (NotificationMessageToShow != null) {
                 if (NotificationMessageToShow.length() > 0) {
                     alert.show();
+                    NotificationMessageToShow="";
                 }
             }
         }catch (Exception e){

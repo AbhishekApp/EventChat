@@ -88,9 +88,19 @@ public class EventModelAdapter extends BaseAdapter {
           downloadImageURL(detail.getEvent_id(), viewHolder.img);
         String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time())).trim();
         //System.out.println("Line 89 event Time Difference :"+strTime+":");
-        if(!TextUtils.isEmpty(strTime)){
+        /*if(!TextUtils.isEmpty(strTime)){
             viewHolder.tvHour.setText(strTime);
+        }*/
+
+        if (strTime.contains("Ago")){
+            viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.past_, 0, 0, 0);
+        }else{
+            viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
+        strTime = strTime.replace(" Ago","");
+        viewHolder.tvHour.setText(strTime);
+
+
         if(detail.getSubscribed_user().equalsIgnoreCase("0")) {
             //viewHolder.tvNoOfTune.setVisibility(View.GONE);
             String subscribed_user = detail.getSubscribed_user();
