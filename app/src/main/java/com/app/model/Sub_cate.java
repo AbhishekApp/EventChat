@@ -12,8 +12,9 @@ public class Sub_cate implements Serializable {
     String event_meta;
     String event_title;
     String event_time;
-    String event_exp_time;
+    String event_exp;
     String event_date;
+    String event_image_url;
 
     public String getEvent_id() {
         return event_id;
@@ -23,12 +24,12 @@ public class Sub_cate implements Serializable {
         this.event_id = event_id;
     }
 
-    public String getEvent_exp_time() {
-        return event_exp_time;
+    public String getEvent_exp() {
+        return event_exp;
     }
 
     public void setEvent_exp_time(String event_exp_time) {
-        this.event_exp_time = event_exp_time;
+        this.event_exp = event_exp_time;
     }
     //    String event_image_url;
 
@@ -48,13 +49,13 @@ public class Sub_cate implements Serializable {
         this.event_title = event_title;
     }
 
-//    public String getEvent_image_url() {
-//        return event_image_url;
-//    }
-//
-//    public void setEvent_image_url(String event_image_url) {
-//        this.event_image_url = event_image_url;
-//    }
+    public String getEvent_image_url() {
+        return event_image_url;
+    }
+
+    public void setEvent_image_url(String event_image_url) {
+        this.event_image_url = event_image_url;
+    }
 
     public String getEvent_time() {
         return event_time;

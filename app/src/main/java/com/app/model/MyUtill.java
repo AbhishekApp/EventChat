@@ -71,11 +71,11 @@ public class MyUtill {
     }
 
 
-    public String getTimeDifference(String startDate, String startTime){
+    public String getTimeDifference(String startDate){
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         String diff="";
         try {
-            Date Date2 = format.parse(startDate+" "+startTime);
+            Date Date2 = format.parse(startDate);
             long mills = Date2.getTime() - System.currentTimeMillis();
             mills = mills/1000;
             long seconds = (int) mills % 60;
@@ -84,10 +84,21 @@ public class MyUtill {
             mills /= 60;
             int hours =  (int) mills % 24;
             mills /= 24;
-            int  days = (int) mills;
+            int  days = (int) mills % 30;
+            mills /= 30;
+            int months = (int) mills % 12;
+            mills /= 12;
+            int years = (int) mills ;
 
             //diff= days+" days "+hours+" hrs "+minutes+" mins";
-            if (days>0){
+
+            if (months>12 && years >=1) {
+                diff = years + " years " + months + " months " + days + " dayrs";
+            }
+            if (months<=12 && years<=0){
+                diff= months+" months "+days+" days "+hours+" hrs";
+            }
+            if (days<30 && months <= 0){
                 diff= days+" days "+hours+" hrs "+minutes+" mins";
             }
             else if(days<=0 && hours > 0){

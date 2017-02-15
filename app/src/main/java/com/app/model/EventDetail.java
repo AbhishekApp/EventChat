@@ -16,17 +16,26 @@ public class EventDetail implements Serializable{
     String event_meta;
     String event_title;
     String event_image_url;
-    String event_time;
-    String event_exp_time;
-    String event_date;
+    String event_exp;
+    String event_start;
     String subscribed_user;
 
-    public String getEvent_exp_time() {
-        return event_exp_time;
+    public String getEvent_start() {
+        return event_start;
     }
 
-    public void setEvent_exp_time(String event_exp_time) {
-        this.event_exp_time = event_exp_time;
+    public void setEvent_start(String event_start) {
+        this.event_start = event_start;
+    }
+
+
+
+    public String getEvent_exp() {
+        return event_exp;
+    }
+
+    public void setEvent_exp(String event_exp) {
+        this.event_exp = event_exp;
     }
 
 
@@ -50,13 +59,7 @@ public class EventDetail implements Serializable{
            this.subscribed_user = subscribed_user;
     }
 
-    public String getEvent_date() {
-        return event_date;
-    }
 
-    public void setEvent_date(String event_date) {
-        this.event_date = event_date;
-    }
 
     public void setSuper_category_name(String super_category_name) {
         this.super_category_name = super_category_name;
@@ -80,9 +83,7 @@ public class EventDetail implements Serializable{
         this.event_title = event_title;
     }
 
-    public void setEvent_time(String event_time){
-        this.event_time = event_time;
-    }
+
 
     public String getSuper_category_name() {
         return super_category_name;
@@ -108,8 +109,5 @@ public class EventDetail implements Serializable{
         return event_title;
     }
 
-    public String getEvent_time(){
-        return event_time;
-    }
 
 }

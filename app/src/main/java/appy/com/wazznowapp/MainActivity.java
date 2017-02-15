@@ -1,4 +1,5 @@
 package appy.com.wazznowapp;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -54,6 +55,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -205,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
         } else{
             Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
+            //finish();
         }
     }
 
@@ -284,11 +288,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
                             Sub_cate subCate = subCtList.getSub_cate().get(j);
                             eventDetail.setEvent_id(subCate.getEvent_id());
-                            eventDetail.setEvent_date(subCate.getEvent_date());
+                            eventDetail.setEvent_start(subCate.getEvent_date());
                             eventDetail.setEvent_meta(subCate.getEvent_meta());
-                            eventDetail.setEvent_time(subCate.getEvent_time());
                             eventDetail.setEvent_title(subCate.getEvent_title());
-                            eventDetail.setEvent_exp_time(subCate.getEvent_exp_time());
+                            eventDetail.setEvent_exp(subCate.getEvent_exp());
                             eventDetail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+subCate.getEvent_id());
                             eventDetail.setSubscribed_user(subscribedUser);
                             arrayListEvent.add(eventDetail);
@@ -457,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         String subCateID = jsonDetail.optString("event_sub_id");
                         String subscribedUser = jsonDetail.optString("subscribed_user");
                         JSONArray jsArr = jsonDetail.getJSONArray("Sub_cate");
+
                         for(int t = 0 ; t < jsArr.length(); t++ ){
                             detail = new EventDetail();
                             JSONObject jOBJ = jsArr.getJSONObject(t);
@@ -467,16 +471,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_id(jOBJ.optString("event_id"));
                             detail.setEvent_meta(jOBJ.optString("event_meta"));
                             detail.setEvent_title(jOBJ.optString("event_title"));
-                            detail.setEvent_date(jOBJ.optString("event_date"));
-                            detail.setEvent_time(jOBJ.optString("event_time"));
+                            detail.setEvent_start(jOBJ.optString("event_start"));
+                            detail.setEvent_exp(jOBJ.optString("event_exp"));
                             detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
                             detail.setSubscribed_user(subscribedUser);
-
                             model.Cate.add(detail);
                             arrayListEvent.add(detail);
                             hashMapEvent.put(detail.getEvent_id(), detail);
-
-                            String strTime = myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time()).trim();
+                            String strTime = myUtill.getTimeDifference(detail.getEvent_start()).trim();
                             /*if(!TextUtils.isEmpty(strTime)) {
                                 model.Cate.add(detail);
                                 arrayListEvent.add(detail);
@@ -488,6 +490,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                     alModel.add(model);
                 }
+                Collections.sort(arrayListEvent, new CustomComparator());
                 //System.out.println("EVENT DETAIL : "+alModel.toString());
             }catch (JSONException e) {
                 e.printStackTrace();
@@ -505,6 +508,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             cannedTask.execute();
         }
     }
+
+
+    public static class CustomComparator implements Comparator<EventDetail> {
+        @Override
+        public int compare(EventDetail o1, EventDetail o2) {
+            return o1.getEvent_start().compareTo(o2.getEvent_start());
+        }
+    }
+
 
 
     private void addUserDetail(){

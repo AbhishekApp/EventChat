@@ -86,7 +86,7 @@ public class EventModelAdapter extends BaseAdapter {
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
         if(!TextUtils.isEmpty(detail.getEvent_image_url()))
           downloadImageURL(detail.getEvent_id(), viewHolder.img);
-        String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_date(), detail.getEvent_time())).trim();
+        String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_start())).trim();
         //System.out.println("Line 89 event Time Difference :"+strTime+":");
         /*if(!TextUtils.isEmpty(strTime)){
             viewHolder.tvHour.setText(strTime);

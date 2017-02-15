@@ -230,7 +230,7 @@ public class EventChatActivity extends AppCompatActivity {
 
         } else {
             Toast.makeText(this, "Please check internet connection. Server Error.", Toast.LENGTH_SHORT).show();
-            finish();
+            //finish();
         }
         //init();
     }
@@ -243,7 +243,7 @@ public class EventChatActivity extends AppCompatActivity {
     }
 
 
-    public static class MyObject implements Comparable<MyObject> {
+    /*public static class MyObject implements Comparable<MyObject> {
 
         private Date dateTime;
 
@@ -259,7 +259,7 @@ public class EventChatActivity extends AppCompatActivity {
         public int compareTo(MyObject o) {
             return getDateTime().compareTo(o.getDateTime());
         }
-    }
+    }*/
 
 
 
