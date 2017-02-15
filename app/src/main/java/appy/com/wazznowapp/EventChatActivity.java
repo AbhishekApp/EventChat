@@ -40,7 +40,6 @@ import java.util.List;
  * Created by admin on 8/2/2016.
  */
 public class EventChatActivity extends AppCompatActivity {
-
     private TabLayout tabLayout;
     private ViewPager viewPager;
     ConnectDetector connectDetector;
@@ -184,13 +183,9 @@ public class EventChatActivity extends AppCompatActivity {
                         }
                     }
 
-
                     //System.out.println(alList.toString());
-
                     Collections.sort(alList, new CustomComparator());
-
                     //System.out.println(alList.toString());
-
                 }
 
                 @Override
@@ -231,20 +226,6 @@ public class EventChatActivity extends AppCompatActivity {
             };
             mDatabaseRefrenceSync1.addChildEventListener(childEventListener1);
 
-
-
-            /*Collections.sort(alList, new Comparator<ChatData> {
-                public int compare(ChatData o1, ChatData o2) {
-                    DateTime a = o1.getDateTime();
-                    DateTime b = o2.getDateTime();
-                    if (a.lt(b))
-                        return -1;
-                    else if (a.lteq(b)) // it's equals
-                        return 0;
-                    else
-                        return 1;
-                }
-            });*/
 
 
         } else {

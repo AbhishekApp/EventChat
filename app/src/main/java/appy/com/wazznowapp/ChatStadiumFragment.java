@@ -1,8 +1,6 @@
 package appy.com.wazznowapp;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -17,14 +15,12 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,17 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -91,7 +76,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     int noSend;
     ArrayList<ChatData> alList;
     ArrayList<String> mKeys;
-    StadiumChatAdapter chatAdapter;
+    NewAdapter chatAdapter;
     String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
             "&apn=appy.com.wazznowapp"+
             "&afl=$"+
@@ -163,7 +148,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         viewLay.setOnItemClickListener(this);
         alList = new ArrayList<ChatData>();
         mKeys = new ArrayList<String>();
-        chatAdapter = new StadiumChatAdapter(getActivity(), alList);
+        chatAdapter = new NewAdapter(getActivity(),R.layout.chat_layout, alList);
         longDeepLink = longDeepLink + eventDetail.getEvent_id()+"&utm_medium=Whatsapp&utm_campaign="+ eventDetail.getEvent_title();
 
         ChildEventListener childEventListener = new ChildEventListener() {
@@ -596,7 +581,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    class StadiumChatAdapter extends BaseAdapter{
+    /*class StadiumChatAdapter extends ArrayAdapter{
         Context con;
         ArrayList<ChatData> alList;
         TextView tvUser,tvMsg,tvComMsg1;
@@ -604,14 +589,19 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         RelativeLayout.LayoutParams relativeParam;
         ImageView imgIcon;
         RelativeLayout comRL;
-        public StadiumChatAdapter(Context context, ArrayList<ChatData> al){
+
+
+        public StadiumChatAdapter(Context context, int resource,ArrayList<ChatData> al) {
+            super(context, resource);
             con = context;
             alList = al;
         }
 
         @Override
         public int getCount() {
-            return alList.size();
+            return (StadiumMsgLimit == -1) ? StadiumMsgLimit : 0;
+            //return StadiumMsgLimit;
+         //   return alList.size();
         }
 
         @Override
@@ -801,7 +791,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     //  String dLink = longDeepLink.replace("SenderID", eventID);
                     //sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra("share", msg);
-                /*sendIntent.setType("text/plain");*/
+                *//*sendIntent.setType("text/plain");*//*
                     //sendIntent.setPackage("com.whatsapp");
                     try{
                         startActivity(sendIntent);
@@ -817,6 +807,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }
 
 
-    }
+    }*/
 }
 

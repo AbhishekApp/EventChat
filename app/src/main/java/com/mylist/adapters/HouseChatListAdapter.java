@@ -17,7 +17,7 @@ import appy.com.wazznowapp.R;
 /**
  * Created by admin on 8/11/2016.
  */
-public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
+public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
 
     Activity activity;
     TextView tvUser;
@@ -29,7 +29,7 @@ public class StadiumChatListAdapter extends FirebaseListAdapter<ChatData> {
     RelativeLayout comRL;
     TextView tvComMsg1;
 
-    public StadiumChatListAdapter(Query ref, Activity activity, int layout){
+    public HouseChatListAdapter(Query ref, Activity activity, int layout){
         super(ref, ChatData.class, layout, activity);
         this.activity = activity;
     }

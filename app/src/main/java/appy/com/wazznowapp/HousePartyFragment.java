@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.app.model.ChatData;
 import com.app.model.MyUtill;
 import com.firebase.client.Firebase;
-import com.mylist.adapters.StadiumChatListAdapter;
+import com.mylist.adapters.HouseChatListAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,7 +38,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
-    StadiumChatListAdapter adapter;
+    HouseChatListAdapter adapter;
     EditText etMsg;
     GridView viewLay;
     String mPhotoUrl;
@@ -95,7 +95,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         etMsg.setOnClickListener(this);
 
         editor = MyApp.preferences.edit();
-        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+        adapter = new HouseChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
     }
 
     @Override
@@ -250,7 +250,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         msgLimit+=10;
         alanRef.limit(msgLimit);
         //alanRef.
-        adapter = new StadiumChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+        adapter = new HouseChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
