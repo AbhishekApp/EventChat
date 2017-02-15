@@ -78,14 +78,27 @@ public class MyUtill {
             Date Date2 = format.parse(startDate+" "+startTime);
             long mills = Date2.getTime() - System.currentTimeMillis();
             mills = mills/1000;
-            long seconds = mills % 60;
+            long seconds = (int) mills % 60;
             mills/= 60;
-            long minutes =mills % 60;
+            int  minutes = (int) mills % 60;
             mills /= 60;
-            long hours = mills % 24;
+            int hours =  (int) mills % 24;
             mills /= 24;
-            long days = mills;
-            diff= days+" days "+hours+" hrs "+minutes+" mins";
+            int  days = (int) mills;
+
+            //diff= days+" days "+hours+" hrs "+minutes+" mins";
+            if (days>0){
+                diff= days+" days "+hours+" hrs "+minutes+" mins";
+            }
+            else if(days<=0 && hours > 0){
+                diff= hours+" hrs "+minutes+" mins "+seconds+" sec";
+            }
+            else if(days<=0 && hours <=0){
+                diff= minutes+" mins "+seconds+" sec";
+            }
+            else if(days<=0 && hours <=0 && minutes <=0){
+                diff= seconds+" seconds";
+            }
             if (diff.contains("-")){
                 diff=diff.replace("-","")+" Ago";
 

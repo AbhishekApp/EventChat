@@ -136,11 +136,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
+
         return view;
     }
 
     private void init(final View v) {
         pd = (ProgressBar) v.findViewById(R.id.pd);
+        pd.setVisibility(View.VISIBLE);
         linearLayout = (LinearLayout) v.findViewById(R.id.linearTopChat);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         listView = (ListView) v.findViewById(R.id.listMain);
@@ -174,7 +176,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 if (previousChildName == null) {
                     alList.add(0, model);
                     mKeys.add(0, key);
-                    //StadiumMsgLimit++;
                 } else {
                     int previousIndex = mKeys.indexOf(previousChildName);
                     int nextIndex = previousIndex + 1;
@@ -185,9 +186,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         alList.add(nextIndex, model);
                         mKeys.add(nextIndex, key);
                     }
-                    /*if(StadiumMsgLimit < 3){
-                        StadiumMsgLimit++;
-                    }*/
                 }
                 chatAdapter.notifyDataSetChanged();
             }
@@ -237,6 +235,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             StadiumMsgLimit= alList.size();
             System.out.println("new size :"+StadiumMsgLimit);
         }
+
+        pd.setVisibility(View.GONE);
     }
 
     @Override
@@ -250,8 +250,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     v = inflater.inflate(R.layout.admin_msg,null);
                     listView.addHeaderView(v);
                     listView.setAdapter(null);
-
-                    //linearLayout.addView(v);
                     TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
@@ -290,8 +288,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }else{
                 linearLayout.removeAllViews();
             }
-
-
             if (MyApp.StadiumMsgLimit>1){
                 chatAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
@@ -306,17 +302,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         UserProfile profile = new UserProfile();
         profile.updateUserGroup(getActivity(), eventDetail.getCatergory_id());
         updateEventList();
-        /*  Update user, Subscribe this event */
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putBoolean(eventDetail.getCatergory_id(), true);
         editor.commit();
         if(!addHousePartyFLAG){
             addHousePartyFLAG = true;
-            //linearLayout.removeAllViews();
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
             View vi = inflater.inflate(R.layout.admin_msg, null);
-            //linearLayout.addView(vi);
-            //listView.removeHeaderView(vi);
             listView.addHeaderView(vi);
             LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
             linearAdminBtn.setGravity(Gravity.CENTER);
@@ -424,20 +416,17 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }catch (Exception e){
             e.printStackTrace();
         }
-            subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-            if(subscribedGroup.contains(eventDetail.getCatergory_id())) {
-                listView.setAdapter(chatAdapter);
-                chatAdapter.notifyDataSetChanged();
-            }
+        subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
+        if(subscribedGroup.contains(eventDetail.getCatergory_id())) {
+            listView.setAdapter(chatAdapter);
+            chatAdapter.notifyDataSetChanged();
+        }
     }
 
 
     @Override
     public void onPause() {
         super.onPause();
-        View view = getActivity().getCurrentFocus();
-        //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        //imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
 
@@ -447,11 +436,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             int id = v.getId();
             View view = getActivity().getCurrentFocus();
             if (id == R.id.imgEmoji) {
-                if (view != null) {
-                    //imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-                //imm.showSoftInput(etMsg, InputMethodManager.SHOW_IMPLICIT);
+
             } else if (id == R.id.etChatMsg) {
                 linearCanMsg.setVisibility(View.GONE);
             } else if (id == R.id.imgSendChat) {
@@ -472,7 +457,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                           }else{
                               System.out.println("user");
                           }
-
                         } else {
                           Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
@@ -595,7 +579,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         addHousePartyFLAG = false;
         editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
-        System.out.println("~~~~~~~~~~~~~~~~~~~~"+ eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
+        System.out.println("~~~~~~~~~~"+ eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
         editor.commit();
         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
 
@@ -608,7 +592,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             return currentDateTime;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return "";
         }
     }
 
@@ -627,7 +611,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
         @Override
         public int getCount() {
-            return StadiumMsgLimit;
+            return alList.size();
         }
 
         @Override
@@ -673,14 +657,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
             });
 
-            /*facebook.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Toast.makeText(getActivity(), "facebook", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getActivity(),InviteFriendActivity.class));
-                }
-            });*/
-
             if(position < alList.size() || StadiumMsgLimit < alList.size()) {
                 try {
                     ChatData model = alList.get(alList.size()-StadiumMsgLimit+position);
@@ -694,7 +670,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }
 
         protected void populateView(final View v, ChatData model) {
-
             tvUser.setTypeface(MyApp.authorFont);
             tvMsg.setTypeface(MyApp.authorMsg);
             tvComMsg1.setText(model.getTitle());

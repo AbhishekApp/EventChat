@@ -94,11 +94,12 @@ public class EventModelAdapter extends BaseAdapter {
 
         if (strTime.contains("Ago")){
             viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.past_, 0, 0, 0);
+            viewHolder.tvHour.setText("");
         }else{
             viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            viewHolder.tvHour.setText(strTime);
         }
-        strTime = strTime.replace(" Ago","");
-        viewHolder.tvHour.setText(strTime);
+
 
 
         if(detail.getSubscribed_user().equalsIgnoreCase("0")) {
