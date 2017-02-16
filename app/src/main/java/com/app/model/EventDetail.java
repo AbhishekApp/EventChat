@@ -19,6 +19,7 @@ public class EventDetail implements Serializable{
     String event_exp;
     String event_start;
     String subscribed_user;
+    String visibility;
 
     public String getEvent_start() {
         return event_start;
@@ -38,6 +39,13 @@ public class EventDetail implements Serializable{
         this.event_exp = event_exp;
     }
 
+    public void setEvent_visiblity(String visibility) {
+        this.visibility = visibility;
+    }
+
+    public String getEvent_visiblity() {
+        return  visibility;
+    }
 
     public String getEvent_id() {
         return event_id;

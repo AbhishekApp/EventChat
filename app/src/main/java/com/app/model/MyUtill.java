@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import appy.com.wazznowapp.EventChatActivity;
 import appy.com.wazznowapp.MyApp;
@@ -72,14 +73,19 @@ public class MyUtill {
 
 
     public String getTimeDifference(String startDate){
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
         String diff="";
+        //if(startDate.equals("03/21/2018 03:00:00")){
+
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
         try {
             Date Date2 = format.parse(startDate);
             long mills = Date2.getTime() - System.currentTimeMillis();
-            mills = mills/1000;
-            long seconds = (int) mills % 60;
-            mills/= 60;
+            long seconds = mills/1000;
+            long days = seconds / 86400;
+
+            /*mills/= 60;
             int  minutes = (int) mills % 60;
             mills /= 60;
             int hours =  (int) mills % 24;
@@ -88,31 +94,67 @@ public class MyUtill {
             mills /= 30;
             int months = (int) mills % 12;
             mills /= 12;
-            int years = (int) mills ;
+            int years = (int) mills ;*/
 
             //diff= days+" days "+hours+" hrs "+minutes+" mins";
 
-            if (months>12 && years >=1) {
-                diff = years + " years " + months + " months " + days + " dayrs";
+            /*if (years >=1 && months<=12 && days<=30) {
+                diff = years + " Years to go" ;
             }
-            if (months<=12 && years<=0){
-                diff= months+" months "+days+" days "+hours+" hrs";
+            if (years<=0 && months<12 &&  days>=30){
+                diff= months+" Months to go";
             }
-            if (days<30 && months <= 0){
-                diff= days+" days "+hours+" hrs "+minutes+" mins";
+            if (years<=0 && months < 12 && days<30 && days>0){
+                diff= days+" Days to go";
             }
             else if(days<=0 && hours > 0){
-                diff= hours+" hrs "+minutes+" mins "+seconds+" sec";
+                diff= hours+" Hours to go";
             }
-            else if(days<=0 && hours <=0){
+            else if(hours <=0 && minutes >=0){
                 diff= minutes+" mins "+seconds+" sec";
             }
-            else if(days<=0 && hours <=0 && minutes <=0){
-                diff= seconds+" seconds";
+            else if(hours <=0 && minutes <0){
+                diff= minutes+" Minutes to go";
             }
-            if (diff.contains("-")){
-                diff=diff.replace("-","")+" Ago";
+            else{
+                System.out.println("LAST ELSE::::::::::  "+years + " years " + months + " months " + days + " days "+hours+" hrs "+minutes+" mins "+seconds+" sec");
+            }*/
+            System.out.println("START::::::::::  " +  days + " days" );
 
+            String temp = ""+seconds;
+            if (temp.contains("-")){
+                    diff="Ago";
+            }else{
+                //days= Math.abs(days);
+
+                if (days > 365) {
+                    long years = days / 365 ;
+                    diff = years + " Years to go";
+                } else {
+                    if (days > 30) {
+                        long months = days / 30;
+                        diff = months + " Months to go";
+                    } else {
+                        if (days > 1 && days < 30) {
+                            diff = days + " Days to go";
+                        }else{
+                            if(days<1){
+                                long hours = TimeUnit.SECONDS.toHours(seconds) - (days *24);
+                                diff = hours + " Hours to go";
+                            }
+                        }
+                        /*int hours = days
+
+                        if (days < 1 && hours > 1) {
+                            diff = hours + " Hours to go";
+                        } else {
+                            if (minutes > 1) {
+                                diff = minutes + " Minutes to go";
+                            } else {
+                                if (seconds > 1 && seconds < 60) {
+                                    diff = minutes + " Seconds to go";*/
+                    }
+                }
             }
         }catch(Exception e){
             e.printStackTrace();

@@ -1,9 +1,7 @@
 package appy.com.wazznowapp;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-
 /**
  * Created by admin on 8/1/2016.
  */

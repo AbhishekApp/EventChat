@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/linearTopChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:divider="@color/white"
+            android:orientation="vertical"
+            android:paddingBottom="1dp"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp">
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/linearlayChat"
+                android:layout_weight="1">
+
+                <!-- A RecyclerView with some commonly used attributes -->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/listMain"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@android:color/transparent"
+                    android:focusable="false"
+                    android:listSelector="@drawable/ripple_effect"
+                    android:transcriptMode="normal"
+                    android:scrollbars="vertical" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <LinearLayout
+                android:id="@+id/linearlayChat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingBottom="2dp"
+                android:paddingTop="1dp">
+
+                <View
+                    android:id="@+id/viewChatDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_above="@+id/linearChat"
+                    android:background="@color/chat_btn_back" />
+
+                <LinearLayout
+                    android:id="@+id/linearChat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:id="@+id/imgEmoji"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.44"
+                        android:padding="2dp"
+                        android:src="@mipmap/emoji_icon" />
+
+                    <EditText
+                        android:id="@+id/etChatMsg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="4dp"
+                        android:layout_weight="0.12"
+                        android:paddingBottom="1dp"
+                        android:background="#00000000">
+
+                        <requestFocus />
+                    </EditText>
+
+                    <ImageView
+                        android:id="@+id/imgSendChat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="0.44"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_send" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearCanMsg"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:visibility="gone">
+
+                    <GridView
+                        android:id="@+id/viewLay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="300dp"
+                        android:numColumns="2" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pd"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
+</RelativeLayout>

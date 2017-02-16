@@ -54,9 +54,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -473,11 +475,51 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_title(jOBJ.optString("event_title"));
                             detail.setEvent_start(jOBJ.optString("event_start"));
                             detail.setEvent_exp(jOBJ.optString("event_exp"));
+                            detail.setEvent_visiblity(jOBJ.optString("visible"));
                             detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
                             detail.setSubscribed_user(subscribedUser);
                             model.Cate.add(detail);
-                            arrayListEvent.add(detail);
-                            hashMapEvent.put(detail.getEvent_id(), detail);
+
+
+                            if(jOBJ.optString("visible").equals("true")) {
+
+                                SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                                try{
+                                    Date Date2 = format.parse(jOBJ.optString("event_start"));
+                                    long mills = Date2.getTime() - System.currentTimeMillis();
+
+                                    String temp = ""+mills;
+
+                                   /* if(temp.contains("-")){
+
+                                        // This is for past events store it in different list and merge afterwards.
+
+                                    }else{
+
+                                        // This is for coming events store it in same list.
+
+                                        arrayListEvent.add(detail);
+                                        hashMapEvent.put(detail.getEvent_id(), detail);
+                                    }*/
+
+                                    arrayListEvent.add(detail);
+                                    hashMapEvent.put(detail.getEvent_id(), detail);
+
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
+
+
+
+                            }else if(jOBJ.optString("visible").equals("false"))
+                            {
+                                System.out.println("else if false");
+
+                            }else{
+                                System.out.println("in else can't parse");
+                            }
+
                             String strTime = myUtill.getTimeDifference(detail.getEvent_start()).trim();
                             /*if(!TextUtils.isEmpty(strTime)) {
                                 model.Cate.add(detail);
