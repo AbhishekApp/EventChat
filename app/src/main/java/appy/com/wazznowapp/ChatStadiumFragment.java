@@ -2,7 +2,6 @@ package appy.com.wazznowapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -32,8 +31,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.firebase.client.Query;
 import com.mylist.adapters.CannedAdapter;
 
 import org.json.JSONArray;
@@ -49,7 +47,6 @@ import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
-import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
 /**
  * Created by admin on 8/2/2016.
  */
@@ -62,7 +59,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     static LinearLayout linearCanMsg;
     GridView viewLay;
     LinearLayout linearLayout;
-    Firebase myFirebaseRef;
+    //Firebase myFirebaseRef;
     Firebase alanRef;
     private SwipeRefreshLayout swipeRefreshLayout;
     CannedAdapter cannedAdapter;
@@ -87,10 +84,15 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     ProgressBar pd;
     String shortLinkURL="";
     String msg;
-    private DatabaseReference mDatabaseRefrenceSync;
+    //private DatabaseReference mDatabaseRefrenceSync;
     View v;
     int mPageEndOffset = 0;
     int mPageLimit = 10;
+    Query alanQuery;
+    public LayoutInflater inflater;
+    ViewGroup container;
+    View view;
+    ChildEventListener childEventListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,28 +100,33 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         connectDetector = new ConnectDetector(getActivity());
         if(connectDetector.getConnection()) {
-            myFirebaseRef = new Firebase(firebaseURL);
-            alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
-            alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
+            //myFirebaseRef = new Firebase(firebaseURL);
+            //myFirebaseRef.limitToFirst(10);
+            alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
+            alanQuery = alanRef.limitToFirst(mPageLimit);
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-            alanRef.keepSynced(true); //synk db from live
+           // alanRef.keepSynced(true); //synk db from live
 
-            mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("StadiumChat");
-            mDatabaseRefrenceSync.keepSynced(true); //sync db from disk
+           // mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("StadiumChat");
+           // mDatabaseRefrenceSync.keepSynced(true); //sync db from disk
 
-            if (PreferenceManager.getDefaultSharedPreferences(getActivity()).contains(eventDetail.getEvent_id())){
+            /*if (PreferenceManager.getDefaultSharedPreferences(getActivity()).contains(eventDetail.getEvent_id())){
                 StadiumMsgLimit=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(eventDetail.getEvent_id(),"3"));
                 System.out.println("onCreate~~~~~~~~~~"+EventChatActivity.eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
             }else{
                 StadiumMsgLimit=3;
-            }
+            }*/
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.stadium_chat, container, false);
+
+        this.inflater = inflater;
+        this.container = container;
+
+        view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
 
         return view;
@@ -151,7 +158,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         chatAdapter = new NewAdapter(getActivity(),R.layout.chat_layout, alList);
         longDeepLink = longDeepLink + eventDetail.getEvent_id()+"&utm_medium=Whatsapp&utm_campaign="+ eventDetail.getEvent_title();
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 //Log.e("ChatStadiumFragment", "onChildAdded:" + dataSnapshot.getKey());
@@ -173,6 +180,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     }
                 }
                 chatAdapter.notifyDataSetChanged();
+                //listView.invalidate();
             }
 
             @Override
@@ -214,12 +222,12 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 Toast.makeText(getActivity(), "Failed to load comments.",Toast.LENGTH_SHORT).show();
             }
         };
-        alanRef.addChildEventListener(childEventListener);
-        if (StadiumMsgLimit >alList.size()&& alList.size()>3){
+        alanQuery.addChildEventListener(childEventListener);
+        /*if (StadiumMsgLimit >alList.size()&& alList.size()>3){
             System.out.println("previous :"+StadiumMsgLimit);
             StadiumMsgLimit= alList.size();
             System.out.println("new size :"+StadiumMsgLimit);
-        }
+        }*/
 
         pd.setVisibility(View.GONE);
     }
@@ -273,10 +281,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }else{
                 linearLayout.removeAllViews();
             }
-            if (MyApp.StadiumMsgLimit>1){
+            //if (MyApp.StadiumMsgLimit>1){
                 chatAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
-            }
+            //}
 
         }catch (Exception ex){
             Log.e("StadiumFragment", "onStart method ERROR: " + ex.toString());
@@ -490,15 +498,27 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onRefresh() {
-        if(alList.size() > StadiumMsgLimit)
-        StadiumMsgLimit=StadiumMsgLimit+5;
+        /*if(alList.size() > StadiumMsgLimit)
+        StadiumMsgLimit=StadiumMsgLimit+5;*/
+        /*alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
+        mPageLimit = mPageLimit+5;
+        alanQuery = alanRef.limitToFirst(mPageLimit);*/
+
+        mPageLimit= mPageLimit+10;
+
+        alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
+        alanQuery = alanRef.limitToFirst(mPageLimit);
+        userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+        view = inflater.inflate(R.layout.stadium_chat, container, false);
+        init(view);
+        alanQuery.addChildEventListener(childEventListener);
         chatAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        StadiumMsgLimit+=2;
+        //StadiumMsgLimit+=2;
         String msg = MyApp.alCanMsg.get(position).getCanned_message();
         sendMsg(msg,"canned"); //cannned message click
     }
@@ -564,9 +584,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         addHousePartyFLAG = false;
         editor = MyApp.preferences.edit();
         editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
-        System.out.println("~~~~~~~~~~"+ eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
+        //System.out.println("~~~~~~~~~~"+ eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
         editor.commit();
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
+        //PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
 
     }
 

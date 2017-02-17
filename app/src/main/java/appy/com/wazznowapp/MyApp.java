@@ -7,12 +7,12 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+
 import com.app.model.AnalyticsSingleton;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.firebase.client.Firebase;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,7 @@ public class MyApp extends Application {
     public static ArrayList<CannedMessage> alCanMsg;
     public static Typeface authorFont,authorMsg;
     public static int FeaturedMsgLimit = 3;
-    public static int StadiumMsgLimit = 3;
+    //public static int StadiumMsgLimit = 3;
     public static FirebaseAnalytics firebaseAnalytics;
     public static final String CHAT_SENT="chat_sent";
     public static final String CANNED_SENT = "canned_sent";
@@ -60,7 +60,7 @@ public class MyApp extends Application {
 
         /*************************************Firebase Offline Capabilities****************************************/
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true); //Globally set Persistence to all instance of firebase at initialisation level of app
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true); //Globally set Persistence to all instance of firebase at initialisation level of app
 
         /*************************************Enable Image Caching ************************************************/
 

@@ -17,7 +17,7 @@ import com.logger.Log;
 import java.util.ArrayList;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
-import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
+
 
 /**
  * Created by admin on 2/15/2017.
@@ -74,7 +74,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             }
         });
 
-        if(position < alList.size() || StadiumMsgLimit < alList.size()) {
+        if(position < alList.size() ) {
             try {
                 ChatData model = alList.get(position);
                 populateView(view, model);

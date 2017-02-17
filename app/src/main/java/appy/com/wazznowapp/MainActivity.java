@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Firebase firebaseEvent;
     ArrayList<EventModel> alModel;
     static ArrayList<EventDetail> arrayListEvent;
+    static ArrayList<EventDetail> arrayListEvent_previous;
     static EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
     ProgressDialog progressDialog;
@@ -259,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listMain = (ListView) findViewById(R.id.listMainEvent);
         alModel = new ArrayList<EventModel>();
         arrayListEvent = new ArrayList<EventDetail>();
+        arrayListEvent_previous = new ArrayList<EventDetail>();
         eventAdapter = new EventModelAdapter(this, arrayListEvent);
         listMain.setAdapter(eventAdapter);
         listMain.setOnItemClickListener(this);
@@ -490,28 +492,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                                     String temp = ""+mills;
 
-                                   /* if(temp.contains("-")){
-
+                                   if(temp.contains("-")){
                                         // This is for past events store it in different list and merge afterwards.
+                                       arrayListEvent_previous.add(detail);
+                                       hashMapEvent.put(detail.getEvent_id(), detail);
 
                                     }else{
-
                                         // This is for coming events store it in same list.
-
                                         arrayListEvent.add(detail);
                                         hashMapEvent.put(detail.getEvent_id(), detail);
-                                    }*/
-
-                                    arrayListEvent.add(detail);
-                                    hashMapEvent.put(detail.getEvent_id(), detail);
-
+                                    }
+                                    /*arrayListEvent.add(detail);
+                                    hashMapEvent.put(detail.getEvent_id(), detail);*/
                                 }catch (Exception e){
+                                    arrayListEvent_previous.add(detail);
+                                    hashMapEvent.put(detail.getEvent_id(), detail);
                                     e.printStackTrace();
                                 }
-
-
-
-
                             }else if(jOBJ.optString("visible").equals("false"))
                             {
                                 System.out.println("else if false");
@@ -533,6 +530,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     alModel.add(model);
                 }
                 Collections.sort(arrayListEvent, new CustomComparator());
+                Collections.sort(arrayListEvent_previous, new CustomComparator());
+
+                arrayListEvent.addAll(arrayListEvent_previous);
                 //System.out.println("EVENT DETAIL : "+alModel.toString());
             }catch (JSONException e) {
                 e.printStackTrace();
@@ -570,8 +570,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alanisawesomeMap.put("email", MyApp.preferences.getString(MyApp.USER_EMAIL, null));
         alanisawesomeMap.put("userType", MyApp.preferences.getString(MyApp.USER_TYPE, null));
         //System.out.println("User Name " + MyApp.preferences.getString(MyApp.USER_NAME, null));
-//        UserDetailTask task = new UserDetailTask();
-//        task.execute();
+        //UserDetailTask task = new UserDetailTask();
+        //task.execute();
     }
 
     class UserDetailTask extends AsyncTask<Void, Void, Void> {

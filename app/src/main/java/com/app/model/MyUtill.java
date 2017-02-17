@@ -73,10 +73,8 @@ public class MyUtill {
 
 
     public String getTimeDifference(String startDate){
-
         String diff="";
-        //if(startDate.equals("03/21/2018 03:00:00")){
-
+        //if(startDate.equals("03/20/2017  03:40:01")){
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
         try {
@@ -119,27 +117,30 @@ public class MyUtill {
             else{
                 System.out.println("LAST ELSE::::::::::  "+years + " years " + months + " months " + days + " days "+hours+" hrs "+minutes+" mins "+seconds+" sec");
             }*/
-            System.out.println("START::::::::::  " +  days + " days" );
-
+            //System.out.println("START::::::::::  " +  days + " days" );
             String temp = ""+seconds;
             if (temp.contains("-")){
                     diff="Ago";
-            }else{
+            }else {
                 //days= Math.abs(days);
-
                 if (days > 365) {
-                    long years = days / 365 ;
+                    long years = days / 365;
                     diff = years + " Years to go";
                 } else {
                     if (days > 30) {
                         long months = days / 30;
-                        diff = months + " Months to go";
+                        diff = "More than "+months + " Months to go";
                     } else {
-                        if (days > 1 && days < 30) {
-                            diff = days + " Days to go";
-                        }else{
-                            if(days<1){
-                                long hours = TimeUnit.SECONDS.toHours(seconds) - (days *24);
+                        if (days > 1 && days <= 30) {
+                            if(days == 30){
+                                long months = days / 30;
+                                diff = months + " Month to go";
+                            }else if(days<30){
+                                diff = days + " Days to go";
+                            }
+                        } else {
+                            if (days < 1) {
+                                long hours = TimeUnit.SECONDS.toHours(seconds) - (days * 24);
                                 diff = hours + " Hours to go";
                             }
                         }
@@ -153,12 +154,12 @@ public class MyUtill {
                             } else {
                                 if (seconds > 1 && seconds < 60) {
                                     diff = minutes + " Seconds to go";*/
+                        }
                     }
-                }
-            }
+             }
         }catch(Exception e){
             e.printStackTrace();
-        }
+        }//}
         return diff;
     }
 }

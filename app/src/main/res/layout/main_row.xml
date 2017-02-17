@@ -75,20 +75,17 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:padding="1dp"
-                    android:text="MI Vs KKR"
+                    android:text="MI Vs KKR" android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tvEventTunedRow"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvEventLocRow"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:drawableLeft="@mipmap/group_icon"
-                    android:drawablePadding="2dp"
-                    android:gravity="center"
                     android:padding="3dp"
-                    android:text="You +20 Tuned In" />
+                    android:text="Match 25\n\nMC Stadium\n\nBengaluru"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
@@ -100,15 +97,19 @@
                 android:scaleType="fitCenter"
                 android:src="@mipmap/chat_icon" />
 
-        </LinearLayout>
 
+        </LinearLayout>
         <TextView
-            android:id="@+id/tvEventLocRow"
+            android:id="@+id/tvEventTunedRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_weight="0.3"
+            android:drawableLeft="@mipmap/group_icon"
+            android:drawablePadding="2dp"
+            android:gravity="center"
             android:padding="3dp"
-            android:text="Match 25, MC Stadium, Bengaluru"
-            android:textSize="12sp" />
+            android:text="You +20 Tuned In" />
 
     </LinearLayout>
 

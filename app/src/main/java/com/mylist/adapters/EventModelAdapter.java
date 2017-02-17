@@ -3,6 +3,7 @@ package com.mylist.adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -83,7 +84,11 @@ public class EventModelAdapter extends BaseAdapter {
         EventDetail detail = alList.get(position);
         viewHolder.tvCateName.setText(detail.getCategory_name());
         viewHolder.tvEventName.setText(detail.getEvent_title());
-        viewHolder.tvEventPlace.setText(detail.getEvent_meta());
+
+        String event_detail = detail.getEvent_meta();
+        event_detail = event_detail.replace(",","\n");
+        viewHolder.tvEventPlace.setText(event_detail.replace(" ",""));
+
         if(!TextUtils.isEmpty(detail.getEvent_image_url()))
           downloadImageURL(detail.getEvent_id(), viewHolder.img);
         String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_start())).trim();
@@ -96,8 +101,12 @@ public class EventModelAdapter extends BaseAdapter {
             viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.past_, 0, 0, 0);
             viewHolder.tvHour.setText("");
         }else{
-            viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            viewHolder.tvHour.setText(strTime);
+            if (strTime.contains("More")){
+                viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.future_, 0, 0, 0);
+                viewHolder.tvHour.setText("");
+            }else{
+                viewHolder.tvHour.setText(strTime);
+            }
         }
 
 
@@ -106,11 +115,10 @@ public class EventModelAdapter extends BaseAdapter {
             //viewHolder.tvNoOfTune.setVisibility(View.GONE);
             String subscribed_user = detail.getSubscribed_user();
             int iSubscribedUser = Integer.parseInt(subscribed_user);
-            subscribed_user = new String("" + iSubscribedUser);
-            viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");
+            subscribed_user = new String("<b> " + iSubscribedUser);
+            viewHolder.tvNoOfTune.setText( subscribed_user + " </b>  Tuned In");
         }
         else {
-
             String subscribed_user = detail.getSubscribed_user();
 //            if (groupRec != null && detail.getCatergory_id() != null) {
                 if (MyApp.preferences.getBoolean(detail.getCatergory_id(), false)) {
@@ -118,7 +126,7 @@ public class EventModelAdapter extends BaseAdapter {
                         viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
                         int iSubscribedUser = Integer.parseInt(subscribed_user);
                         iSubscribedUser--;
-                        subscribed_user = new String("You +" + iSubscribedUser);
+                        subscribed_user = new String("<b> You + </b> " + iSubscribedUser);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -126,7 +134,7 @@ public class EventModelAdapter extends BaseAdapter {
                     viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
                 }
             viewHolder.tvNoOfTune.setVisibility(View.VISIBLE);
-            viewHolder.tvNoOfTune.setText( subscribed_user + " Tuned In");
+            viewHolder.tvNoOfTune.setText(Html.fromHtml( "<b> "+subscribed_user + " </b> Tuned In"));
         }
         /*try {
             if (groupRec != null && detail.getCatergory_id() != null) {
@@ -139,7 +147,6 @@ public class EventModelAdapter extends BaseAdapter {
         }catch (Exception ex){
             viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
         }*/
-
         try{
             if(colorIndex >= mycolor.length-1){
                 colorIndex = 0;
