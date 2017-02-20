@@ -79,7 +79,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         try {
             MyApp.CustomEventAnalytics("signup_activity_loaded", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
         }
-        catch (Exception e){}
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -87,7 +89,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btnSignup) {
-            progressBar.setVisibility(View.VISIBLE);
+            //progressBar.setVisibility(View.VISIBLE);
             btnSign.setClickable(false);
             String uName = etName.getText().toString();
             String uLastName = etLastName.getText().toString();

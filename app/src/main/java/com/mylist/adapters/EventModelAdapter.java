@@ -85,9 +85,9 @@ public class EventModelAdapter extends BaseAdapter {
         viewHolder.tvCateName.setText(detail.getCategory_name());
         viewHolder.tvEventName.setText(detail.getEvent_title());
 
-        String event_detail = detail.getEvent_meta();
-        event_detail = event_detail.replace(",","\n");
-        viewHolder.tvEventPlace.setText(event_detail.replace(" ",""));
+        /*String event_detail = detail.getEvent_meta();
+        event_detail = event_detail.replace(",","\n");*/
+        viewHolder.tvEventPlace.setText(detail.getEvent_meta());
 
         if(!TextUtils.isEmpty(detail.getEvent_image_url()))
           downloadImageURL(detail.getEvent_id(), viewHolder.img);
@@ -98,13 +98,14 @@ public class EventModelAdapter extends BaseAdapter {
         }*/
 
         if (strTime.contains("Ago")){
-            viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.past_, 0, 0, 0);
-            viewHolder.tvHour.setText("");
+            viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock2, 0, 0, 0);
+            viewHolder.tvHour.setText("\t\t");
         }else{
             if (strTime.contains("More")){
-                viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.future_, 0, 0, 0);
-                viewHolder.tvHour.setText("");
-            }else{
+                viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock1, 0, 0, 0);
+                viewHolder.tvHour.setText("\t\t");
+            }else if(strTime.contains("to go")){
+                viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 viewHolder.tvHour.setText(strTime);
             }
         }

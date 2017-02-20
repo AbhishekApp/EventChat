@@ -269,6 +269,29 @@ public class EventChatActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(CateName);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setOffscreenPageLimit(0);
+
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+                System.out.println("on changing the page make respected tab selected");
+                //actionBar.setSelectedNavigationItem(position);
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+                System.out.println("onPageScrolled tab selected");
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+                System.out.println("onPageScrollStateChanged tab selected");
+            }
+        });
+
+
+
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -324,7 +347,7 @@ public class EventChatActivity extends AppCompatActivity {
             ChatStadiumFragment.linearCanMsg.setVisibility(View.GONE);
             finish();
         } else if (id == R.id.menu_signup) {
-            Intent ii = new Intent(this, SignUpActivity.class);
+            Intent ii = new Intent(this, NewSignUpActivity.class);
             startActivity(ii);
         } else if (id == R.id.menu_info) {
             Intent ii = new Intent(this, InfoActivity.class);
@@ -416,9 +439,7 @@ public class EventChatActivity extends AppCompatActivity {
                 if (new Date().after(sDate)) {
                     //System.out.println("future date");
                     //future date
-
                     moreThanDay = Math.abs(new Date().getTime() - sDate.getTime()) > MILLIS_PER_DAY;
-
                     //System.out.println("date is more than a Day:  "+moreThanDay);
 
                     if (moreThanDay){
@@ -435,17 +456,11 @@ public class EventChatActivity extends AppCompatActivity {
                         time = new SimpleDateFormat("hh:mm a").format(new Date(sDate.getTime())) ;
                         ActionItemAddText("<br>"+/*toTitleCase(*/alList.get(i).getTitle()/*)*/+"<br><font color='grey'>"+time.toLowerCase()+"</font><br>");
                     }
-
                 }
                 else{
-
                     //back date
                     System.out.println("back date");
                 }
-
-
-
-
             }
             catch (Exception e){
                 e.printStackTrace();

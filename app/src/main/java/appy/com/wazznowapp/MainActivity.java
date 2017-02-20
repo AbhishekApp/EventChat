@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.menu_signup){
-            Intent ii = new Intent(this, SignUpActivity.class);
+            Intent ii = new Intent(this, NewSignUpActivity.class);
             startActivity(ii);
         }else if(id == R.id.menu_info){
             Intent ii = new Intent(this, InfoActivity.class);

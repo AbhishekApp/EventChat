@@ -238,7 +238,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                     }
                 }
             }else{
-                Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                 startActivity(ii);
                 //startActivityForResult(ii, 111);
             }

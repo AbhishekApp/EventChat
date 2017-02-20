@@ -11,7 +11,7 @@
         android:id="@+id/imgRowMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.6"
+        android:layout_weight="0.7"
         android:background="@color/white"
         android:scaleType="fitXY"
         android:src="@mipmap/cricket_ipl" />
@@ -75,7 +75,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:padding="1dp"
-                    android:text="MI Vs KKR" android:textColor="@color/black"
+                    android:text="MI Vs KKR"
+                    android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -83,8 +84,9 @@
                     android:id="@+id/tvEventLocRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:padding="3dp"
-                    android:text="Match 25\n\nMC Stadium\n\nBengaluru"
+                    android:text="Match 25, MC Stadium, Bengaluru"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -99,6 +101,7 @@
 
 
         </LinearLayout>
+
         <TextView
             android:id="@+id/tvEventTunedRow"
             android:layout_width="wrap_content"

@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -47,6 +48,7 @@ import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
+import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
 /**
  * Created by admin on 8/2/2016.
  */
@@ -86,8 +88,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     String msg;
     //private DatabaseReference mDatabaseRefrenceSync;
     View v;
-    int mPageEndOffset = 0;
-    int mPageLimit = 10;
+    int mPageEndOffsetStadium = 0;
     Query alanQuery;
     public LayoutInflater inflater;
     ViewGroup container;
@@ -98,25 +99,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        connectDetector = new ConnectDetector(getActivity());
-        if(connectDetector.getConnection()) {
-            //myFirebaseRef = new Firebase(firebaseURL);
-            //myFirebaseRef.limitToFirst(10);
-            alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
-            alanQuery = alanRef.limitToFirst(mPageLimit);
-            userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-           // alanRef.keepSynced(true); //synk db from live
 
-           // mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("StadiumChat");
-           // mDatabaseRefrenceSync.keepSynced(true); //sync db from disk
-
-            /*if (PreferenceManager.getDefaultSharedPreferences(getActivity()).contains(eventDetail.getEvent_id())){
-                StadiumMsgLimit=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(eventDetail.getEvent_id(),"3"));
-                System.out.println("onCreate~~~~~~~~~~"+EventChatActivity.eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
-            }else{
-                StadiumMsgLimit=3;
-            }*/
-        }
     }
 
     @Override
@@ -126,11 +109,35 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         this.inflater = inflater;
         this.container = container;
 
+        connectDetector = new ConnectDetector(getActivity());
+        if(connectDetector.getConnection()) {
+            //myFirebaseRef = new Firebase(firebaseURL);
+            //myFirebaseRef.limitToFirst(10);
+            alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
+            alanQuery = alanRef.limitToLast(StadiumMsgLimit);
+            userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+            // alanRef.keepSynced(true); //synk db from live
+
+            // mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("StadiumChat");
+            // mDatabaseRefrenceSync.keepSynced(true); //sync db from disk
+
+            /*if (PreferenceManager.getDefaultSharedPreferences(getActivity()).contains(eventDetail.getEvent_id())){
+                StadiumMsgLimit=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(eventDetail.getEvent_id(),"3"));
+                System.out.println("onCreate~~~~~~~~~~"+EventChatActivity.eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
+            }else{
+                StadiumMsgLimit=3;
+            }*/
+        }
+
+
         view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
 
         return view;
     }
+
+
+
 
     private void init(final View v) {
         pd = (ProgressBar) v.findViewById(R.id.pd);
@@ -420,6 +427,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     @Override
     public void onPause() {
         super.onPause();
+
+        System.out.println("onPause");
+
     }
 
 
@@ -454,14 +464,14 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                           Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
                     }else{
-                        Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                        Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                         startActivityForResult(ii, 111);
                     }
                 }else{
                     if (view != null) {
                       //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
-                    Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                    Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                     startActivityForResult(ii, 111);
                 }
             }
@@ -504,16 +514,29 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         mPageLimit = mPageLimit+5;
         alanQuery = alanRef.limitToFirst(mPageLimit);*/
 
-        mPageLimit= mPageLimit+10;
+        StadiumMsgLimit = StadiumMsgLimit+5;
 
-        alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
-        alanQuery = alanRef.limitToFirst(mPageLimit);
+        /*alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
+        alanQuery = alanRef.limitToFirst(StadiumMsgLimit);
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
         view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
         alanQuery.addChildEventListener(childEventListener);
-        chatAdapter.notifyDataSetChanged();
+        */
+
+
+        //chatAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(ChatStadiumFragment.this).commit();
+
+
+        //getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.your_container)).commit();
+
+  //      getActivity().finish();
+//        startActivity(new Intent(getActivity(),EventChatActivity.class));
+
     }
 
     @Override
@@ -528,7 +551,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
        String sender = MyApp.preferences.getString(MyApp.USER_NAME, "");
         if(sender.contains("Guest") || TextUtils.isEmpty(sender)) {
             if (TextUtils.isEmpty(sender)) {
-                Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                 startActivityForResult(ii, 111);
             } else {
             try {
@@ -562,7 +585,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
             } else {
                 Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
-                Intent ii = new Intent(getActivity(), SignUpActivity.class);
+                Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                 startActivityForResult(ii, 111);
             }
          }

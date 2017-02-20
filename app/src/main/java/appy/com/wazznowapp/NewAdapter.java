@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.model.ChatData;
-import com.logger.Log;
 
 import java.util.ArrayList;
 
@@ -36,10 +35,10 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         super(context, resource, list);
         con = context;
         alList = list;
-        Log.i("NewAdapterRAvi",""+list.size());
-        for(int i=0;i<list.size();i++){
+        //Log.i("NewAdapterRAvi",""+list.size());
+        /*for(int i=0;i<list.size();i++){
             Log.i("NewAdapterRAvi",""+list.get(i).getTitle());
-        }
+        }*/
     }
 
     @Override

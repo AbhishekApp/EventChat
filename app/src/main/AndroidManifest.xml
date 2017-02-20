@@ -67,6 +67,11 @@
             android:theme="@style/AppTheme" />
 
         <activity
+            android:name=".NewSignUpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <activity
             android:name=".InviteFriendActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
@@ -98,5 +103,17 @@
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->
+
+
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
     </application>
 </manifest>

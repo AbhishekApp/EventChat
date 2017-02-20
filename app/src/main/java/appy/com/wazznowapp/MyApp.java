@@ -37,7 +37,7 @@ public class MyApp extends Application {
     public static ArrayList<CannedMessage> alCanMsg;
     public static Typeface authorFont,authorMsg;
     public static int FeaturedMsgLimit = 3;
-    //public static int StadiumMsgLimit = 3;
+    public static int StadiumMsgLimit = 5;
     public static FirebaseAnalytics firebaseAnalytics;
     public static final String CHAT_SENT="chat_sent";
     public static final String CANNED_SENT = "canned_sent";
