@@ -49,7 +49,7 @@
 
 
     <string name="facebook_title_text">Facebook Login</string>
-    <string name="facebook_app_id">544841532393188</string>
+    <string name="facebook_app_id">266320550472950</string>
 
 
 
@@ -108,5 +108,10 @@
 
     <string name="id_fmt">User ID: %s</string>
     <string name="email_fmt">Email: %s</string>
+
+
+    <string name="com_facebook_login_text">Log in with facebook </string>
+
+    <string name="logout_text">Already Logged-In. Logout?</string>
 
 </resources>

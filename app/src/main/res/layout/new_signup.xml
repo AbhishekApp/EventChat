@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -21,17 +22,18 @@
             android:textSize="20dp"
             android:textStyle="bold" />
 
-        <Button
+        <com.facebook.login.widget.LoginButton
             android:id="@+id/btnFb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:background="#3f5f9c"
             android:drawableLeft="@drawable/f_b_"
-            android:text="SIGN UP WITH FACEBOOK              "
             android:textAllCaps="false"
             android:textColor="#fefefe"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            facebook:com_facebook_login_text="SIGN UP WITH FACEBOOK              "
+            facebook:com_facebook_logout_text="Already Logged-In. Logout?" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -95,7 +97,8 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="" />
+            android:text=""
+            android:textColor="@android:color/black" />
 
 
     </LinearLayout>

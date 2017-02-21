@@ -89,7 +89,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btnSignup) {
-            //progressBar.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
             btnSign.setClickable(false);
             String uName = etName.getText().toString();
             String uLastName = etLastName.getText().toString();
@@ -112,7 +112,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             setResult(101);
             finish();
         }
-
     }
 
     public static void makeClickable() {
@@ -269,6 +268,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             editor.putString(MyApp.USER_LAST_NAME, uLastName);
             editor.putString(MyApp.USER_PHONE, uPhone);
             editor.putString(MyApp.USER_EMAIL, email);
+            editor.putString(MyApp.USER_TYPE, "user");
             editor.putString(MyApp.USER_PASSWORD, password);
             editor.commit();
 
@@ -277,6 +277,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             alanisawesomeMap.put("name", uName);
             alanisawesomeMap.put("lastName", uLastName);
             alanisawesomeMap.put("passKey", password);
+            alanisawesomeMap.put("authorType", "user");
             alanisawesomeMap.put("phone", uPhone);
             alanisawesomeMap.put("email", email);
             //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
