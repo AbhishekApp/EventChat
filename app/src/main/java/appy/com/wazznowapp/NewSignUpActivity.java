@@ -140,28 +140,20 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                     userSignup = new UserLoginSignupAction();
 
                     try {
-
                         //String[] nameSplit = "Manish".split(" ");
-
                         String[] nameSplit = user.getDisplayName().split(" ");
                         String first = nameSplit[0];
                         String last = nameSplit[1];
-
                         userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
-
                     }
                     catch (ArrayIndexOutOfBoundsException  e) {
                         new InvalidNameException("Missing space in: " + user);
-
                         userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
                     }
                     catch (Exception e){
                         e.printStackTrace();
                     }
-
                     progressBar.setVisibility(View.GONE);
-
-
 
                 } else {
                     // User is signed out
@@ -210,8 +202,6 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                             finish();
                         }
                     }
-
-
                 });
             }else{
                 Toast.makeText(con, "Please fill all the required field", Toast.LENGTH_SHORT).show();

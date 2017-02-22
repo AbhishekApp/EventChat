@@ -83,8 +83,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             e.printStackTrace();
         }
     }
-
-
+    
     @Override
     public void onClick(View v) {
         int id = v.getId();

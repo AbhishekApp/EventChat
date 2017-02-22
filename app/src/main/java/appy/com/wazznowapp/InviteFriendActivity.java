@@ -47,7 +47,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     String msg;
     TextView tvMsg;
     String userName;
-    String eventID, eventCategory;
+    String eventID, eventCategory,eventName="",eventTime="";
     String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
             "&apn=appy.com.wazznowapp"+
             "&afl=$"+
@@ -72,12 +72,17 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 Toast.makeText(InviteFriendActivity.this, "Google Connection Failed", Toast.LENGTH_SHORT).show();
             }
         }).build();
-        init();
+
         eventCategory = getIntent().getStringExtra("EventName");
         eventID = getIntent().getStringExtra("EventID");
+        eventName  = getIntent().getStringExtra("Event");
+        eventTime  = getIntent().getStringExtra("EventTime");
       //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
         longDeepLink = longDeepLink + eventID+"&utm_medium=Whatsapp&utm_campaign="+eventCategory;
-        btnShare.setOnClickListener(this);
+
+        eventTime = eventTime.split(" ")[0];
+
+        init();
     }
 
     private void init(){
@@ -88,15 +93,15 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
         if(!TextUtils.isEmpty(userName)){
             if(!userName.contains("user")){
-                tvMsg.setText("Hi..! This is "+ userName +" lets watch Mumbai vs Pune match on June 21 on Pune together");
+                tvMsg.setText("Hi..! This is "+ userName +" lets watch "+eventName+" match on "+eventTime+" on "+eventName.split(" ")[0]+" together");
             }else{
-                tvMsg.setText("Hi..! lets watch Mumbai vs Pune match on June 21 on Pune together");
+                tvMsg.setText("Hi..! lets watch "+eventName+" match on "+eventTime+" on "+eventName.split(" ")[0]+" together");
             }
         }else{
-            tvMsg.setText("Hi..! lets watch Mumbai vs Pune match on June 21 on Pune together");
+            tvMsg.setText("Hi..! lets watch "+eventName+" match on "+eventTime+" on "+eventName.split(" ")[0]+" together");
         }
         btnShare = (Button) findViewById(R.id.btnInviteFriend);
-
+        btnShare.setOnClickListener(this);
     }
 
     @Override

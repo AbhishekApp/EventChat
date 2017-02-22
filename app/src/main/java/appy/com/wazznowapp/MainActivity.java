@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.app.model.AdminMessage;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
@@ -63,6 +64,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventID;
+import static appy.com.wazznowapp.MyApp.alAdmMsg;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     ListView listMain;
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
+    String AdminURL = MyApp.FIREBASE_BASE_URL+"/admin_msg.json";
     int REQUEST_INVITE = 111;
     //static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
@@ -683,6 +686,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MyUtill myUtill;
         JSONArray jsonArray;
         CannedMessage message;
+        AdminMessage admessage;
 
         @Override
         protected void onPreExecute() {
@@ -705,6 +709,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     Log.e("CannedTask","get canned message ERROR: "+e.toString());
                 }
             }
+
+            alAdmMsg = new ArrayList<AdminMessage>();
+            jsonArray = myUtill.getJSONFromServer(AdminURL);
+            for(int i = 0 ; i < jsonArray.length() ; i++){
+                try {
+                    admessage = new AdminMessage();
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    admessage.set_admin_message(jsonObject.optString("Msg"));
+                    alAdmMsg.add(admessage);
+                } catch (JSONException e) {
+                    Log.e("AdminTask","get admin message ERROR: "+e.toString());
+                }
+            }
+
+
+            //System.out.println(""+alAdmMsg.toString());
+
+
             return null;
         }
 

@@ -31,6 +31,9 @@ import com.mylist.adapters.HouseChatListAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+
 /**
  * Created by admin on 8/2/2016.
  */
@@ -65,7 +68,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.eventDetail.getCategory_name()  + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("HousepartyChat");
+        alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()  + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("HousepartyChat");
         alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
     }
 
@@ -123,7 +126,10 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
 
                 btnYes.setText("Invite Friends");
                 btnNo.setText("No, Thanks");
-                tvAdminMsg.setText("Invite for House Party. There are most fun.");
+                //tvAdminMsg.setText("Invite for House Party. There are most fun.");
+                tvAdminMsg.setText(MyApp.alAdmMsg.get(3).get_admin_message());
+
+
                 btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -149,8 +155,10 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         //editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
         //editor.commit();
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
-        ii.putExtra("EventName", EventChatActivity.eventDetail.getCatergory_id());
-        ii.putExtra("EventID", EventChatActivity.eventDetail.getEvent_id());
+        ii.putExtra("EventName", eventDetail.getCatergory_id());
+        ii.putExtra("EventID", eventDetail.getEvent_id());
+        ii.putExtra("Event", eventDetail.getEvent_title());
+        ii.putExtra("EventTime", eventDetail.getEvent_start());
         startActivity(ii);
     }
 
@@ -220,7 +228,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                                 etMsg.setText("");
                                 ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),"normal");
                                 alanRef.push().setValue(alan);
-                                MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName , " : House Party : "+ EventChatActivity.eventDetail.getCategory_name());
+                                MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName , " : House Party : "+ eventDetail.getCategory_name());
 
                                 if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                                     MyUtill.addMsgtoFeatured(getActivity(),msg);

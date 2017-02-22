@@ -1,4 +1,5 @@
 package appy.com.wazznowapp;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static appy.com.wazznowapp.EventChatActivity.CateName;
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
@@ -239,6 +241,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         pd.setVisibility(View.GONE);
     }
 
+
+
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -262,7 +268,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
                     btnYes.setText("Yes I want to tune In");
                     btnNo.setText("No, I don't want to tune In");
-                    tvAdminMsg.setText("Congrats now you are part of "+ eventDetail.getSubscribed_user()+"+ in stadium following the match");
+                    //tvAdminMsg.setText("Congrats now you are part of "+ eventDetail.getSubscribed_user()+"+ in stadium following the match");
+
+                    tvAdminMsg.setText(MyApp.alAdmMsg.get(0).get_admin_message().replace("<event>",CateName));
 
                     btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -324,7 +332,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
             btnYes.setText("Invite Friends");
             btnNo.setText("No, Thanks");
-            tvAdminMsg.setText("Start a House Party. There are most fun.");
+            //tvAdminMsg.setText("Start a House Party. There are most fun.");
+            tvAdminMsg.setText(MyApp.alAdmMsg.get(3).get_admin_message());
+
+
+
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -392,6 +404,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
         ii.putExtra("EventName", eventDetail.getCatergory_id());
         ii.putExtra("EventID", eventDetail.getEvent_id());
+        ii.putExtra("Event", eventDetail.getEvent_title());
+        ii.putExtra("EventTime", eventDetail.getEvent_start());
         startActivity(ii);
     }
 

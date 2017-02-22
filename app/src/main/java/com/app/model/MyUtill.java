@@ -2,12 +2,12 @@ package com.app.model;
 
 import android.app.Activity;
 import android.util.Log;
-
 import com.firebase.client.Firebase;
-
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
 import org.json.JSONArray;
 import org.json.JSONException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,10 +17,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
 import appy.com.wazznowapp.EventChatActivity;
 import appy.com.wazznowapp.MyApp;
-
 import static appy.com.wazznowapp.HousePartyFragment.getCurrentTimeStamp;
 import static appy.com.wazznowapp.MyApp.FIREBASE_BASE_URL;
 
@@ -57,7 +55,7 @@ public class MyUtill {
         } catch (Exception ex){
             Log.e("MyUtill", "Get Data From Server ERROR: "+ex.toString());
         }
-    //    System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+        //System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
         return jsonObject;
     }
 
@@ -72,52 +70,17 @@ public class MyUtill {
     }
 
 
+
+
     public String getTimeDifference(String startDate){
         String diff="";
-        //if(startDate.equals("03/20/2017  03:40:01")){
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
         try {
             Date Date2 = format.parse(startDate);
             long mills = Date2.getTime() - System.currentTimeMillis();
             long seconds = mills/1000;
             long days = seconds / 86400;
 
-            /*mills/= 60;
-            int  minutes = (int) mills % 60;
-            mills /= 60;
-            int hours =  (int) mills % 24;
-            mills /= 24;
-            int  days = (int) mills % 30;
-            mills /= 30;
-            int months = (int) mills % 12;
-            mills /= 12;
-            int years = (int) mills ;*/
-
-            //diff= days+" days "+hours+" hrs "+minutes+" mins";
-
-            /*if (years >=1 && months<=12 && days<=30) {
-                diff = years + " Years to go" ;
-            }
-            if (years<=0 && months<12 &&  days>=30){
-                diff= months+" Months to go";
-            }
-            if (years<=0 && months < 12 && days<30 && days>0){
-                diff= days+" Days to go";
-            }
-            else if(days<=0 && hours > 0){
-                diff= hours+" Hours to go";
-            }
-            else if(hours <=0 && minutes >=0){
-                diff= minutes+" mins "+seconds+" sec";
-            }
-            else if(hours <=0 && minutes <0){
-                diff= minutes+" Minutes to go";
-            }
-            else{
-                System.out.println("LAST ELSE::::::::::  "+years + " years " + months + " months " + days + " days "+hours+" hrs "+minutes+" mins "+seconds+" sec");
-            }*/
-            //System.out.println("START::::::::::  " +  days + " days" );
             String temp = ""+seconds;
             if (temp.contains("-")){
                     diff="Ago";
@@ -144,22 +107,29 @@ public class MyUtill {
                                 diff = hours + " Hours to go";
                             }
                         }
-                        /*int hours = days
-
-                        if (days < 1 && hours > 1) {
-                            diff = hours + " Hours to go";
-                        } else {
-                            if (minutes > 1) {
-                                diff = minutes + " Minutes to go";
-                            } else {
-                                if (seconds > 1 && seconds < 60) {
-                                    diff = minutes + " Seconds to go";*/
                         }
                     }
              }
         }catch(Exception e){
             e.printStackTrace();
-        }//}
+        }
         return diff;
     }
+
+
+
+
+
+    public void JODATimeDiff(String today, String StartTime1){
+        Period p = new Period(new DateTime(today), new DateTime(StartTime1), PeriodType.dayTime());
+        int month = p.getMonths();
+        int days = p.getDays();
+        int hours = p.getHours();
+        int mints = p.getMinutes();
+        int seconds = p.getSeconds();
+
+    }
+
+
+
 }

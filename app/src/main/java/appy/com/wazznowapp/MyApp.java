@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.app.model.AdminMessage;
 import com.app.model.AnalyticsSingleton;
 import com.app.model.CannedMessage;
 import com.app.model.ConnectDetector;
@@ -44,6 +45,8 @@ public class MyApp extends Application {
     public static final String FEATURED_SENT = "featured_sent";
     public static final String FRAGMENT_SELECTED = "fragment_selected";
     public static final String SIGNUP_ACTIVITY_LOADED = "signup_activity_loaded";
+    public static ArrayList<AdminMessage> alAdmMsg;
+
 
     @Override
     public void onCreate() {
@@ -55,7 +58,6 @@ public class MyApp extends Application {
         }
         preferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         getDeviveID(getApplicationContext());
-        alCanMsg = new ArrayList<CannedMessage>();
 
 
         /*************************************Firebase Offline Capabilities****************************************/

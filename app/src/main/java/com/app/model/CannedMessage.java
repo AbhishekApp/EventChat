@@ -4,7 +4,6 @@ package com.app.model;
  * Created by admin on 10/17/2016.
  */
 public class CannedMessage {
-
     String canned_message;
 
     public String getCanned_message() {
