@@ -204,7 +204,15 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                     }
                 });
             }else{
-                Toast.makeText(con, "Please fill all the required field", Toast.LENGTH_SHORT).show();
+                if(TextUtils.isEmpty(email)&& TextUtils.isEmpty(uName)){
+                    Toast.makeText(con, "Please fill all the required field", Toast.LENGTH_SHORT).show();
+                }else{
+                    //if(TextUtils.isEmpty(email)){
+                        Toast.makeText(con, "We need your Email to sign you in. Please try again!", Toast.LENGTH_SHORT).show();
+                    //}
+                }
+
+
             }
         }
         FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {

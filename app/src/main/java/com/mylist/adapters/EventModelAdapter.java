@@ -89,27 +89,39 @@ public class EventModelAdapter extends BaseAdapter {
         event_detail = event_detail.replace(",","\n");*/
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
 
-        if(!TextUtils.isEmpty(detail.getEvent_image_url()))
-          downloadImageURL(detail.getEvent_id(), viewHolder.img);
-        String strTime =String.valueOf(myUtill.getTimeDifference(detail.getEvent_start())).trim();
-        //System.out.println("Line 89 event Time Difference :"+strTime+":");
+        if(!TextUtils.isEmpty(detail.getEvent_image_url())) {
+            downloadImageURL(detail.getEvent_id(), viewHolder.img);
+        }
+
+        //System.out.println("isTimeBetweenTwoTime :::: "+myUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp()));
+
+        //if(myUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp())){
+          //  viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+          //  viewHolder.tvHour.setText("LIVE!    ");
+       // }/*else {*/
+            String strTime = String.valueOf(myUtill.getTimeDifference(detail.getEvent_start())).trim();
+            //System.out.println("Line 89 event Time Difference :"+strTime+":");
         /*if(!TextUtils.isEmpty(strTime)){
             viewHolder.tvHour.setText(strTime);
         }*/
-
-        if (strTime.contains("Ago")){
-            viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock2, 0, 0, 0);
-            viewHolder.tvHour.setText("\t\t");
-        }else{
-            if (strTime.contains("More")){
-                viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock1, 0, 0, 0);
-                viewHolder.tvHour.setText("\t\t");
-            }else if(strTime.contains("to go")){
-                viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                viewHolder.tvHour.setText(strTime);
+            if (strTime.contains("Ago")) {
+                if(myUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp())){
+                    viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    viewHolder.tvHour.setText("LIVE !\t\t");
+                }else {
+                    viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock2, 0, 0, 0);
+                    viewHolder.tvHour.setText("\t\t");
+                }
+            } else {
+                if (strTime.contains("More")) {
+                    viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock1, 0, 0, 0);
+                    viewHolder.tvHour.setText("\t\t");
+                } else if (strTime.contains("to go")) {
+                    viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    viewHolder.tvHour.setText(strTime);
+                }
             }
-        }
-
+        /*}*/
 
 
         if(detail.getSubscribed_user().equalsIgnoreCase("0")) {

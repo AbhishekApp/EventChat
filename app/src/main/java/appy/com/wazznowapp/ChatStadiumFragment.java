@@ -270,7 +270,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     btnNo.setText("No, I don't want to tune In");
                     //tvAdminMsg.setText("Congrats now you are part of "+ eventDetail.getSubscribed_user()+"+ in stadium following the match");
 
-                    tvAdminMsg.setText(MyApp.alAdmMsg.get(0).get_admin_message().replace("<event>",CateName));
+                    tvAdminMsg.setText(MyApp.alAdmMsg.get(0).get_admin_message().replace("<Event>",CateName));
 
                     btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -333,8 +333,52 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             btnYes.setText("Invite Friends");
             btnNo.setText("No, Thanks");
             //tvAdminMsg.setText("Start a House Party. There are most fun.");
-            tvAdminMsg.setText(MyApp.alAdmMsg.get(3).get_admin_message());
 
+            if(MyUtill.isTimeBetweenTwoTime(eventDetail.getEvent_start(),eventDetail.getEvent_exp()))
+            {
+                //LIVE
+                String toDisplay = MyApp.alAdmMsg.get(1).get_admin_message().replace("<Event>",CateName);
+                tvAdminMsg.setText(toDisplay);
+
+            }else{
+                //FUTURE OR PAST
+
+                //Toast.makeText(getActivity(), ""+MyUtill.getDaysDifference(eventDetail.getEvent_start()), Toast.LENGTH_SHORT).show();
+
+
+                if(MyUtill.getDaysDifference(eventDetail.getEvent_start()).contains("-")){
+
+                    //PAST
+
+                    tvAdminMsg.setText(MyApp.alAdmMsg.get(2).get_admin_message().replace("<Event> will be live in <days>, ",""));
+
+                }else{
+
+
+                    //FUTURE LESS THAN 30 DAYS
+                    tvAdminMsg.setText(
+                            MyApp.alAdmMsg.get(2).get_admin_message()
+                            .replace("<Event>",CateName)
+                            .replace(
+                                    "<days>",MyUtill.getDaysDifference(
+                                            eventDetail.getEvent_start()
+                                    )
+                            )
+                    );
+
+
+                    //FUTURE MORE THAN 30 DAYS
+                    if(tvAdminMsg.getText().toString().contains(" is coming soon")){
+                        tvAdminMsg.setText(tvAdminMsg.getText().toString().replace("will be live in", ""));
+                    }else{
+                        Toast.makeText(getActivity(), "in Else", Toast.LENGTH_SHORT).show();
+                    }
+
+
+
+                }
+
+            }
 
 
             btnYes.setOnClickListener(new View.OnClickListener() {
@@ -638,7 +682,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    /*class StadiumChatAdapter extends ArrayAdapter{
+/*class StadiumChatAdapter extends ArrayAdapter{
         Context con;
         ArrayList<ChatData> alList;
         TextView tvUser,tvMsg,tvComMsg1;

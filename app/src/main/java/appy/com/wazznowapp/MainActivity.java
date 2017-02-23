@@ -74,8 +74,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Firebase firebase;
     Firebase firebaseEvent;
     ArrayList<EventModel> alModel;
-    static ArrayList<EventDetail> arrayListEvent;
-    static ArrayList<EventDetail> arrayListEvent_previous;
+    static ArrayList<EventDetail> arrayListEvent, arrayListEvent_previous,arrayListEvent_live;
     static EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
     ProgressDialog progressDialog;
@@ -264,6 +263,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alModel = new ArrayList<EventModel>();
         arrayListEvent = new ArrayList<EventDetail>();
         arrayListEvent_previous = new ArrayList<EventDetail>();
+        arrayListEvent_live = new ArrayList<EventDetail>();
         eventAdapter = new EventModelAdapter(this, arrayListEvent);
         listMain.setAdapter(eventAdapter);
         listMain.setOnItemClickListener(this);
@@ -497,17 +497,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                                    if(temp.contains("-")){
                                         // This is for past events store it in different list and merge afterwards.
-                                       arrayListEvent_previous.add(detail);
-                                       hashMapEvent.put(detail.getEvent_id(), detail);
+
+                                        System.out.println(detail.getEvent_title());
+
+
+                                       if(myUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp())){
+
+                                            //FOR LIVE!
+                                           arrayListEvent_live.add(detail);
+                                           hashMapEvent.put(detail.getEvent_id(), detail);
+
+                                       }else{
+                                            //FOR PAST
+                                           arrayListEvent_previous.add(detail);
+                                           hashMapEvent.put(detail.getEvent_id(), detail);
+                                       }
 
                                     }else{
-                                        // This is for coming events store it in same list.
+                                        // FOR UPCOMMING
                                         arrayListEvent.add(detail);
                                         hashMapEvent.put(detail.getEvent_id(), detail);
                                     }
                                     /*arrayListEvent.add(detail);
                                     hashMapEvent.put(detail.getEvent_id(), detail);*/
                                 }catch (Exception e){
+
+                                    // NO DATE
                                     arrayListEvent_previous.add(detail);
                                     hashMapEvent.put(detail.getEvent_id(), detail);
                                     e.printStackTrace();
@@ -532,8 +547,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                     alModel.add(model);
                 }
+
+
+
+                arrayListEvent.addAll(arrayListEvent_live);
+
                 Collections.sort(arrayListEvent, new CustomComparator());
                 Collections.sort(arrayListEvent_previous, new CustomComparator());
+
+
 
                 arrayListEvent.addAll(arrayListEvent_previous);
                 //System.out.println("EVENT DETAIL : "+alModel.toString());
@@ -675,8 +697,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                System.out.println("EVENT DATA onPostExecute Exception : "+ex.toString());
            }finally {
                //progressDialog.hide();
-               EventTask task = new EventTask();
-               task.execute();
+
+               try {
+                   EventTask task = new EventTask();
+                   task.execute();
+               }catch (Exception e){
+                   e.printStackTrace();
+               }
            }
 
         }
