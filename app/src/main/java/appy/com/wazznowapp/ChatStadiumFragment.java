@@ -350,7 +350,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
                     //PAST
 
-                    tvAdminMsg.setText(MyApp.alAdmMsg.get(2).get_admin_message().replace("<Event> will be live in <days>, ",""));
+                    tvAdminMsg.setText(MyApp.alAdmMsg.get(4).get_admin_message());
 
                 }else{
 
@@ -366,18 +366,14 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                             )
                     );
 
-
                     //FUTURE MORE THAN 30 DAYS
                     if(tvAdminMsg.getText().toString().contains(" is coming soon")){
-                        tvAdminMsg.setText(tvAdminMsg.getText().toString().replace("will be live in", ""));
+                        tvAdminMsg.setText(MyApp.alAdmMsg.get(5).get_admin_message().replace("<Event>",CateName));
                     }else{
                         Toast.makeText(getActivity(), "in Else", Toast.LENGTH_SHORT).show();
                     }
 
-
-
                 }
-
             }
 
 

@@ -749,11 +749,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     Log.e("AdminTask","get admin message ERROR: "+e.toString());
                 }
             }
-
-
             //System.out.println(""+alAdmMsg.toString());
-
-
             return null;
         }
 
@@ -778,6 +774,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
     }
-
-
 }

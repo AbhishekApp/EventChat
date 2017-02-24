@@ -62,6 +62,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     SharedPreferences.Editor editor;
     int mPageEndOffset = 0;
     int mPageLimit = 10;
+    View vi;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,8 +109,8 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             if(!MyApp.preferences.getBoolean(EventChatActivity.eventID+"HouseParty", false) && !addHousePartyFLAG){
                 //linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-                View vi = inflater.inflate(R.layout.admin_msg,null);
-                linearLayout.removeAllViews();
+                vi = inflater.inflate(R.layout.admin_msg,null);
+               // linearLayout.removeAllViews();
                 //linearLayout.addView(vi);
                 listView.addHeaderView(vi);
                 LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
@@ -150,6 +151,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         }
     }
 
+
     private void housePartyStarted(){
         //editor = MyApp.preferences.edit();
         //editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
@@ -178,6 +180,9 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     @Override
     public void onStop() {
         super.onStop();
+        //LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+        //View vi = inflater.inflate(R.layout.admin_msg,null);
+        listView.removeHeaderView(vi);
 
     }
 

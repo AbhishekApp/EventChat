@@ -81,28 +81,28 @@ public class DeepLink extends AppCompatActivity implements GoogleApiClient.OnCon
         // would automatically launch the deep link if one is found.
         boolean autoLaunchDeepLink = false;
         AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
-                .setResultCallback(
-                        new ResultCallback<AppInviteInvitationResult>() {
-                            @Override
-                            public void onResult(@NonNull AppInviteInvitationResult result) {
-                                if (result.getStatus().isSuccess()) {
-                                    // Extract deep link from Intent
-                                    Intent intent = result.getInvitationIntent();
-                                    String deepLink = AppInviteReferral.getDeepLink(intent);
+            .setResultCallback(
+                new ResultCallback<AppInviteInvitationResult>() {
+                    @Override
+                    public void onResult(@NonNull AppInviteInvitationResult result) {
+                    if (result.getStatus().isSuccess()) {
+                        // Extract deep link from Intent
+                        Intent intent = result.getInvitationIntent();
+                        String deepLink = AppInviteReferral.getDeepLink(intent);
 
-                                    // Handle the deep link. For example, open the linked
-                                    // content, or apply promotional credit to the user's
-                                    // account.
+                        // Handle the deep link. For example, open the linked
+                        // content, or apply promotional credit to the user's
+                        // account.
 
-                                    // [START_EXCLUDE]
-                                    // Display deep link in the UI
-                                    ((TextView) findViewById(R.id.link_view_receive)).setText(deepLink);
-                                    // [END_EXCLUDE]
-                                } else {
-                                    Log.d(TAG, "getInvitation: no deep link found.");
-                                }
-                            }
-                        });
+                        // [START_EXCLUDE]
+                        // Display deep link in the UI
+                        ((TextView) findViewById(R.id.link_view_receive)).setText(deepLink);
+                        // [END_EXCLUDE]
+                    } else {
+                        Log.d(TAG, "getInvitation: no deep link found.");
+                    }
+                    }
+                });
         // [END get_deep_link]
     }
     // [END on_create]

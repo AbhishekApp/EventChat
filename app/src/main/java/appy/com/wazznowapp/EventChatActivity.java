@@ -182,7 +182,6 @@ public class EventChatActivity extends AppCompatActivity {
                             }
                         }
                     }
-
                     //System.out.println(alList.toString());
                     Collections.sort(alList, new CustomComparator());
                     //System.out.println(alList.toString());
