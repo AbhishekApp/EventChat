@@ -186,6 +186,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             String inviterDeviceID = intent.getStringExtra("UserDeviceID");
                             Uri uri = intent.getData();
                             invitedEventid = uri.getQueryParameter("eventid");
+
+                            String myMessage = uri.getQueryParameter("utm_medium");
+
+                            Log.e("MainActivity", "get Deep link message "+myMessage);
+
                            try{
                                Log.e("MainActivity", "get Deep link URL "+deepLink);
                                Log.e("MainActivity", "get Deep link uri "+uri.toString());
@@ -193,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
                                invitedGroup = deepLink.split("utm_campaign=")[1];
                                Log.e("MainActivity", "get Deep link group "+invitedGroup);
+
                                getInvited = true;
 
                            }catch (Exception ex){

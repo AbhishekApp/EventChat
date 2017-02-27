@@ -1,6 +1,7 @@
 package com.mylist.adapters;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,8 +12,12 @@ import android.widget.TextView;
 import com.app.model.ChatData;
 import com.firebase.client.Query;
 
+import appy.com.wazznowapp.EventChatActivity;
+import appy.com.wazznowapp.InviteFriendActivity;
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
+
+import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 
 /**
  * Created by admin on 8/11/2016.
@@ -34,8 +39,23 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         this.activity = activity;
     }
 
+    private void housePartyStarted(String message){
+        //editor = MyApp.preferences.edit();
+        //editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
+        //editor.commit();
+        Intent ii = new Intent(activity, InviteFriendActivity.class);
+        ii.putExtra("EventName", eventDetail.getCatergory_id());
+        ii.putExtra("EventID", eventDetail.getEvent_id());
+        ii.putExtra("Event", eventDetail.getEvent_title());
+        ii.putExtra("message", message);
+        ii.putExtra("EventTime", eventDetail.getEvent_start());
+        activity.startActivity(ii);
+    }
+
+
+
     @Override
-    protected void populateView(final View v, ChatData model, int position) {
+    protected void populateView(final View v,final ChatData model, int position) {
         comRL = (RelativeLayout)v.findViewById(R.id.comRL);
         tvComMsg1 = (TextView)comRL.findViewById(R.id.tvComMsg1);
         imgIcon = (ImageView) v.findViewById(R.id.imgIcon);
@@ -47,15 +67,28 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvMsg.setText(model.getTitle());
         tvUser.setText(model.getAuthor());
         tvComMsg1.setText(model.getTitle());
-        //linearBtn.setVisibility(View.GONE);
+        //linearBtn.setVisibility(View.GONE);..
+
+
+
+        ImageView share = (ImageView) v.findViewById(R.id.share);
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
+                //openShareScreen
+
+                housePartyStarted(model.getTitle());
+
+
+            }
+        });
 
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         String sender = model.getAuthor();
         String fromUser = model.getToUser();
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         boolean isEqual = sender.equalsIgnoreCase(userName);
-
-
 
         if(model.getAuthorType().equals("com")){
             //System.out.println("commmmenttttttaaaatooorrrr");

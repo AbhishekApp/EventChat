@@ -1,6 +1,9 @@
 package appy.com.wazznowapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +13,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.model.ChatData;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
@@ -30,6 +48,16 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     LinearLayout linear;//, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
     ImageView imgIcon;
+    String shortLinkURL = "";
+    String msg;
+    String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
+            "&apn=appy.com.wazznowapp"+
+            "&afl=$"+
+            "&st=WazzNow+Title" +
+            "&sd=House+Party+Chat+Invitation" +
+            "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png"+
+            "&utm_source=";
+    String userName = "";
 
     public NewAdapter(Context context, int resource, ArrayList<ChatData> list) {
         super(context, resource, list);
@@ -39,6 +67,9 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         /*for(int i=0;i<list.size();i++){
             Log.i("NewAdapterRAvi",""+list.get(i).getTitle());
         }*/
+
+
+
     }
 
     @Override
@@ -66,12 +97,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         if(!share.isShown())
             share.setVisibility(View.VISIBLE);
 
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
-            }
-        });
+
 
         if(position < alList.size() ) {
             try {
@@ -86,17 +112,146 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     }
 
 
-    protected void populateView(final View v, ChatData model) {
+    /*private void housePartyStarted(String message){
+        //editor = MyApp.preferences.edit();
+        //editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
+        //editor.commit();
+        Intent ii = new Intent(con, InviteFriendActivity.class);
+        ii.putExtra("EventName", eventDetail.getCatergory_id());
+        ii.putExtra("EventID", eventDetail.getEvent_id());
+        ii.putExtra("Event", eventDetail.getEvent_title());
+        ii.putExtra("message", message);
+        ii.putExtra("EventTime", eventDetail.getEvent_start());
+        con.startActivity(ii);
+    }*/
+
+
+
+
+    public class newShortAsync extends AsyncTask<Void, Void, String> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //pd = new android.widget.ProgressBar(InviteFriendActivity.this,null,android.R.attr.progressBarStyleLarge);
+            //pd.getIndeterminateDrawable().setColorFilter(0xFFFF0000,android.graphics.PorterDuff.Mode.MULTIPLY);
+            //pd.setCancelable(false);
+            ChatStadiumFragment.pd.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            BufferedReader reader;
+            StringBuffer buffer;
+            String res = null;
+            String json = "{\"longUrl\": \"" + longDeepLink.replace("$", con.getResources().getString(R.string.apk_link)) + "\"}";
+            try {
+                URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key=" + con.getResources().getString(R.string.google_shortlink_api_key));
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setReadTimeout(40000);
+                con.setConnectTimeout(40000);
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/json");
+                OutputStream os = con.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(json);
+                writer.flush();
+                writer.close();
+                os.close();
+                int status = con.getResponseCode();
+                InputStream inputStream;
+                if (status == HttpURLConnection.HTTP_OK)
+                    inputStream = con.getInputStream();
+                else
+                    inputStream = con.getErrorStream();
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                buffer = new StringBuffer();
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+                res = buffer.toString();
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();// for now eat exceptions
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //System.out.println("JSON RESP:" + s);
+            String response = s;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String id = jsonObject.getString("id");
+                shortLinkURL = id;
+                Intent sendIntent = new Intent(con, ShareEventActivity.class);
+                userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+                if (!TextUtils.isEmpty(userName)) {
+                    if (!userName.contains("user")) {
+                        msg = "Hi, This is " + userName + ". Watch the " + id + " with me right here on WazzNow.";
+                    } else {
+                        msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
+                    }
+                } else {
+                    msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
+                }
+                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+                //  String dLink = longDeepLink.replace("SenderID", eventID);
+                //sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra("share", msg);
+                /*sendIntent.setType("text/plain");*/
+                //sendIntent.setPackage("com.whatsapp");
+                try {
+                    con.startActivity(sendIntent);
+                    //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
+                } catch (Exception ex) {
+                    Toast.makeText(con, "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
+                }
+                ChatStadiumFragment.pd.setVisibility(View.GONE);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void populateView(final View v, final ChatData model) {
         tvUser.setTypeface(MyApp.authorFont);
         tvMsg.setTypeface(MyApp.authorMsg);
+
         tvComMsg1.setText(model.getTitle());
+        tvMsg.setText(model.getTitle());
+
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         String sender = model.getAuthor();
         String fromUser = model.getToUser();
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         boolean isEqual = sender.equalsIgnoreCase(userName);
-        tvMsg.setText(model.getTitle());
+
         tvUser.setText(model.getAuthor());
+
+
+        ImageView share = (ImageView) v.findViewById(R.id.share);
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
+                //openShareScreen
+
+/*                housePartyStarted(model.getTitle());*/
+                longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                new newShortAsync().execute();
+
+            }
+        });
+
 
         if(model.getAuthorType().equals("com")){
             comRL.setVisibility(View.VISIBLE);

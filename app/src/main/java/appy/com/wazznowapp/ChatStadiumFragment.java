@@ -85,7 +85,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             "&sd=House+Party+Chat+Invitation" +
             "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png"+
             "&utm_source=";
-    ProgressBar pd;
+    public static ProgressBar pd;
     String shortLinkURL="";
     String msg;
     //private DatabaseReference mDatabaseRefrenceSync;
@@ -118,19 +118,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
             alanQuery = alanRef.limitToLast(StadiumMsgLimit);
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-            // alanRef.keepSynced(true); //synk db from live
-
-            // mDatabaseRefrenceSync=FirebaseDatabase.getInstance().getReference().child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("StadiumChat");
-            // mDatabaseRefrenceSync.keepSynced(true); //sync db from disk
-
-            /*if (PreferenceManager.getDefaultSharedPreferences(getActivity()).contains(eventDetail.getEvent_id())){
-                StadiumMsgLimit=Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(eventDetail.getEvent_id(),"3"));
-                System.out.println("onCreate~~~~~~~~~~"+EventChatActivity.eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
-            }else{
-                StadiumMsgLimit=3;
-            }*/
         }
-
 
         view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
@@ -241,10 +229,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         pd.setVisibility(View.GONE);
     }
 
-
-
-
-
     @Override
     public void onStart() {
         super.onStart();
@@ -354,7 +338,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
                 }else{
 
-
                     //FUTURE LESS THAN 30 DAYS
                     tvAdminMsg.setText(
                             MyApp.alAdmMsg.get(2).get_admin_message()
@@ -372,11 +355,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     }else{
                         Toast.makeText(getActivity(), "in Else", Toast.LENGTH_SHORT).show();
                     }
-
                 }
             }
-
-
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -446,6 +426,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         ii.putExtra("EventID", eventDetail.getEvent_id());
         ii.putExtra("Event", eventDetail.getEvent_title());
         ii.putExtra("EventTime", eventDetail.getEvent_start());
+        ii.putExtra("message", "");
         startActivity(ii);
     }
 
@@ -646,7 +627,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }else{
             ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
             alanRef.push().setValue(alan);
-            MyApp.CustomEventAnalytics("chat_sent ", EventChatActivity.SuperCateName , eventDetail.getCategory_name());
+            try {MyApp.CustomEventAnalytics("chat_sent ", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+            }catch (Exception ex){}
             onRefresh();
             if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                 MyUtill.addMsgtoFeatured(getActivity(),msg);

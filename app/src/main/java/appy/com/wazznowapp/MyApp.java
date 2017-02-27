@@ -150,9 +150,9 @@ public class MyApp extends Application {
     }
 
 
-    public static void CustomEventAnalytics(String EventLogName, String customEventName,String customEventMessage){
+    public static void CustomEventAnalytics(String EventLogName, String customEventName, String customEventMessage){
         /*************************************Firebase Custom Events Analytics*********************************/
-        String eventName;
+        String eventName = "A";
         switch (EventLogName) {
             case CHAT_SENT:
                 eventName = "chat_sent";

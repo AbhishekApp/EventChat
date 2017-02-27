@@ -160,6 +160,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         ii.putExtra("EventName", eventDetail.getCatergory_id());
         ii.putExtra("EventID", eventDetail.getEvent_id());
         ii.putExtra("Event", eventDetail.getEvent_title());
+        ii.putExtra("message", "");
         ii.putExtra("EventTime", eventDetail.getEvent_start());
         startActivity(ii);
     }

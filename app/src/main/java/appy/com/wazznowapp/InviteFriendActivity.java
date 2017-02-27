@@ -79,7 +79,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         eventName  = getIntent().getStringExtra("Event");
         eventTime  = getIntent().getStringExtra("EventTime");
       //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
-        longDeepLink = longDeepLink + eventID+"&utm_medium=Whatsapp"+/*getIntent().getStringExtra("message")*/""+"&utm_campaign="+eventCategory;
+        longDeepLink = longDeepLink + eventID+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventCategory;
 
         eventTime = eventTime.split(" ")[0];
 

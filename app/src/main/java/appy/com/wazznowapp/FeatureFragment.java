@@ -241,7 +241,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         addTuneFLAG = false;
         addHousePartyFLAG = false;
         editor = MyApp.preferences.edit();
-        editor.putBoolean(EventChatActivity.eventID + "HouseParty", false);
+        editor.putBoolean(eventID + "HouseParty", false);
         editor.commit();
         MyApp.FeaturedMsgLimit=0;
     }
@@ -299,6 +299,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 tvUser = (TextView) view.findViewById(R.id.tvChatUser);
                 tvMsg = (TextView) view.findViewById(R.id.tvChat);
                 linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
+                share = (ImageView) view.findViewById(R.id.share);
 
                 //btnYes = (TextView) view.findViewById(R.id.btnYesTuneOrInvite);
                 //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
@@ -307,20 +308,12 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 tvUser = (TextView) view.findViewById(R.id.tvChatUser);
                 tvMsg = (TextView) view.findViewById(R.id.tvChat);
                 linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
+                share = (ImageView) view.findViewById(R.id.share);
 
                 //btnYes = (TextView) view.findViewById(R.id.btnYesTuneOrInvite);
                 //btnNo = (TextView) view.findViewById(R.id.btnNoThanks);
             }
 
-            share = (ImageView) view.findViewById(R.id.share);
-            share.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
-                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name(),eventID); //no message ID as all will be in same sub-category
-                    new newShortAsync().execute();
-                }
-            });
 
             //if (position < alList.size() && FeaturedMsgLimit <= alList.size()) {
             try {
@@ -336,7 +329,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             return view;
         }
 
-        protected void populateView(final View v, ChatData model) {
+        protected void populateView(final View v, final ChatData model) {
             try {
                 headerText.setText(new SimpleDateFormat("dd-MMM hh:mm a").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getTimestamp())));
                 tvMsg.setText(model.getTitle().replace("#featured", "").replace("#Featured", "").replace("#FEATURED", ""));
@@ -361,6 +354,23 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             linear.setLayoutParams(relativeParam);
             linear.setVisibility(View.VISIBLE);
             linear.setPadding(35, 5, 80, 5);
+
+
+            //share = (ImageView) v.findViewById(R.id.share);
+            share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
+                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name(),eventID); //no message ID as all will be in same sub-category
+
+                    longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                    new newShortAsync().execute();
+                }
+            });
+
+
+
+
             if (model.getAuthor().equalsIgnoreCase("Admin")) {
                 imgIcon.setVisibility(View.VISIBLE);
             } else {
@@ -375,7 +385,6 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
 
     public class newShortAsync extends AsyncTask<Void, Void, String> {
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -404,7 +413,6 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 writer.flush();
                 writer.close();
                 os.close();
-
                 int status = con.getResponseCode();
                 InputStream inputStream;
                 if (status == HttpURLConnection.HTTP_OK)
@@ -465,9 +473,9 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 e.printStackTrace();
             }
         }
-
-
     }
+
+
 }
 
 
