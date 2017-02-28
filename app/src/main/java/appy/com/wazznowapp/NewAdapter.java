@@ -3,7 +3,6 @@ package appy.com.wazznowapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.model.ChatData;
 
@@ -34,8 +32,6 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
-
-
 /**
  * Created by admin on 2/15/2017.
  */
@@ -63,12 +59,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         super(context, resource, list);
         con = context;
         alList = list;
-        //Log.i("NewAdapterRAvi",""+list.size());
-        /*for(int i=0;i<list.size();i++){
-            Log.i("NewAdapterRAvi",""+list.get(i).getTitle());
-        }*/
-
-
+        msg = con.getResources().getString(R.string.share_msg);
 
     }
 
@@ -112,20 +103,92 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     }
 
 
-    /*private void housePartyStarted(String message){
-        //editor = MyApp.preferences.edit();
-        //editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
-        //editor.commit();
-        Intent ii = new Intent(con, InviteFriendActivity.class);
-        ii.putExtra("EventName", eventDetail.getCatergory_id());
-        ii.putExtra("EventID", eventDetail.getEvent_id());
-        ii.putExtra("Event", eventDetail.getEvent_title());
-        ii.putExtra("message", message);
-        ii.putExtra("EventTime", eventDetail.getEvent_start());
-        con.startActivity(ii);
-    }*/
 
 
+    protected void populateView(final View v, final ChatData model) {
+        tvUser.setTypeface(MyApp.authorFont);
+        tvMsg.setTypeface(MyApp.authorMsg);
+
+        tvComMsg1.setText(model.getTitle());
+        tvMsg.setText(model.getTitle());
+
+        relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        String sender = model.getAuthor();
+        String fromUser = model.getToUser();
+        String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
+        boolean isEqual = sender.equalsIgnoreCase(userName);
+
+
+        if (model.getAuthor().equals("Guest User"))
+        {
+            //tvUser.setText("");
+            tvUser.setVisibility(View.GONE);
+        }else {
+            tvUser.setText(model.getAuthor());
+            tvUser.setVisibility(View.VISIBLE);
+        }
+
+        ImageView share = (ImageView) v.findViewById(R.id.share);
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
+                //openShareScreen
+
+/*                housePartyStarted(model.getTitle());*/
+                longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                new newShortAsync().execute();
+
+            }
+        });
+
+
+        if(model.getAuthorType().equals("com")){
+            comRL.setVisibility(View.VISIBLE);
+            linear.setVisibility(View.GONE);
+        }else {
+            linear.setVisibility(View.VISIBLE);
+            comRL.setVisibility(View.GONE);
+            if((fromUser.equals(MyApp.getDeviveID(con)))) {
+                tvMsg.setTextColor(con.getResources().getColor(R.color.white));
+                tvMsg.setPadding(25,15,70,15);
+                tvUser.setGravity(Gravity.RIGHT);
+                tvUser.setVisibility(View.GONE);
+                linear.setGravity(Gravity.RIGHT);
+                relativeParam.addRule(Gravity.CENTER);
+                relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                relativeParam.setMargins(0,5,105,5);
+                linear.setLayoutParams(relativeParam);
+                linear.setBackgroundResource(R.drawable.outgoing_message_bg);
+            }
+            else{
+                tvMsg.setGravity(Gravity.LEFT);
+                tvMsg.setPadding(35,5,10,15);
+                tvMsg.setTextColor(con.getResources().getColor(R.color.chat_text_color));
+                tvUser.setGravity(Gravity.LEFT);
+
+                if(tvUser.getText().toString().length()>0){
+                    tvUser.setPadding(35,5,10,5);
+                    tvUser.setVisibility(View.VISIBLE);
+                }else{
+
+                }
+
+                relativeParam.addRule(Gravity.LEFT);
+                linear.setGravity(Gravity.LEFT);
+                relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                relativeParam.setMargins(105,5,0,5);
+                linear.setLayoutParams(relativeParam);
+                linear.setBackgroundResource(R.drawable.chat_new);
+                linear.setPadding(35,5,80,5);
+            }
+            if(model.getAuthor().equalsIgnoreCase("Admin")) {
+                imgIcon.setVisibility(View.VISIBLE);
+            }else{
+                imgIcon.setVisibility(View.GONE);
+            }
+        }
+    }
 
 
     public class newShortAsync extends AsyncTask<Void, Void, String> {
@@ -192,7 +255,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 JSONObject jsonObject = new JSONObject(response);
                 String id = jsonObject.getString("id");
                 shortLinkURL = id;
-                Intent sendIntent = new Intent(con, ShareEventActivity.class);
+                /*Intent sendIntent = new Intent(con, ShareEventActivity.class);
                 userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
                 if (!TextUtils.isEmpty(userName)) {
                     if (!userName.contains("user")) {
@@ -207,89 +270,33 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 //  String dLink = longDeepLink.replace("SenderID", eventID);
                 //sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra("share", msg);
-                /*sendIntent.setType("text/plain");*/
+                *//*sendIntent.setType("text/plain");*//*
                 //sendIntent.setPackage("com.whatsapp");
                 try {
                     con.startActivity(sendIntent);
                     //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
                 } catch (Exception ex) {
                     Toast.makeText(con, "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
-                }
+                }*/
+
+                msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
+
+                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+                //  String dLink = longDeepLink.replace("SenderID", eventID);
+                //sendIntent.setAction(Intent.ACTION_SEND);
+                // sendIntent.putExtra("share", msg);
+                /*sendIntent.setType("text/plain");*/
+                //sendIntent.setPackage("com.whatsapp");
+
+                Intent intent2 = new Intent();
+                intent2.setAction(Intent.ACTION_SEND);
+                intent2.setType("text/plain");
+                intent2.putExtra(Intent.EXTRA_TEXT, msg );
+                con.startActivity(Intent.createChooser(intent2, "Share "));
+
                 ChatStadiumFragment.pd.setVisibility(View.GONE);
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
-        }
-    }
-
-    protected void populateView(final View v, final ChatData model) {
-        tvUser.setTypeface(MyApp.authorFont);
-        tvMsg.setTypeface(MyApp.authorMsg);
-
-        tvComMsg1.setText(model.getTitle());
-        tvMsg.setText(model.getTitle());
-
-        relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        String sender = model.getAuthor();
-        String fromUser = model.getToUser();
-        String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
-        boolean isEqual = sender.equalsIgnoreCase(userName);
-
-        tvUser.setText(model.getAuthor());
-
-
-        ImageView share = (ImageView) v.findViewById(R.id.share);
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
-                //openShareScreen
-
-/*                housePartyStarted(model.getTitle());*/
-                longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
-                new newShortAsync().execute();
-
-            }
-        });
-
-
-        if(model.getAuthorType().equals("com")){
-            comRL.setVisibility(View.VISIBLE);
-            linear.setVisibility(View.GONE);
-        }else {
-            linear.setVisibility(View.VISIBLE);
-            comRL.setVisibility(View.GONE);
-            if((fromUser.equals(MyApp.getDeviveID(con)))) {
-                tvMsg.setTextColor(con.getResources().getColor(R.color.white));
-                tvMsg.setPadding(25,15,70,15);
-                tvUser.setGravity(Gravity.RIGHT);
-                tvUser.setVisibility(View.GONE);
-                linear.setGravity(Gravity.RIGHT);
-                relativeParam.addRule(Gravity.CENTER);
-                relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                relativeParam.setMargins(0,5,105,5);
-                linear.setLayoutParams(relativeParam);
-                linear.setBackgroundResource(R.drawable.outgoing_message_bg);
-            }
-            else{
-                tvMsg.setGravity(Gravity.LEFT);
-                tvMsg.setPadding(35,5,10,15);
-                tvMsg.setTextColor(con.getResources().getColor(R.color.chat_text_color));
-                tvUser.setGravity(Gravity.LEFT);
-                tvUser.setVisibility(View.VISIBLE);
-                tvUser.setPadding(35,5,10,5);
-                relativeParam.addRule(Gravity.LEFT);
-                linear.setGravity(Gravity.LEFT);
-                relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                relativeParam.setMargins(105,5,0,5);
-                linear.setLayoutParams(relativeParam);
-                linear.setBackgroundResource(R.drawable.chat_new);
-                linear.setPadding(35,5,80,5);
-            }
-            if(model.getAuthor().equalsIgnoreCase("Admin")) {
-                imgIcon.setVisibility(View.VISIBLE);
-            }else{
-                imgIcon.setVisibility(View.GONE);
             }
         }
     }

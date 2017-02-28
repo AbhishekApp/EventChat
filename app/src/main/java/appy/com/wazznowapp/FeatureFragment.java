@@ -1,4 +1,5 @@
 package appy.com.wazznowapp;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -95,6 +95,8 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         connectDetector = new ConnectDetector(getActivity());
         if (connectDetector.getConnection()) {
+
+            msg = getActivity().getResources().getString(R.string.share_msg);
             myFirebaseRef = new Firebase(firebaseURL);
             alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child("FeatureChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
@@ -446,7 +448,9 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 JSONObject jsonObject = new JSONObject(response);
                 String id = jsonObject.getString("id");
                 shortLinkURL = id;
-                Intent sendIntent = new Intent(getActivity(), ShareEventActivity.class);
+                //Intent sendIntent = new Intent(getActivity(), ShareEventActivity.class);
+                /*Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sendIntent.setType("text/plain");
                 if (!TextUtils.isEmpty(userName)) {
                     if (!userName.contains("user")) {
                         msg = "Hi, This is " + userName + ". Watch the " + id + " with me right here on WazzNow.";
@@ -460,14 +464,31 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 //  String dLink = longDeepLink.replace("SenderID", eventID);
                 //sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra("share", msg);
-                /*sendIntent.setType("text/plain");*/
+                *//*sendIntent.setType("text/plain");*//*
                 //sendIntent.setPackage("com.whatsapp");
                 try {
                     startActivity(sendIntent);
                     //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
                 } catch (Exception ex) {
                     Toast.makeText(getActivity(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
-                }
+                }*/
+
+                msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
+
+                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+                //  String dLink = longDeepLink.replace("SenderID", eventID);
+                //sendIntent.setAction(Intent.ACTION_SEND);
+                // sendIntent.putExtra("share", msg);
+                /*sendIntent.setType("text/plain");*/
+                //sendIntent.setPackage("com.whatsapp");
+
+                Intent intent2 = new Intent();
+                intent2.setAction(Intent.ACTION_SEND);
+                intent2.setType("text/plain");
+                intent2.putExtra(Intent.EXTRA_TEXT, msg );
+                getActivity().startActivity(Intent.createChooser(intent2, "Share "));
+
+
                 pd.setVisibility(View.GONE);
             } catch (JSONException e) {
                 e.printStackTrace();

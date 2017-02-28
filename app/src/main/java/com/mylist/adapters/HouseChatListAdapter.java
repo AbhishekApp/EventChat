@@ -2,6 +2,7 @@ package com.mylist.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,12 +13,27 @@ import android.widget.TextView;
 import com.app.model.ChatData;
 import com.firebase.client.Query;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+
 import appy.com.wazznowapp.EventChatActivity;
-import appy.com.wazznowapp.InviteFriendActivity;
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+import static appy.com.wazznowapp.HousePartyFragment.pdh;
 
 /**
  * Created by admin on 8/11/2016.
@@ -33,13 +49,23 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
     ImageView imgIcon;
     RelativeLayout comRL;
     TextView tvComMsg1;
+    String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
+            "&apn=appy.com.wazznowapp"+
+            "&afl=$"+
+            "&st=WazzNow+Title" +
+            "&sd=House+Party+Chat+Invitation" +
+            "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png"+
+            "&utm_source=";
+
+    String shortLinkURL = "";
+    String msg ="";
 
     public HouseChatListAdapter(Query ref, Activity activity, int layout){
         super(ref, ChatData.class, layout, activity);
         this.activity = activity;
     }
 
-    private void housePartyStarted(String message){
+    /*private void housePartyStarted(String message){
         //editor = MyApp.preferences.edit();
         //editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
         //editor.commit();
@@ -50,7 +76,8 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         ii.putExtra("message", message);
         ii.putExtra("EventTime", eventDetail.getEvent_start());
         activity.startActivity(ii);
-    }
+    }*/
+
 
 
 
@@ -78,7 +105,10 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
                 MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
                 //openShareScreen
 
-                housePartyStarted(model.getTitle());
+                /*housePartyStarted(model.getTitle());*/
+
+                longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                new newShortAsync().execute();
 
 
             }
@@ -147,5 +177,116 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
             }
         }
 
+    }
+
+
+    public class newShortAsync extends AsyncTask<Void, Void, String> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //pd = new android.widget.ProgressBar(InviteFriendActivity.this,null,android.R.attr.progressBarStyleLarge);
+            //pd.getIndeterminateDrawable().setColorFilter(0xFFFF0000,android.graphics.PorterDuff.Mode.MULTIPLY);
+            //pd.setCancelable(false);
+            pdh.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            BufferedReader reader;
+            StringBuffer buffer;
+            String res = null;
+            String json = "{\"longUrl\": \"" + longDeepLink.replace("$", activity.getResources().getString(R.string.apk_link)) + "\"}";
+            try {
+                URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key=" + activity.getResources().getString(R.string.google_shortlink_api_key));
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setReadTimeout(40000);
+                con.setConnectTimeout(40000);
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/json");
+                OutputStream os = con.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(json);
+                writer.flush();
+                writer.close();
+                os.close();
+                int status = con.getResponseCode();
+                InputStream inputStream;
+                if (status == HttpURLConnection.HTTP_OK)
+                    inputStream = con.getInputStream();
+                else
+                    inputStream = con.getErrorStream();
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                buffer = new StringBuffer();
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+                res = buffer.toString();
+            } catch (MalformedURLException e) {
+                //e.printStackTrace();// for now eat exceptions
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //System.out.println("JSON RESP:" + s);
+            String response = s;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String id = jsonObject.getString("id");
+                shortLinkURL = id;
+                /*Intent sendIntent = new Intent(con, ShareEventActivity.class);
+                userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+                if (!TextUtils.isEmpty(userName)) {
+                    if (!userName.contains("user")) {
+                        msg = "Hi, This is " + userName + ". Watch the " + id + " with me right here on WazzNow.";
+                    } else {
+                        msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
+                    }
+                } else {
+                    msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
+                }
+                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+                //  String dLink = longDeepLink.replace("SenderID", eventID);
+                //sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra("share", msg);
+                *//*sendIntent.setType("text/plain");*//*
+                //sendIntent.setPackage("com.whatsapp");
+                try {
+                    con.startActivity(sendIntent);
+                    //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
+                } catch (Exception ex) {
+                    Toast.makeText(con, "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
+                }*/
+
+                msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
+
+                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+                //  String dLink = longDeepLink.replace("SenderID", eventID);
+                //sendIntent.setAction(Intent.ACTION_SEND);
+                // sendIntent.putExtra("share", msg);
+                /*sendIntent.setType("text/plain");*/
+                //sendIntent.setPackage("com.whatsapp");
+
+                Intent intent2 = new Intent();
+                intent2.setAction(Intent.ACTION_SEND);
+                intent2.setType("text/plain");
+                intent2.putExtra(Intent.EXTRA_TEXT, msg );
+                activity.startActivity(Intent.createChooser(intent2, "Share "));
+
+                pdh.setVisibility(View.GONE);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

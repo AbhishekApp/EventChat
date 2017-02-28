@@ -199,4 +199,7 @@
 
     <string name="joda_time_android_relative_time" msgid="1818557177829411417">"<xliff:g id="DATE">%1$s</xliff:g>, <xliff:g id="TIME">%2$s</xliff:g>"</string>
 
+
+    <string name="share_msg">Hey Watch the event with me and others watching at the same time on WazzOn. DeepLink</string>
+
 </resources>

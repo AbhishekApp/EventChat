@@ -16,17 +16,20 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.model.ChatData;
 import com.app.model.MyUtill;
 import com.firebase.client.Firebase;
+import com.mylist.adapters.CannedAdapter;
 import com.mylist.adapters.HouseChatListAdapter;
 
 import java.text.SimpleDateFormat;
@@ -37,7 +40,7 @@ import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 /**
  * Created by admin on 8/2/2016.
  */
-public class HousePartyFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class HousePartyFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
     ListView listView;
     ImageView imgEmoji;
     ImageView send;
@@ -57,12 +60,15 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     String userName="";
     int msgLimit = 10;
     InputMethodManager imm;
-    LinearLayout linearLayout,linearlayChat;
+    LinearLayout linearLayout,linearlayChat,linearCanMsg;
     static boolean addHousePartyFLAG = false;
     SharedPreferences.Editor editor;
     int mPageEndOffset = 0;
     int mPageLimit = 10;
     View vi;
+    CannedAdapter cannedAdapter;
+    public static ProgressBar pdh;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,15 +98,23 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         viewLay = (GridView) v.findViewById(R.id.viewLay);
         //     al = new ArrayList<String>();
+        linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
+        pdh = (ProgressBar) v.findViewById(R.id.pd);
 
+        cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
+        viewLay.setAdapter(cannedAdapter);
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
+        viewLay.setOnItemClickListener(this);
 
         editor = MyApp.preferences.edit();
         adapter = new HouseChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
     }
+
+
+
 
     @Override
     public void onStart() {
@@ -197,7 +211,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         int id = v.getId();
         View view = getActivity().getCurrentFocus();
         if (id == R.id.imgEmoji) {
-            if (view != null) {
+            /*if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
@@ -206,7 +220,16 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             } else {
                 viewLay.setVisibility(View.VISIBLE);
                 Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
+            }*/
+
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
+            etMsg.setText("");
+            viewLay.setVisibility(View.VISIBLE);
+            linearCanMsg.setVisibility(View.VISIBLE);
+            //Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
@@ -279,5 +302,32 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //StadiumMsgLimit+=2;
+        String msg = MyApp.alCanMsg.get(position).getCanned_message();
+        try {
+            if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatActivity.eventID, false)) {
+                //linearlayChat.setVisibility(View.VISIBLE);
+                adapter.notifyDataSetChanged();
+                etMsg.setText("");
+                ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),"normal");
+                alanRef.push().setValue(alan);
+                MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName , " : House Party : "+ eventDetail.getCategory_name());
+
+                if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
+                    MyUtill.addMsgtoFeatured(getActivity(),msg);
+                }
+            }else{
+                //linearlayChat.setVisibility(View.GONE);
+                Toast.makeText(getActivity(),"You are not eligible to this group.", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception ex) {
+            Log.e("StadiumFragment", "sendMsg ERROR: " + ex.toString());
+
+        }
+        etMsg.setText("");
     }
 }

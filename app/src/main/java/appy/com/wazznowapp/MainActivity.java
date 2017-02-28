@@ -204,11 +204,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                            }catch (Exception ex){
                                Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
                                getInvited = false;
+
+                               //Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                            }
                             // Because autoLaunchDeepLink = true we don't have to do anything
                             // here, but we could set that to false and manually choose
                             // an Activity to launch to handle the deep link here.
-                            // ...
                         }
                         }
                     });
@@ -216,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         init();
                     }catch (Exception e){
                         // for now eat exceptions
+                        e.printStackTrace();
                     }
         } else{
             Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();

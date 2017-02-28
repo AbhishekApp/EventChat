@@ -1,5 +1,6 @@
 package appy.com.wazznowapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -353,7 +354,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     if(tvAdminMsg.getText().toString().contains(" is coming soon")){
                         tvAdminMsg.setText(MyApp.alAdmMsg.get(5).get_admin_message().replace("<Event>",CateName));
                     }else{
-                        Toast.makeText(getActivity(), "in Else", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), "in Else", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -442,11 +443,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
              if(!(noSend >= 0 && noSend < 3)){
                  if(noSend == 0) {
                      linearCanMsg.setVisibility(View.VISIBLE);
+                     MyUtill.hideKeyBoard(getActivity(),linearCanMsg);
                  }else {
                      linearCanMsg.setVisibility(View.GONE);
                  }
             }else{
                 linearCanMsg.setVisibility(View.VISIBLE);
+                 MyUtill.hideKeyBoard(getActivity(),linearCanMsg);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -474,6 +477,20 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             int id = v.getId();
             View view = getActivity().getCurrentFocus();
             if (id == R.id.imgEmoji) {
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                etMsg.setText("");
+                viewLay.setVisibility(View.VISIBLE);
+                linearCanMsg.setVisibility(View.VISIBLE);
+                //Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
+                /*if (viewLay.getVisibility() == View.VISIBLE) {
+                    viewLay.setVisibility(View.GONE);
+                } else {
+                    viewLay.setVisibility(View.VISIBLE);
+                    Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
+                }*/
 
             } else if (id == R.id.etChatMsg) {
                 linearCanMsg.setVisibility(View.GONE);
@@ -532,7 +549,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 if(noSend < 3) {
                     linearCanMsg.setVisibility(View.VISIBLE);
                 }else{
-                    Toast.makeText(getActivity(), "You have already send free messages.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "You have already send free messages.", Toast.LENGTH_SHORT).show();
+
+                    Toast.makeText(getActivity(), "Let's put a Name to the message, Please Register",Toast.LENGTH_LONG).show();
                 }
             }
             else if(resultCode == 102){
@@ -543,34 +562,14 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onRefresh() {
-        /*if(alList.size() > StadiumMsgLimit)
-        StadiumMsgLimit=StadiumMsgLimit+5;*/
-        /*alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
-        mPageLimit = mPageLimit+5;
-        alanQuery = alanRef.limitToFirst(mPageLimit);*/
 
         StadiumMsgLimit = StadiumMsgLimit+5;
 
-        /*alanRef = new Firebase(firebaseURL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
-        alanQuery = alanRef.limitToFirst(StadiumMsgLimit);
-        userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-        view = inflater.inflate(R.layout.stadium_chat, container, false);
-        init(view);
-        alanQuery.addChildEventListener(childEventListener);
-        */
-
-
-        //chatAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this).attach(ChatStadiumFragment.this).commit();
 
-
-        //getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentById(R.id.your_container)).commit();
-
-  //      getActivity().finish();
-//        startActivity(new Intent(getActivity(),EventChatActivity.class));
 
     }
 
@@ -579,6 +578,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         //StadiumMsgLimit+=2;
         String msg = MyApp.alCanMsg.get(position).getCanned_message();
         sendMsg(msg,"canned"); //cannned message click
+
+        etMsg.setText("");
     }
 
     private void sendMsg(String msg,String messageType){
@@ -619,7 +620,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     MyUtill.addMsgtoFeatured(getActivity(),msg);
                 }
             } else {
-                Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "You have already sent Free Msgs” with “Let's put a Name to the message, Please Register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                 startActivityForResult(ii, 111);
             }
@@ -660,232 +662,5 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }
     }
 
-/*class StadiumChatAdapter extends ArrayAdapter{
-        Context con;
-        ArrayList<ChatData> alList;
-        TextView tvUser,tvMsg,tvComMsg1;
-        LinearLayout linear;//, linearBtn;
-        RelativeLayout.LayoutParams relativeParam;
-        ImageView imgIcon;
-        RelativeLayout comRL;
-
-
-        public StadiumChatAdapter(Context context, int resource,ArrayList<ChatData> al) {
-            super(context, resource);
-            con = context;
-            alList = al;
-        }
-
-        @Override
-        public int getCount() {
-            return (StadiumMsgLimit == -1) ? StadiumMsgLimit : 0;
-            //return StadiumMsgLimit;
-         //   return alList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return  alList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup parent) {
-            if(view==null){
-                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(con.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.chat_layout, null);
-                comRL = (RelativeLayout)view.findViewById(R.id.comRL);
-                tvComMsg1 = (TextView)comRL.findViewById(R.id.tvComMsg1);
-                imgIcon = (ImageView) view.findViewById(R.id.imgIcon);
-                tvUser = (TextView) view.findViewById(R.id.tvChatUser);
-                tvMsg = (TextView) view.findViewById(R.id.tvChat);
-                linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
-            }else{
-                imgIcon = (ImageView) view.findViewById(R.id.imgIcon);
-                tvUser = (TextView) view.findViewById(R.id.tvChatUser);
-                tvMsg = (TextView) view.findViewById(R.id.tvChat);
-                linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
-                comRL = (RelativeLayout)view.findViewById(R.id.comRL);
-                tvComMsg1 = (TextView)comRL.findViewById(R.id.tvComMsg1);
-            }
-
-
-            ImageView share = (ImageView) view.findViewById(R.id.share);
-            if(!share.isShown())
-                share.setVisibility(View.VISIBLE);
-
-            share.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
-                    new newShortAsync().execute();
-                }
-            });
-
-            if(position < alList.size() || StadiumMsgLimit < alList.size()) {
-                try {
-                    ChatData model = alList.get(alList.size()-StadiumMsgLimit+position);
-                    populateView(view, model);
-                }
-                catch (Exception e){
-                    e.printStackTrace(); //eats exceptions for now
-                }
-            }
-            return view;
-        }
-
-        protected void populateView(final View v, ChatData model) {
-            tvUser.setTypeface(MyApp.authorFont);
-            tvMsg.setTypeface(MyApp.authorMsg);
-            tvComMsg1.setText(model.getTitle());
-            relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            String sender = model.getAuthor();
-            String fromUser = model.getToUser();
-            String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
-            boolean isEqual = sender.equalsIgnoreCase(userName);
-            tvMsg.setText(model.getTitle());
-            tvUser.setText(model.getAuthor());
-
-            if(model.getAuthorType().equals("com")){
-                comRL.setVisibility(View.VISIBLE);
-                linear.setVisibility(View.GONE);
-            }else {
-                linear.setVisibility(View.VISIBLE);
-                comRL.setVisibility(View.GONE);
-                if((fromUser.equals(MyApp.getDeviveID(con)))) {
-                    tvMsg.setTextColor(con.getResources().getColor(R.color.white));
-                    tvMsg.setPadding(25,15,70,15);
-                    tvUser.setGravity(Gravity.RIGHT);
-                    tvUser.setVisibility(View.GONE);
-                    linear.setGravity(Gravity.RIGHT);
-                    relativeParam.addRule(Gravity.CENTER);
-                    relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    relativeParam.setMargins(0,5,105,5);
-                    linear.setLayoutParams(relativeParam);
-                    linear.setBackgroundResource(R.drawable.outgoing_message_bg);
-                }
-                else{
-                    tvMsg.setGravity(Gravity.LEFT);
-                    tvMsg.setPadding(35,5,10,15);
-                    tvMsg.setTextColor(con.getResources().getColor(R.color.chat_text_color));
-                    tvUser.setGravity(Gravity.LEFT);
-                    tvUser.setVisibility(View.VISIBLE);
-                    tvUser.setPadding(35,5,10,5);
-                    relativeParam.addRule(Gravity.LEFT);
-                    linear.setGravity(Gravity.LEFT);
-                    relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                    relativeParam.setMargins(105,5,0,5);
-                    linear.setLayoutParams(relativeParam);
-                    linear.setBackgroundResource(R.drawable.chat_new);
-                    linear.setPadding(35,5,80,5);
-                }
-                if(model.getAuthor().equalsIgnoreCase("Admin")) {
-                    imgIcon.setVisibility(View.VISIBLE);
-                }else{
-                    imgIcon.setVisibility(View.GONE);
-                }
-            }
-        }
-
-
-        public class newShortAsync extends AsyncTask<Void,Void,String> {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                //pd = new android.widget.ProgressBar(InviteFriendActivity.this,null,android.R.attr.progressBarStyleLarge);
-                //pd.getIndeterminateDrawable().setColorFilter(0xFFFF0000,android.graphics.PorterDuff.Mode.MULTIPLY);
-                //pd.setCancelable(false);
-                pd.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            protected String doInBackground(Void... params) {
-                BufferedReader reader;
-                StringBuffer buffer;
-                String res=null;
-                String json = "{\"longUrl\": \""+longDeepLink.replace("$",getResources().getString(R.string.apk_link))+"\"}";
-                try {
-                    URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key="+getResources().getString(R.string.google_shortlink_api_key));
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setReadTimeout(40000);
-                    con.setConnectTimeout(40000);
-                    con.setRequestMethod("POST");
-                    con.setRequestProperty("Content-Type", "application/json");
-                    OutputStream os = con.getOutputStream();
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                    writer.write(json);
-                    writer.flush();
-                    writer.close();
-                    os.close();
-
-                    int status=con.getResponseCode();
-                    InputStream inputStream;
-                    if(status== HttpURLConnection.HTTP_OK)
-                        inputStream=con.getInputStream();
-                    else
-                        inputStream = con.getErrorStream();
-
-                    reader= new BufferedReader(new InputStreamReader(inputStream));
-                    buffer= new StringBuffer();
-                    String line="";
-                    while((line=reader.readLine())!=null)
-                    {
-                        buffer.append(line);
-                    }
-                    res= buffer.toString();
-                } catch (MalformedURLException e) {
-                    //e.printStackTrace();// for now eat exceptions
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return res;
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                //System.out.println("JSON RESP:" + s);
-                String response=s;
-                try {
-                    JSONObject jsonObject=new JSONObject(response);
-                    String id=jsonObject.getString("id");
-                    shortLinkURL = id;
-                    Intent sendIntent = new Intent(getActivity(),ShareEventActivity.class);
-                    if(!TextUtils.isEmpty(userName)){
-                        if(!userName.contains("user")){
-                            msg = "Hi, This is "+userName+". Watch the " + id+" with me right here on WazzNow.";
-                        }else{
-                            msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
-                        }
-                    }else{
-                        msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
-                    }
-                    //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-                    //  String dLink = longDeepLink.replace("SenderID", eventID);
-                    //sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra("share", msg);
-                *//*sendIntent.setType("text/plain");*//*
-                    //sendIntent.setPackage("com.whatsapp");
-                    try{
-                        startActivity(sendIntent);
-                        //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-                    }catch (Exception ex){
-                        Toast.makeText(getActivity(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
-                    }
-                    pd.setVisibility(View.GONE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-    }*/
 }
 

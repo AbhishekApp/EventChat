@@ -1,7 +1,11 @@
 package com.app.model;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
@@ -334,5 +338,15 @@ public class MyUtill {
     }
         */
 
+    }
+
+    public static void hideKeyBoard(Activity act,View view) {
+        //View view = act.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)act.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }else{
+            Toast.makeText(act,"error",Toast.LENGTH_LONG).show();
+        }
     }
 }

@@ -109,13 +109,13 @@ public class EventModelAdapter extends BaseAdapter {
                     viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     viewHolder.tvHour.setText("LIVE !\t\t");
                 }else {
-                    viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock2, 0, 0, 0);
-                    viewHolder.tvHour.setText("\t\t");
+                    viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.anti, 0, 0, 0);
+                    viewHolder.tvHour.setText("\t\t\t");
                 }
             } else {
                 if (strTime.contains("More")) {
-                    viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock1, 0, 0, 0);
-                    viewHolder.tvHour.setText("\t\t");
+                    viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clock, 0, 0, 0);
+                    viewHolder.tvHour.setText("\t\t\t");
                 } else if (strTime.contains("to go")) {
                     viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     viewHolder.tvHour.setText(strTime);

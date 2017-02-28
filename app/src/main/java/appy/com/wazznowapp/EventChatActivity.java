@@ -440,9 +440,7 @@ public class EventChatActivity extends AppCompatActivity {
                     //future date
                     moreThanDay = Math.abs(new Date().getTime() - sDate.getTime()) > MILLIS_PER_DAY;
                     //System.out.println("date is more than a Day:  "+moreThanDay);
-
                     if (moreThanDay){
-
                         Date ssDate = sdf.parse(alList.get(i).getTimestamp());
                         String newDate= new SimpleDateFormat("hh:mm a dd-MMM-yyyy").format(ssDate);
 
@@ -464,7 +462,6 @@ public class EventChatActivity extends AppCompatActivity {
             catch (Exception e){
                 e.printStackTrace();
             }
-
         }
 
 

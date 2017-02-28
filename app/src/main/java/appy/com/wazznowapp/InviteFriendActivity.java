@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -65,6 +64,8 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.invite_friends_activity);
         pd = (ProgressBar) findViewById(R.id.pd);
 
+        msg = getApplicationContext().getResources().getString(R.string.share_msg);
+
         new GoogleApiClient.Builder(this)
         .addApi(AppInvite.API)
         .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
@@ -79,7 +80,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         eventName  = getIntent().getStringExtra("Event");
         eventTime  = getIntent().getStringExtra("EventTime");
       //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
-        longDeepLink = longDeepLink + eventID+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventCategory;
+        longDeepLink = longDeepLink + eventID+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventName;
 
         eventTime = eventTime.split(" ")[0];
 
@@ -92,7 +93,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         actionBar.setDisplayHomeAsUpEnabled(true);
         tvMsg = (TextView) findViewById(R.id.tvInviteText);
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-        if(!TextUtils.isEmpty(userName)){
+        /*if(!TextUtils.isEmpty(userName)){
             if(!userName.contains("user")){
                 tvMsg.setText("Hi..! This is "+ userName +" lets watch "+eventName+" match on "+eventTime+" on "+eventName.split(" ")[0]+" together");
             }else{
@@ -100,7 +101,11 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             }
         }else{
             tvMsg.setText("Hi..! lets watch "+eventName+" match on "+eventTime+" on "+eventName.split(" ")[0]+" together");
-        }
+        }*/
+        tvMsg.setText(msg.replace("event",eventName).replace("DeepLink",""));
+
+//        msg =msg.replace("event",eventCategory)
+
         btnShare = (Button) findViewById(R.id.btnInviteFriend);
         btnShare.setOnClickListener(this);
     }
@@ -188,8 +193,10 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 JSONObject jsonObject=new JSONObject(response);
                 String id=jsonObject.getString("id");
                 shortLinkURL = id;
-                Intent sendIntent = new Intent(InviteFriendActivity.this,ShareEventActivity.class);
-                if(!TextUtils.isEmpty(userName)){
+                //Intent sendIntent = new Intent(InviteFriendActivity.this,ShareEventActivity.class);
+                //Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
+                //sendIntent.setType("text/plain");
+                /*if(!TextUtils.isEmpty(userName)){
                     if(!userName.contains("user")){
                         msg = "Hi, This is "+userName+". Watch the " + id+" with me right here on WazzNow.";
                     }else{
@@ -197,20 +204,30 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                     }
                 }else{
                     msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
-                }
+                }*/
+
+                msg =msg.replace("event",eventName).replace("DeepLink",shortLinkURL);
+
                 //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
                 //  String dLink = longDeepLink.replace("SenderID", eventID);
                 //sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra("share", msg);
+               // sendIntent.putExtra("share", msg);
                 /*sendIntent.setType("text/plain");*/
                 //sendIntent.setPackage("com.whatsapp");
-                try{
-                    startActivity(sendIntent);
-                    overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
+
+                Intent intent2 = new Intent();
+                intent2.setAction(Intent.ACTION_SEND);
+                intent2.setType("text/plain");
+                intent2.putExtra(Intent.EXTRA_TEXT, msg );
+                startActivity(Intent.createChooser(intent2, "Share "));
+
+                /*try{
+                    startActivity(intent2);
+                    //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
                 }catch (Exception ex){
                     Toast.makeText(getBaseContext(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
                 }
-
+*/
                 pd.setVisibility(View.GONE);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -237,11 +254,20 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         }*/
 
 
-       if (shortLinkURL.length()<=0){
+       if (shortLinkURL.length()<=0 ){
            new newShortAsync().execute();
        }else{
-           Intent sendIntent = new Intent(InviteFriendActivity.this,ShareEventActivity.class);
-           if(!TextUtils.isEmpty(userName)){
+
+           if(msg.length()>0) {
+               //Intent sendIntent = new Intent(InviteFriendActivity.this, ShareEventActivity.class);
+               Intent intent2 = new Intent();
+               intent2.setAction(Intent.ACTION_SEND);
+               intent2.setType("text/plain");
+               intent2.putExtra(Intent.EXTRA_TEXT, msg );
+               startActivity(Intent.createChooser(intent2, "Share"));
+              // Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
+               //sendIntent.setType("text/plain");
+          /* if(!TextUtils.isEmpty(userName)){
                if(!userName.contains("user")){
                    msg = "Hi, This is "+userName+". Watch the " + shortLinkURL+" with me right here on WazzNow.";
                }else{
@@ -249,18 +275,25 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                }
            }else{
                msg = "Hi,  Watch the " + shortLinkURL+" with me right here on WazzNow.";
-           }
-           //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-           //  String dLink = longDeepLink.replace("SenderID", eventID);
-           //sendIntent.setAction(Intent.ACTION_SEND);
-           sendIntent.putExtra("share", msg);
+           }*/
+
+
+               //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
+               //  String dLink = longDeepLink.replace("SenderID", eventID);
+               //sendIntent.setAction(Intent.ACTION_SEND);
+               //sendIntent.putExtra("share", msg);
                 /*sendIntent.setType("text/plain");*/
-           //sendIntent.setPackage("com.whatsapp");
-           try{
-               startActivity(sendIntent);
-               overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-           }catch (Exception ex){
-               Toast.makeText(getBaseContext(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
+               //sendIntent.setPackage("com.whatsapp");
+               /*try {
+                   startActivity(intent2);
+                   overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+               } catch (Exception ex) {
+                   //Toast.makeText(getBaseContext(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
+                   Toast.makeText(getBaseContext(), "can't share.", Toast.LENGTH_SHORT).show();
+               }*/
+           }
+           else{
+               Toast.makeText(this, "no content", Toast.LENGTH_SHORT).show();
            }
        }
 
