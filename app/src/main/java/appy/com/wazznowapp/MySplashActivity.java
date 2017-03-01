@@ -27,7 +27,7 @@ public class MySplashActivity extends Activity{
 
 
         handler = new Handler();
-        handler.postDelayed(runn, 5 * 1000);
+        handler.postDelayed(runn, 3 * 1000);
     }
 
     Runnable runn = new Runnable() {
@@ -56,9 +56,9 @@ public class MySplashActivity extends Activity{
                 str = Base64.encodeToString(md.digest(), Base64.DEFAULT);
             }
         } catch (PackageManager.NameNotFoundException e) {
-
+                e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
-
+            e.printStackTrace();
         }
 
         System.out.println("Hask Key Value=="+str);

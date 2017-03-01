@@ -108,6 +108,7 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
                 /*housePartyStarted(model.getTitle());*/
 
                 longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                msg = model.getTitle();
                 new newShortAsync().execute();
 
 
@@ -141,7 +142,7 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
                 relativeParam.setMargins(0,5,105,5);
                 linear.setLayoutParams(relativeParam);
 //              linear.setBackgroundResource(R.drawable.chat_outgoing_background);
-                linear.setBackgroundResource(R.drawable.outgoing_message_bg);
+                linear.setBackgroundResource(R.drawable.chat_out);
                 //linearBtn.setVisibility(View.GONE);
 
             }
@@ -268,7 +269,8 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
                     Toast.makeText(con, "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
                 }*/
 
-                msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
+                //msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
+                msg = msg +" "+shortLinkURL;
 
                 //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
                 //  String dLink = longDeepLink.replace("SenderID", eventID);

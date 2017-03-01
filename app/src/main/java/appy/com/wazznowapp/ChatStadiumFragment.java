@@ -102,7 +102,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
     }
 
     @Override
@@ -127,9 +126,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         return view;
     }
 
-
-
-
     private void init(final View v) {
         pd = (ProgressBar) v.findViewById(R.id.pd);
         pd.setVisibility(View.VISIBLE);
@@ -139,7 +135,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
-
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
         viewLay = (GridView) v.findViewById(R.id.viewLay);
@@ -327,18 +322,12 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
             }else{
                 //FUTURE OR PAST
-
                 //Toast.makeText(getActivity(), ""+MyUtill.getDaysDifference(eventDetail.getEvent_start()), Toast.LENGTH_SHORT).show();
 
-
                 if(MyUtill.getDaysDifference(eventDetail.getEvent_start()).contains("-")){
-
                     //PAST
-
                     tvAdminMsg.setText(MyApp.alAdmMsg.get(4).get_admin_message());
-
                 }else{
-
                     //FUTURE LESS THAN 30 DAYS
                     tvAdminMsg.setText(
                             MyApp.alAdmMsg.get(2).get_admin_message()
@@ -349,7 +338,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                                     )
                             )
                     );
-
                     //FUTURE MORE THAN 30 DAYS
                     if(tvAdminMsg.getText().toString().contains(" is coming soon")){
                         tvAdminMsg.setText(MyApp.alAdmMsg.get(5).get_admin_message().replace("<Event>",CateName));
@@ -465,9 +453,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     @Override
     public void onPause() {
         super.onPause();
-
         System.out.println("onPause");
-
     }
 
 
@@ -503,10 +489,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                             getAdminSecondMessage();
                         }
                         if (!TextUtils.isEmpty(msg)) {
-                          chatAdapter.notifyDataSetChanged();
-                          etMsg.setText("");
-                          sendMsg(msg,"normal");
+                         // chatAdapter.notifyDataSetChanged();
 
+                          sendMsg(msg,"normal");
+                            etMsg.setText("");
                           if(MyApp.preferences.getString(MyApp.USER_TYPE, "").equals("com")){
                               System.out.println("com");
                           }else{
@@ -621,7 +607,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
             } else {
                 //Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(), "You have already sent Free Msgs” with “Let's put a Name to the message, Please Register", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Let's put a Name to the message, Please Register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                 startActivityForResult(ii, 111);
             }
@@ -629,13 +615,24 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         }else{
             ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
             alanRef.push().setValue(alan);
-            try {MyApp.CustomEventAnalytics("chat_sent ", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
-            }catch (Exception ex){}
-            onRefresh();
+                try {
+                    if (messageType.equals("normal")) {
+                        MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+                    } else if (messageType.equals("canned")) {
+                        MyApp.CustomEventAnalytics("canned_sent", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+                    }
+                }
+                catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            //onRefresh();
+            //chatAdapter.notifyDataSetChanged();
             if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                 MyUtill.addMsgtoFeatured(getActivity(),msg);
             }
         }
+
+        chatAdapter.notifyDataSetChanged();
     }
 
     @Override

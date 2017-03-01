@@ -440,19 +440,19 @@ public class EventChatActivity extends AppCompatActivity {
                     //future date
                     moreThanDay = Math.abs(new Date().getTime() - sDate.getTime()) > MILLIS_PER_DAY;
                     //System.out.println("date is more than a Day:  "+moreThanDay);
-                    if (moreThanDay){
+                    /*if (moreThanDay){
                         Date ssDate = sdf.parse(alList.get(i).getTimestamp());
                         String newDate= new SimpleDateFormat("hh:mm a dd-MMM-yyyy").format(ssDate);
 
                         String[] parts = newDate.split(" ");
 
-                        ActionItemAddText("<br>"+/*toTitleCase(*/alList.get(i).getTitle()/*)*/+"<br><font color='grey'>"+parts[0]+" "+parts[1].toLowerCase()+" "+parts[2] +"</font><br>");
+                        ActionItemAddText("<br>"+*//*toTitleCase(*//*alList.get(i).getTitle()*//*)*//*+"<br><font color='grey'>"+parts[0]+" "+parts[1].toLowerCase()+" "+parts[2] +"</font><br>");
                         //put content here
                     }else
-                    {
+                    {*/
                         time = new SimpleDateFormat("hh:mm a").format(new Date(sDate.getTime())) ;
-                        ActionItemAddText("<br>"+/*toTitleCase(*/alList.get(i).getTitle()/*)*/+"<br><font color='grey'>"+time.toLowerCase()+"</font><br>");
-                    }
+                        ActionItemAddText("<br>"+/*toTitleCase(*/alList.get(i).getTitle()/*)*/+"<br><br><font color='grey'>"+time.toLowerCase()+"</font><br>");
+                    //}
                 }
                 else{
                     //back date

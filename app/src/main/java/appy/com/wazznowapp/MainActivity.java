@@ -1,6 +1,5 @@
 package appy.com.wazznowapp;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.app.model.AdminMessage;
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     static ArrayList<EventDetail> arrayListEvent, arrayListEvent_previous,arrayListEvent_live;
     static EventModelAdapter eventAdapter;
     Map<String, String> alanisawesomeMap;
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
     ConnectDetector connectDetector;
     final String TAG = "MainActivity";
     Handler handler;
@@ -92,11 +92,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     //static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
     private String NotificationMessageToShow = "";
+    ProgressBar pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pd = (ProgressBar) findViewById(R.id.pd);
+        pd.setVisibility(View.VISIBLE);
 
         // If a notification message is tapped, any data accompanying the notification
         // message is available in the intent extras. In this sample the launcher
@@ -431,15 +434,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         JSONArray jsonArray;
         MyUtill myUtill;
         EventTask(){
-            progressDialog = new ProgressDialog(MainActivity.this);
+            //progressDialog = new ProgressDialog(MainActivity.this);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             try{
-                progressDialog.setMessage("Event Detail Loading...");
-                progressDialog.show();
+                //progressDialog.setMessage("Event Detail Loading...");
+                //progressDialog.show();
             }catch (Exception ex){
                 ex.printStackTrace();
             }
@@ -578,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             super.onPostExecute(aVoid);
             listMain.setAdapter(eventAdapter);
             eventAdapter.notifyDataSetChanged();
-            progressDialog.hide();
+            //progressDialog.hide();
             CannedTask cannedTask = new CannedTask();
             cannedTask.execute();
         }
@@ -713,7 +716,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                    e.printStackTrace();
                }
            }
-
+            pd.setVisibility(View.GONE);
         }
     }
 
@@ -764,7 +767,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            progressDialog.hide();
+            //progressDialog.hide();
             try{
                 if(getInvited){
                     EventDetail detail = hashMapEvent.get(invitedEventid);

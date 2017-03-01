@@ -59,8 +59,6 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         super(context, resource, list);
         con = context;
         alList = list;
-        msg = con.getResources().getString(R.string.share_msg);
-
     }
 
     @Override
@@ -137,6 +135,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
 
 /*                housePartyStarted(model.getTitle());*/
                 longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                msg = model.getTitle();
                 new newShortAsync().execute();
 
             }
@@ -157,13 +156,13 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 linear.setGravity(Gravity.RIGHT);
                 relativeParam.addRule(Gravity.CENTER);
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                relativeParam.setMargins(0,5,105,5);
+                relativeParam.setMargins(0,5,40,5);
                 linear.setLayoutParams(relativeParam);
-                linear.setBackgroundResource(R.drawable.outgoing_message_bg);
+                linear.setBackgroundResource(R.drawable.chat_out);
             }
             else{
                 tvMsg.setGravity(Gravity.LEFT);
-                tvMsg.setPadding(35,5,10,15);
+                tvMsg.setPadding(40,5,10,15);
                 tvMsg.setTextColor(con.getResources().getColor(R.color.chat_text_color));
                 tvUser.setGravity(Gravity.LEFT);
 
@@ -177,10 +176,10 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 relativeParam.addRule(Gravity.LEFT);
                 linear.setGravity(Gravity.LEFT);
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                relativeParam.setMargins(105,5,0,5);
+                relativeParam.setMargins(40,5,0,5);
                 linear.setLayoutParams(relativeParam);
                 linear.setBackgroundResource(R.drawable.chat_new);
-                linear.setPadding(35,5,80,5);
+                //linear.setPadding(35,5,80,5);
             }
             if(model.getAuthor().equalsIgnoreCase("Admin")) {
                 imgIcon.setVisibility(View.VISIBLE);
@@ -192,7 +191,6 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
 
 
     public class newShortAsync extends AsyncTask<Void, Void, String> {
-
 
         @Override
         protected void onPreExecute() {
@@ -279,7 +277,8 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                     Toast.makeText(con, "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
                 }*/
 
-                msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
+                //msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
+                msg = msg +" "+shortLinkURL;
 
                 //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
                 //  String dLink = longDeepLink.replace("SenderID", eventID);

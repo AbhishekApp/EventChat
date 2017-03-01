@@ -114,8 +114,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     }
 
 
-
-
     @Override
     public void onStart() {
         super.onStart();
@@ -143,7 +141,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                 btnNo.setText("No, Thanks");
                 //tvAdminMsg.setText("Invite for House Party. There are most fun.");
                 tvAdminMsg.setText(MyApp.alAdmMsg.get(3).get_admin_message());
-
 
                 btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
