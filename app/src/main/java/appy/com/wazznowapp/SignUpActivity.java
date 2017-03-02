@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -34,9 +33,8 @@ import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
+import static appy.com.wazznowapp.NewSignUpActivity.closeSignup;
 import static appy.com.wazznowapp.R.id.progressBar2;
-
-
 /**
  * Created by admin on 8/2/2016.
  */
@@ -132,6 +130,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(closeSignup){
+            finish();
+        }
+    }
+
     private boolean validate(String name, String email, String pass, String phone) {
         boolean valid = false;
         try {
@@ -178,32 +185,38 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         public void userSignup(final Activity con, final String uName, final String uLastName, final String uPhone, final String email, final String password){
             if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                mAuth.addAuthStateListener(mAuthListener);
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            mAuth.addAuthStateListener(mAuthListener);
 
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(Task<AuthResult> task) {
-                        Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        progressBar.setVisibility(View.GONE);
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(Task<AuthResult> task) {
+                Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
+                progressBar.setVisibility(View.GONE);
 
-                        if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
-                            Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
-                            userUpdateOnServer(uName, uLastName, uPhone, email, password);
-                            SignUpActivity.makeClickable();
-                            setResult(102);
-                            finish();
-                        }else if(task.isSuccessful()){
-                            MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
-                            Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
-                            userUpdateOnServer(uName, uLastName, uPhone, email, password);
-                            setResult(102);
-                            finish();
-                        }
-                    }
+                if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
+
+                    Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                    userUpdateOnServer(uName, uLastName, uPhone, email, password);
+                    SignUpActivity.makeClickable();
+                    setResult(102);
+                    closeSignup=true;
+                    finish();
+
+                }else if(task.isSuccessful()){
+
+                    MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
+                    Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                    userUpdateOnServer(uName, uLastName, uPhone, email, password);
+                    setResult(102);
+                    closeSignup=true;
+                    finish();
+
+                }
+                }
 
 
-                });
+            });
             }else{
                 Toast.makeText(con, "Please fill all the required field", Toast.LENGTH_SHORT).show();
             }
@@ -211,14 +224,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d("Signup", "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d("Signup", "onAuthStateChanged:signed_out");
-                }
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // User is signed in
+                Log.d("Signup", "onAuthStateChanged:signed_in:" + user.getUid());
+            } else {
+                // User is signed out
+                Log.d("Signup", "onAuthStateChanged:signed_out");
+            }
             }
         };
 
@@ -227,18 +240,18 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             mAuth.addAuthStateListener(mAuthListener);
 
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(Task<AuthResult> task) {
-                            Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
-                            if (!task.isSuccessful()) {
-                                Log.w("Login", "signInWithEmail:failed", task.getException());
-                                Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(Task<AuthResult> task) {
+                    Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
+                    if (!task.isSuccessful()) {
+                        Log.w("Login", "signInWithEmail:failed", task.getException());
+                        Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
+                    }
+                    }
+                });
 
         }
 
@@ -246,13 +259,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             SimpleLogin authClient = new SimpleLogin(myRef, con);
             authClient.changePassword(email, password, newPassword, new SimpleLoginCompletionHandler() {
                 public void completed(FirebaseSimpleLoginError error, boolean success) {
-                    if (error != null) {
-                        // There was an error processing this request
-                        Toast.makeText(con, "Password not changed", Toast.LENGTH_SHORT).show();
-                    } else if (success) {
-                        // Password changed successfully
-                        Toast.makeText(con, "Password Changed Successfully", Toast.LENGTH_SHORT).show();
-                    }
+                if (error != null) {
+                    // There was an error processing this request
+                    Toast.makeText(con, "Password not changed", Toast.LENGTH_SHORT).show();
+                } else if (success) {
+                    // Password changed successfully
+                    Toast.makeText(con, "Password Changed Successfully", Toast.LENGTH_SHORT).show();
+                }
                 }
             });
         }

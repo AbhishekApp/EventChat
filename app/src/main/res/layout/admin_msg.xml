@@ -45,7 +45,7 @@
             android:padding="4dp">
 
 
-            <LinearLayout
+            <LinearLayout android:id="@+id/innerAdmin1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border"
@@ -80,7 +80,7 @@
                 android:background="@color/white" />
 
 
-            <LinearLayout
+            <LinearLayout android:id="@+id/innerAdmin2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/border"

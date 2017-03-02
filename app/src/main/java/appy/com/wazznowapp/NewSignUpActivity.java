@@ -60,8 +60,6 @@ import java.util.Map;
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.SignUpActivity.btnSign;
-
-
 /**
  * Created by admin on 8/2/2016.
  */
@@ -81,17 +79,15 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
     CallbackManager callbackManager;
     TextView textView;
     LoginButton btnFb;
-
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
-
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
     // [END declare_auth_listener]
-
     private static final String TAG = "FacebookLogin";
     UserLoginSignupAction userSignup;
+    public static boolean closeSignup=false;
 
 
     private FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
@@ -130,41 +126,35 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         mAuthListener = new FirebaseAuth.AuthStateListener()  {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-
-                    updateUI(user);
-
-                    userSignup = new UserLoginSignupAction();
-
-                    try {
-                        //String[] nameSplit = "Manish".split(" ");
-                        String[] nameSplit = user.getDisplayName().split(" ");
-                        String first = nameSplit[0];
-                        String last = nameSplit[1];
-                        userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
-                    }
-                    catch (ArrayIndexOutOfBoundsException  e) {
-                        new InvalidNameException("Missing space in: " + user);
-                        userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    progressBar.setVisibility(View.GONE);
-
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // User is signed in
+                Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                updateUI(user);
+                userSignup = new UserLoginSignupAction();
+                try {
+                    //String[] nameSplit = "Manish".split(" ");
+                    String[] nameSplit = user.getDisplayName().split(" ");
+                    String first = nameSplit[0];
+                    String last = nameSplit[1];
+                    userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
                 }
-                // [START_EXCLUDE]
-
-                // [END_EXCLUDE]
+                catch (ArrayIndexOutOfBoundsException  e) {
+                    new InvalidNameException("Missing space in: " + user);
+                    userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                progressBar.setVisibility(View.GONE);
+            } else {
+                // User is signed out
+                Log.d(TAG, "onAuthStateChanged:signed_out");
+            }
+            // [START_EXCLUDE]
+            // [END_EXCLUDE]
             }
         };
-
         init();
         myFirebaseSignup = new Firebase(firebaseURL);
         myFirebaseSignup.child("UserDetail");
@@ -185,22 +175,22 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(Task<AuthResult> task) {
-                        Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        progressBar.setVisibility(View.GONE);
+                    Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
+                    progressBar.setVisibility(View.GONE);
 
-                        if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
-                            Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
-                            userUpdateOnServer(uName, uLastName, uPhone, email, password);
-                            SignUpActivity.makeClickable();
-                            setResult(102);
-                            finish();
-                        }else if(task.isSuccessful()){
-                            MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
-                            Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
-                            userUpdateOnServer(uName, uLastName, uPhone, email, password);
-                            setResult(102);
-                            finish();
-                        }
+                    if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
+                        Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                        userUpdateOnServer(uName, uLastName, uPhone, email, password);
+                        SignUpActivity.makeClickable();
+                        setResult(102);
+                        finish();
+                    }else if(task.isSuccessful()){
+                        MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
+                        Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                        userUpdateOnServer(uName, uLastName, uPhone, email, password);
+                        setResult(102);
+                        finish();
+                    }
                     }
                 });
             }else{
@@ -211,55 +201,51 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                         Toast.makeText(con, "We need your Email to sign you in. Please try again!", Toast.LENGTH_SHORT).show();
                     //}
                 }
-
-
             }
         }
         FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d("Signup", "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d("Signup", "onAuthStateChanged:signed_out");
-                }
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // User is signed in
+                Log.d("Signup", "onAuthStateChanged:signed_in:" + user.getUid());
+            } else {
+                // User is signed out
+                Log.d("Signup", "onAuthStateChanged:signed_out");
+            }
             }
         };
 
         public void userLogin(Firebase myRef, final Activity con, String email, String password){
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.addAuthStateListener(mAuthListener);
-
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(Task<AuthResult> task) {
-                            Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
-                            if (!task.isSuccessful()) {
-                                Log.w("Login", "signInWithEmail:failed", task.getException());
-                                Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
+            .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(Task<AuthResult> task) {
+                Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
+                if (!task.isSuccessful()) {
+                    Log.w("Login", "signInWithEmail:failed", task.getException());
+                    Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
+                }
+                }
+            });
         }
 
         public void userChangePassword(Firebase myRef, final Context con, String email, String password, String newPassword){
             SimpleLogin authClient = new SimpleLogin(myRef, con);
             authClient.changePassword(email, password, newPassword, new SimpleLoginCompletionHandler() {
                 public void completed(FirebaseSimpleLoginError error, boolean success) {
-                    if (error != null) {
-                        // There was an error processing this request
-                        Toast.makeText(con, "Password not changed", Toast.LENGTH_SHORT).show();
-                    } else if (success) {
-                        // Password changed successfully
-                        Toast.makeText(con, "Password Changed Successfully", Toast.LENGTH_SHORT).show();
-                    }
+                if (error != null) {
+                    // There was an error processing this request
+                    Toast.makeText(con, "Password not changed", Toast.LENGTH_SHORT).show();
+                } else if (success) {
+                    // Password changed successfully
+                    Toast.makeText(con, "Password Changed Successfully", Toast.LENGTH_SHORT).show();
+                }
                 }
             });
         }
@@ -298,14 +284,6 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-
-
-
-
-
-
-
-
     private void init() {
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -343,9 +321,6 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
-
-
-
         btnSign = (Button) findViewById(R.id.btnmySignup);
         progressBar = (ProgressBar) findViewById(R.id.progressBar2);
         textView = (TextView) findViewById(R.id.textView);
@@ -364,7 +339,6 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
     public void signOut() {
         mAuth.signOut();
         LoginManager.getInstance().logOut();
-
         updateUI(null);
     }
 
@@ -484,6 +458,13 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(closeSignup){
+            finish();
+        }
+    }
 
     public void fbConnect() {
         permissionNeeds = Arrays.asList("email","public_profile");

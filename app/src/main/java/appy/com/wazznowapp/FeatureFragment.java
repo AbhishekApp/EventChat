@@ -27,8 +27,6 @@ import android.widget.Toast;
 
 import com.app.model.ChatData;
 import com.app.model.ConnectDetector;
-import com.app.model.MyUtill;
-import com.app.model.UserProfile;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -52,7 +50,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import static appy.com.wazznowapp.EventChatActivity.CateName;
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.FeaturedMsgLimit;
@@ -116,7 +113,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
 
-    private void getAdminSecondMessage(){
+/*    private void getAdminSecondMessage(){
         UserProfile profile = new UserProfile();
         profile.updateUserGroup(getActivity(), eventDetail.getCatergory_id());
         //updateEventList();
@@ -193,7 +190,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             listView.setAdapter(chatAdapter);
             chatAdapter.notifyDataSetChanged();
         }
-    }
+    }*/
 
     private void housePartyStarted(){
         editor = MyApp.preferences.edit();
@@ -294,7 +291,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         };
         alanRef.addChildEventListener(childEventListener);
 
-        getAdminSecondMessage();
+        //getAdminSecondMessage();
 
     }
 

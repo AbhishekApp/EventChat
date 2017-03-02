@@ -13,7 +13,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -52,6 +51,7 @@ import static appy.com.wazznowapp.EventChatActivity.CateName;
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
+
 /**
  * Created by admin on 8/2/2016.
  */
@@ -101,7 +101,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     @Override
@@ -306,24 +306,26 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
             ImageView like = (ImageView) vi.findViewById(R.id.like);
             ImageView dislike = (ImageView) vi.findViewById(R.id.dislike);
-
             like.setImageResource(R.drawable.add);
             dislike.setImageResource(R.drawable.nothanks);
+
+            LinearLayout innerAdmin1 = (LinearLayout) vi.findViewById(R.id.innerAdmin1);
+            innerAdmin1.setVisibility(View.GONE);
+
+            LinearLayout innerAdmin2 = (LinearLayout) vi.findViewById(R.id.innerAdmin2);
+            innerAdmin2.setVisibility(View.GONE);
 
             btnYes.setText("Invite Friends");
             btnNo.setText("No, Thanks");
             //tvAdminMsg.setText("Start a House Party. There are most fun.");
 
             if(MyUtill.isTimeBetweenTwoTime(eventDetail.getEvent_start(),eventDetail.getEvent_exp()))
-            {
-                //LIVE
+            {   //LIVE
                 String toDisplay = MyApp.alAdmMsg.get(1).get_admin_message().replace("<Event>",CateName);
                 tvAdminMsg.setText(toDisplay);
-
             }else{
                 //FUTURE OR PAST
                 //Toast.makeText(getActivity(), ""+MyUtill.getDaysDifference(eventDetail.getEvent_start()), Toast.LENGTH_SHORT).show();
-
                 if(MyUtill.getDaysDifference(eventDetail.getEvent_start()).contains("-")){
                     //PAST
                     tvAdminMsg.setText(MyApp.alAdmMsg.get(4).get_admin_message());
@@ -424,20 +426,20 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onResume() {
         super.onResume();
         try {
-            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            View view = getActivity().getCurrentFocus();
+            //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            //View view = getActivity().getCurrentFocus();
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatActivity.eventID, "-1"));
              if(!(noSend >= 0 && noSend < 3)){
                  if(noSend == 0) {
-                     linearCanMsg.setVisibility(View.VISIBLE);
+                     linearCanMsg.setVisibility(View.GONE);
                      MyUtill.hideKeyBoard(getActivity(),linearCanMsg);
                  }else {
                      linearCanMsg.setVisibility(View.GONE);
                  }
             }else{
-                linearCanMsg.setVisibility(View.VISIBLE);
-                 MyUtill.hideKeyBoard(getActivity(),linearCanMsg);
+                linearCanMsg.setVisibility(View.GONE);
+                MyUtill.hideKeyBoard(getActivity(),linearCanMsg);
             }
         }catch (Exception e){
             e.printStackTrace();

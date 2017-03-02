@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         e.printStackTrace();
                     }
         } else{
-            Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Internet connection is not available", Toast.LENGTH_SHORT).show();
             //finish();
         }
     }
@@ -747,7 +747,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     Log.e("CannedTask","get canned message ERROR: "+e.toString());
                 }
             }
-
             alAdmMsg = new ArrayList<AdminMessage>();
             jsonArray = myUtill.getJSONFromServer(AdminURL);
             for(int i = 0 ; i < jsonArray.length() ; i++){

@@ -178,7 +178,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 relativeParam.setMargins(40,5,0,5);
                 linear.setLayoutParams(relativeParam);
-                linear.setBackgroundResource(R.drawable.chat_new);
+                linear.setBackgroundResource(R.drawable.incoming_message_bg);
                 //linear.setPadding(35,5,80,5);
             }
             if(model.getAuthor().equalsIgnoreCase("Admin")) {
