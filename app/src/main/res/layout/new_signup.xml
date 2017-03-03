@@ -28,12 +28,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:background="#3f5f9c"
-            android:drawableLeft="@drawable/f_b_"
+            android:drawableLeft="@drawable/fr"
             android:textAllCaps="false"
             android:textColor="#fefefe"
-            android:textSize="12sp"
-            facebook:com_facebook_login_text="SIGN UP WITH FACEBOOK              "
-            facebook:com_facebook_logout_text="Already Logged-In. Logout?" />
+            android:textSize="12sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -78,7 +76,7 @@
             android:layout_height="wrap_content"
             android:background="@color/btncolor"
             android:drawableRight="@drawable/arrow"
-            android:text="                   SIGN UP WITH EMAIL"
+            android:text="\t\t\t\t\t\t\t\t\tSIGN UP WITH EMAIL"
             android:textAllCaps="false"
             android:textColor="#fefefe"
             android:textSize="12sp" />

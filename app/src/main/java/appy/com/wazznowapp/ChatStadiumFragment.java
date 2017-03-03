@@ -97,6 +97,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     ViewGroup container;
     View view;
     ChildEventListener childEventListener;
+    public static boolean nahClicked=false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -425,25 +426,36 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
-        try {
-            //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            //View view = getActivity().getCurrentFocus();
-            userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-            noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatActivity.eventID, "-1"));
-             if(!(noSend >= 0 && noSend < 3)){
-                 if(noSend == 0) {
-                     linearCanMsg.setVisibility(View.GONE);
-                     MyUtill.hideKeyBoard(getActivity(),linearCanMsg);
-                 }else {
-                     linearCanMsg.setVisibility(View.GONE);
-                 }
-            }else{
-                linearCanMsg.setVisibility(View.GONE);
-                MyUtill.hideKeyBoard(getActivity(),linearCanMsg);
+
+        if(nahClicked){
+            etMsg.setText("");
+            linearCanMsg.setVisibility(View.VISIBLE);
+            MyUtill.hideKeyBoard(getActivity(),linearCanMsg,true);
+            //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }else{
+            try {
+                //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                //View view = getActivity().getCurrentFocus();
+                userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+                noSend = Integer.parseInt(MyApp.preferences.getString("SendTime: " + EventChatActivity.eventID, "-1"));
+                if(!(noSend >= 0 && noSend < 3)){
+                    if(noSend == 0) {
+                        linearCanMsg.setVisibility(View.GONE);
+                        MyUtill.hideKeyBoard(getActivity(),linearCanMsg,false);
+                    }else {
+                        linearCanMsg.setVisibility(View.GONE);
+                    }
+                }else{
+                    linearCanMsg.setVisibility(View.GONE);
+                    MyUtill.hideKeyBoard(getActivity(),linearCanMsg,false);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
-        }catch (Exception e){
-            e.printStackTrace();
         }
+
+
+
         subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
         if(subscribedGroup.contains(eventDetail.getCatergory_id())) {
             listView.setAdapter(chatAdapter);
@@ -485,7 +497,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             } else if (id == R.id.imgSendChat) {
                 if(!TextUtils.isEmpty(userName)) {
                   if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
-                        String msg = etMsg.getText().toString();
+                         msg = etMsg.getText().toString();
                         subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
                         if (!subscribedGroup.contains(eventDetail.getCatergory_id())) {
                             getAdminSecondMessage();
@@ -504,15 +516,23 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                           Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
                     }else{
+
                         Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                         startActivityForResult(ii, 111);
+
+
                     }
                 }else{
                     if (view != null) {
                       //imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
+                    msg = etMsg.getText().toString();
+                if (!TextUtils.isEmpty(msg)) {
                     Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                     startActivityForResult(ii, 111);
+                }else {
+                   // Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
+                }
                 }
             }
         }catch (Exception ex){

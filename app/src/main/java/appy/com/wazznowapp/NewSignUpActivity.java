@@ -59,6 +59,7 @@ import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
+import static appy.com.wazznowapp.MyApp.isSignupSuccessful;
 import static appy.com.wazznowapp.SignUpActivity.btnSign;
 /**
  * Created by admin on 8/2/2016.
@@ -140,6 +141,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                     userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
                 }
                 catch (ArrayIndexOutOfBoundsException  e) {
+                    // no last name case
                     new InvalidNameException("Missing space in: " + user);
                     userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
                 }
@@ -179,14 +181,18 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                     progressBar.setVisibility(View.GONE);
 
                     if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
-                        Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                        isSignupSuccessful = true;
+                        Toast.makeText(con, "account overwitten", Toast.LENGTH_SHORT).show();
                         userUpdateOnServer(uName, uLastName, uPhone, email, password);
                         SignUpActivity.makeClickable();
                         setResult(102);
                         finish();
+
+
                     }else if(task.isSuccessful()){
+                        isSignupSuccessful = true;
                         MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
-                        Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(con, "new signup", Toast.LENGTH_SHORT).show();
                         userUpdateOnServer(uName, uLastName, uPhone, email, password);
                         setResult(102);
                         finish();
@@ -374,6 +380,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
            // fbConnect();
         }
         else if (id == R.id.tvNahGuestUser) {
+            ChatStadiumFragment.nahClicked =true;
             editor = MyApp.preferences.edit();
             editor.putString(MyApp.USER_NAME, "Guest User");
             editor.commit();
@@ -391,9 +398,6 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         if (user != null) {
             //textView.setText("\n"+getString(R.string.facebook_status_fmt, user.getDisplayName())+"\n\n"+getString(R.string.firebase_status_fmt, user.getEmail()));
 
-
-
-
         } else {
             textView.setText("");
             //mDetailTextView.setText(null);
@@ -406,6 +410,13 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
+
+        MenuItem signup = menu.findItem(R.id.menu_signup);
+        if (isSignupSuccessful) {
+            signup.setVisible(false);
+        }else{
+            signup.setVisible(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -572,11 +583,6 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                 });
     }
     // [END auth_with_facebook]
-
-
-
-
-
 }
 
 

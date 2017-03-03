@@ -94,13 +94,17 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         connectDetector = new ConnectDetector(getActivity());
         if (connectDetector.getConnection()) {
-
+        try {
             //msg = getActivity().getResources().getString(R.string.share_msg);
             myFirebaseRef = new Firebase(firebaseURL);
             alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child("FeatureChat");
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
             alanRef.keepSynced(true);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         }
     }
 

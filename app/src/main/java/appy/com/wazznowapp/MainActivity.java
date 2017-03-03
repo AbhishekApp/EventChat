@@ -65,6 +65,7 @@ import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.alAdmMsg;
+import static appy.com.wazznowapp.MyApp.isSignupSuccessful;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     ListView listMain;
@@ -394,6 +395,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
+        MenuItem signup = menu.findItem(R.id.menu_signup);
+        if (isSignupSuccessful) {
+            signup.setVisible(false);
+        }else{
+            signup.setVisible(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -641,6 +648,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     JSONObject jsonObject = new JSONObject(sb.toString());
                 //System.out.println("EVENT DATA JSONOBJECT : " + jsonObject.toString());
                 flagExist = jsonObject.has(deviceID);
+
                 //System.out.println("EVENT DATA  Found : "+flagExist);
           //    jUser = jsonObject.getJSONObject(deviceID);
                 jsonArray = jsonObject.getJSONArray(deviceID);
@@ -704,6 +712,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                        firebase.child("users/" + deviceID).setValue(users);
                    }
                }
+
+
+               if(flagExist){
+               /*old user*/
+                    /*check for user already signed in */
+                   isSignupSuccessful = true;
+               }
+               else{
+                   /*new user*/
+                   isSignupSuccessful = false;
+               }
+
            }catch (Exception ex){
                System.out.println("EVENT DATA onPostExecute Exception : "+ex.toString());
            }finally {

@@ -46,7 +46,7 @@ public class MyApp extends Application {
     public static final String FRAGMENT_SELECTED = "fragment_selected";
     public static final String SIGNUP_ACTIVITY_LOADED = "signup_activity_loaded";
     public static ArrayList<AdminMessage> alAdmMsg;
-
+    public static boolean isSignupSuccessful= false;
 
     @Override
     public void onCreate() {
@@ -58,6 +58,7 @@ public class MyApp extends Application {
         }
         preferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         getDeviveID(getApplicationContext());
+
 
 
         /*************************************Firebase Offline Capabilities****************************************/

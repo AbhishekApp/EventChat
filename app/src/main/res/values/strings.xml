@@ -202,4 +202,8 @@
 
     <string name="share_msg">Hey Watch the event with me and others watching at the same time on WazzOn. DeepLink</string>
 
+    <string name="com_facebook_loginview_log_out_button">Log in with Facebook\t\t\t</string>
+    <string name="com_facebook_loginview_log_in_button">Log in with Facebook\t\t\t</string>
+    <string name="com_facebook_loginview_log_in_button_long">Log in with Facebook\t\t\t</string>
+
 </resources>

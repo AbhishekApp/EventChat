@@ -1,9 +1,14 @@
 package com.app.model;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -340,13 +345,49 @@ public class MyUtill {
 
     }
 
-    public static void hideKeyBoard(Activity act,View view) {
+    public static void hideKeyBoard(Activity act, View view, Boolean force) {
         //View view = act.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)act.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }else{
-            Toast.makeText(act,"error",Toast.LENGTH_LONG).show();
+        if (force) {
+            /*************************MORE FORCEFUL********** MAYBE AGAINST ANDROID GUIDELINES ***********DID DUE TO REQUIREMENT*/
+            try {
+                act.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            } else {
+                Toast.makeText(act, "error", Toast.LENGTH_LONG).show();
+            }
         }
     }
+
+
+
+    public static void alertDialogShow(final Activity activity, String message)
+    {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+        alertDialog.setTitle("Time to level up!");
+        alertDialog.setMessage("It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.");
+        alertDialog.setPositiveButton("Update",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        // DO TASK
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
+                    }
+                });
+        alertDialog.setNegativeButton("Exit",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        // DO TASK
+
+                    }
+                });
+        alertDialog.show();
+    }
+
+
+
 }

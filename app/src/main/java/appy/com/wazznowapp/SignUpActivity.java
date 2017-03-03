@@ -103,6 +103,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
 
         } else if (id == R.id.tvNahGuestUser) {
+            ChatStadiumFragment.nahClicked =true;
             editor = MyApp.preferences.edit();
             editor.putString(MyApp.USER_NAME, "Guest User");
             editor.commit();

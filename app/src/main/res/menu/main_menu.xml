@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/menu_info"
-        android:title="@string/info"
+    <item
+        android:id="@+id/menu_info"
         android:icon="@android:drawable/title_bar"
-        android:orderInCategory="1"/>
+        android:orderInCategory="1"
+        android:title="@string/info" />
 
-    <item android:id="@+id/menu_mute"
-        android:title="@string/mute"
+    <item
+        android:id="@+id/menu_mute"
         android:icon="@android:drawable/title_bar"
-        android:orderInCategory="1"/>
+        android:orderInCategory="1"
+        android:title="@string/mute" />
 
-    <item android:id="@+id/menu_signup"
+    <item
+        android:id="@+id/menu_signup"
+        android:icon="@android:drawable/title_bar"
+        android:orderInCategory="1"
         android:title="@string/signup"
-        android:icon="@android:drawable/title_bar"
-        android:orderInCategory="1"/>
+        android:visible="false" />
 
-    <item android:id="@+id/menu_more"
-        android:title="@string/more"
+    <item
+        android:id="@+id/menu_more"
         android:icon="@android:drawable/title_bar"
-        android:orderInCategory="1"/>
+        android:orderInCategory="1"
+        android:title="@string/more" />
 
 </menu>

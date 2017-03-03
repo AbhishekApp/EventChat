@@ -36,6 +36,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+import static appy.com.wazznowapp.MyApp.isSignupSuccessful;
+
 /**
  * Created by admin on 8/2/2016.
  */
@@ -321,6 +324,13 @@ public class EventChatActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.chat_menu, menu);
+
+        MenuItem signup = menu.findItem(R.id.menu_signup);
+        if (isSignupSuccessful) {
+            signup.setVisible(false);
+        }else{
+            signup.setVisible(true);
+        }
         new Handler().post(new Runnable() {
         @Override
         public void run() {
