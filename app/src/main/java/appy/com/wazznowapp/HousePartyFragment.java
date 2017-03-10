@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+import static appy.com.wazznowapp.R.id.tvAdminMsg1;
 
 /**
  * Created by admin on 8/2/2016.
@@ -122,12 +123,18 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                 //linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 vi = inflater.inflate(R.layout.admin_msg,null);
+
+
+                TextView tvAdminMsg = (TextView) vi.findViewById(tvAdminMsg1);
+                tvAdminMsg.setBackgroundResource(R.drawable.chat_head_);
+
+
+                LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
+                linearAdminBtn.setBackgroundResource(R.drawable.admin_bg);
                // linearLayout.removeAllViews();
                 //linearLayout.addView(vi);
                 listView.addHeaderView(vi);
-                LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
                 linearAdminBtn.setGravity(Gravity.CENTER);
-                TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
                 TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
                 TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
 

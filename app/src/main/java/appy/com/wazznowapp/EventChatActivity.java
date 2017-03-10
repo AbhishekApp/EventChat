@@ -363,6 +363,7 @@ public class EventChatActivity extends AppCompatActivity {
             startActivity(ii);
         } else if (id == R.id.menu_more) {
             Toast.makeText(this, "More is coming soon", Toast.LENGTH_SHORT).show();
+            //MyUtill.alertDialogShowUpdate(EventChatActivity.this);
         } else if (id == R.id.menu_noti) {
             //Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
         }

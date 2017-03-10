@@ -182,7 +182,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
 
                     if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
                         isSignupSuccessful = true;
-                        Toast.makeText(con, "account overwitten", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(con, "account overwitten", Toast.LENGTH_SHORT).show();
                         userUpdateOnServer(uName, uLastName, uPhone, email, password);
                         SignUpActivity.makeClickable();
                         setResult(102);
@@ -192,7 +192,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                     }else if(task.isSuccessful()){
                         isSignupSuccessful = true;
                         MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
-                        Toast.makeText(con, "new signup", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(con, "new signup", Toast.LENGTH_SHORT).show();
                         userUpdateOnServer(uName, uLastName, uPhone, email, password);
                         setResult(102);
                         finish();

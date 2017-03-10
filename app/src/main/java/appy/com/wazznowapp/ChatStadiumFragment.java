@@ -51,6 +51,8 @@ import static appy.com.wazznowapp.EventChatActivity.CateName;
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
+import static appy.com.wazznowapp.R.id.etChatMsg;
+import static appy.com.wazznowapp.R.id.tvAdminMsg1;
 
 /**
  * Created by admin on 8/2/2016.
@@ -58,7 +60,7 @@ import static appy.com.wazznowapp.MyApp.StadiumMsgLimit;
 public class ChatStadiumFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
     ConnectDetector connectDetector;
     ListView listView;
-    ImageView imgEmoji;
+    ImageView imgEmoji,keyboard;
     ImageView send;
     EditText etMsg;
     static LinearLayout linearCanMsg;
@@ -134,8 +136,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         listView = (ListView) v.findViewById(R.id.listMain);
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
+        keyboard = (ImageView) v.findViewById(R.id.keyboard);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
-        etMsg = (EditText) v.findViewById(R.id.etChatMsg);
+        etMsg = (EditText) v.findViewById(etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
         viewLay = (GridView) v.findViewById(R.id.viewLay);
@@ -144,6 +147,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         linearCanMsg.setVisibility(View.GONE);
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
+        keyboard.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
         viewLay.setOnItemClickListener(this);
@@ -237,7 +241,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     v = inflater.inflate(R.layout.admin_msg,null);
                     listView.addHeaderView(v);
                     listView.setAdapter(null);
-                    TextView tvAdminMsg = (TextView) v.findViewById(R.id.tvAdminMsg1);
+                    LinearLayout linearAdminLay = (LinearLayout) v.findViewById(R.id.linearAdmin);
+
+
+                    TextView tvAdminMsg = (TextView) v.findViewById(tvAdminMsg1);
+                    tvAdminMsg.setBackgroundResource(R.drawable.chat_head_);
+
+
+                    LinearLayout linearAdminBtn = (LinearLayout) v.findViewById(R.id.linearAdminBtn);
+                    linearAdminBtn.setBackgroundResource(R.drawable.admin_bg);
+
                     TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
                     TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
 
@@ -298,10 +311,20 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             addHousePartyFLAG = true;
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
             View vi = inflater.inflate(R.layout.admin_msg, null);
+            LinearLayout linearAdminLay = (LinearLayout) vi.findViewById(R.id.linearAdmin);
+
+
             listView.addHeaderView(vi);
             LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
+            linearAdminBtn.setVisibility(View.GONE);
+
             linearAdminBtn.setGravity(Gravity.CENTER);
-            TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
+
+            TextView tvAdminMsg = (TextView) vi.findViewById(tvAdminMsg1);
+            LinearLayout.LayoutParams relativeParam;
+            relativeParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            relativeParam.setMargins(0,5,0,0);
+            tvAdminMsg.setBackgroundResource(R.drawable.new_admin_image);
             TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
             TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
 
@@ -429,10 +452,18 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
         if(nahClicked){
             etMsg.setText("");
+            viewLay.setAdapter(cannedAdapter);
             linearCanMsg.setVisibility(View.VISIBLE);
             MyUtill.hideKeyBoard(getActivity(),linearCanMsg,true);
+
+            imgEmoji.setVisibility(View.GONE);
+            keyboard.setVisibility(View.VISIBLE);
+
             //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }else{
+            imgEmoji.setVisibility(View.VISIBLE);
+            keyboard.setVisibility(View.GONE);
+
             try {
                 //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                 //View view = getActivity().getCurrentFocus();
@@ -454,8 +485,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
         }
 
-
-
         subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
         if(subscribedGroup.contains(eventDetail.getCatergory_id())) {
             listView.setAdapter(chatAdapter);
@@ -475,15 +504,38 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         try{
             int id = v.getId();
-            View view = getActivity().getCurrentFocus();
+            final View view = getActivity().getCurrentFocus();
+
+            if (id == R.id.keyboard) {
+                /*Handler mHandler= new Handler();
+                mHandler.post(
+                        new Runnable() {
+                            public void run() {*/
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInputFromWindow(etMsg.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+                    etMsg.requestFocus();
+                }
+                            /*}
+                        });*/
+
+                viewLay.setVisibility(View.GONE);
+                linearCanMsg.setVisibility(View.GONE);
+                imgEmoji.setVisibility(View.VISIBLE);
+                keyboard.setVisibility(View.GONE);
+            }
             if (id == R.id.imgEmoji) {
                 if (view != null) {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
+
                 etMsg.setText("");
                 viewLay.setVisibility(View.VISIBLE);
                 linearCanMsg.setVisibility(View.VISIBLE);
+                imgEmoji.setVisibility(View.GONE);
+                keyboard.setVisibility(View.VISIBLE);
+
                 //Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
                 /*if (viewLay.getVisibility() == View.VISIBLE) {
                     viewLay.setVisibility(View.GONE);
@@ -492,8 +544,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
                 }*/
 
-            } else if (id == R.id.etChatMsg) {
+            } else if (id == etChatMsg) {
                 linearCanMsg.setVisibility(View.GONE);
+                imgEmoji.setVisibility(View.GONE);
+                keyboard.setVisibility(View.VISIBLE);
+
             } else if (id == R.id.imgSendChat) {
                 if(!TextUtils.isEmpty(userName)) {
                   if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
@@ -667,6 +722,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         //System.out.println("~~~~~~~~~~"+ eventDetail.getEvent_id()+" :"+StadiumMsgLimit);
         editor.commit();
         //PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
+        nahClicked= false;
 
     }
 

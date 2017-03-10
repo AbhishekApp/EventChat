@@ -26,7 +26,6 @@
             android:id="@+id/tvAdminMsg1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/chat_head_"
             android:gravity="left|center"
             android:paddingBottom="10dp"
             android:paddingLeft="15dp"
@@ -39,7 +38,6 @@
             android:id="@+id/linearAdminBtn"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:background="@drawable/admin_bg"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="4dp">

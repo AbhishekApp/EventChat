@@ -89,11 +89,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
     String AdminURL = MyApp.FIREBASE_BASE_URL+"/admin_msg.json";
+    String appVersion = MyApp.FIREBASE_BASE_URL+"/AppVersionInfo.json";
     int REQUEST_INVITE = 111;
     //static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
     private String NotificationMessageToShow = "";
     ProgressBar pd;
+    String VersionOnNet="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,10 +188,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             // Extract information from the intent
                             Intent intent = result.getInvitationIntent();
                             String deepLink = AppInviteReferral.getDeepLink(intent);
-                            String invitationId = AppInviteReferral.getInvitationId(intent);
-                            String inviterDeviceID = intent.getStringExtra("UserDeviceID");
+                            //String invitationId = AppInviteReferral.getInvitationId(intent);
+                            //String inviterDeviceID = intent.getStringExtra("UserDeviceID");
                             Uri uri = intent.getData();
-                            invitedEventid = uri.getQueryParameter("eventid");
+                            //invitedEventid = uri.getQueryParameter("eventid");
 
                             String myMessage = uri.getQueryParameter("utm_medium");
 
@@ -779,6 +781,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     Log.e("AdminTask","get admin message ERROR: "+e.toString());
                 }
             }
+
+
+            HttpURLConnection urlConnection = null;
+            URL url = null;
+            try {
+                url = new URL(appVersion);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+
+                VersionOnNet =sb.toString();
+                VersionOnNet = VersionOnNet.replace("\n","").replaceAll("^\"|\"$", "");
+
+                System.out.println("VERSION : "+sb.toString());
+
+            } catch (MalformedURLException e) {
+                System.out.println("VERSION DATA MalfomedURL Exception : " + e.toString());
+            } catch (IOException e) {
+                System.out.println("VERSION DATA IO Exception : " + e.toString());
+            } catch (Exception e){
+                System.out.println("VERSION DATA Exception : "+e.toString());
+            }finally {
+                urlConnection.disconnect();
+            }
+
+
             //System.out.println(""+alAdmMsg.toString());
             return null;
         }
@@ -788,6 +821,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             super.onPostExecute(aVoid);
             //progressDialog.hide();
             try{
+
+                Toast.makeText(MainActivity.this, "Version On Net "+VersionOnNet, Toast.LENGTH_SHORT).show();
+
+                String versionName = BuildConfig.VERSION_NAME;
+
+                Toast.makeText(MainActivity.this, "Version On Device "+versionName, Toast.LENGTH_SHORT).show();
+
+                if (VersionOnNet.equals(versionName)){
+
+                }else{
+                    MyUtill.alertDialogShowUpdate(MainActivity.this);
+                }
+
                 if(getInvited){
                     EventDetail detail = hashMapEvent.get(invitedEventid);
                     if(detail.getEvent_id().length()>0){

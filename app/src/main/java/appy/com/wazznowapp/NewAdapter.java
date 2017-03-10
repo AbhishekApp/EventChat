@@ -3,6 +3,8 @@ package appy.com.wazznowapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.text.Html;
+import android.text.util.Linkify;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,14 +103,25 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     }
 
 
-
-
     protected void populateView(final View v, final ChatData model) {
         tvUser.setTypeface(MyApp.authorFont);
         tvMsg.setTypeface(MyApp.authorMsg);
 
-        tvComMsg1.setText(model.getTitle());
-        tvMsg.setText(model.getTitle());
+
+        if (model.getTitle().contains("http")){
+            tvComMsg1.setText(Html.fromHtml(model.getTitle()));
+            tvMsg.setText(Html.fromHtml(model.getTitle()));
+            //tvMsg.setMovementMethod(LinkMovementMethod.getInstance());
+            //tvMsg.setAutoLinkMask();
+            Linkify.addLinks(tvMsg, Linkify.ALL);
+            Linkify.addLinks(tvComMsg1, Linkify.ALL);
+
+        }else
+        {
+            tvComMsg1.setText(model.getTitle());
+            tvMsg.setText(model.getTitle());
+
+        }
 
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         String sender = model.getAuthor();

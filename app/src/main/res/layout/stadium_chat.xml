@@ -37,10 +37,10 @@
                     android:id="@+id/listMain"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
+                    android:cacheColorHint="@android:color/transparent"
                     android:divider="@android:color/transparent"
                     android:focusable="false"
                     android:listSelector="@drawable/ripple_effect"
-                    android:cacheColorHint="@android:color/transparent"
                     android:transcriptMode="normal" />
 
             </android.support.v4.widget.SwipeRefreshLayout>
@@ -78,6 +78,15 @@
                         android:padding="2dp"
                         android:src="@mipmap/emoji_icon" />
 
+                    <ImageView
+                        android:id="@+id/keyboard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.44"
+                        android:padding="2dp"
+                        android:src="@mipmap/keyboard"
+                        android:visibility="gone" />
+
                     <EditText
                         android:id="@+id/etChatMsg"
                         android:layout_width="match_parent"
@@ -85,8 +94,8 @@
                         android:layout_gravity="center"
                         android:layout_margin="4dp"
                         android:layout_weight="0.12"
-                        android:paddingBottom="1dp"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:paddingBottom="1dp">
 
                         <requestFocus />
                     </EditText>
@@ -108,14 +117,14 @@
                     android:layout_height="200dp"
                     android:background="@color/white"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
+                    android:paddingTop="5dp"
                     android:visibility="gone">
 
                     <GridView
                         android:id="@+id/viewLay"
                         android:layout_width="wrap_content"
-                        android:layout_height="300dp"
-                        android:numColumns="2" />
+                        android:layout_height="200dp"
+                        android:numColumns="2"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

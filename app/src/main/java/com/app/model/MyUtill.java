@@ -366,28 +366,24 @@ public class MyUtill {
 
 
 
-    public static void alertDialogShow(final Activity activity, String message)
+    public static void alertDialogShowUpdate(final Activity activity)
     {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
         alertDialog.setTitle("Time to level up!");
         alertDialog.setMessage("It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.");
         alertDialog.setPositiveButton("Update",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        // DO TASK
-                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
-                    }
-                });
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                    // DO TASK
+                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
+                }
+            });
         alertDialog.setNegativeButton("Exit",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        // DO TASK
-
-                    }
-                });
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                    // DO TASK
+                }
+            });
         alertDialog.show();
     }
-
-
-
 }
