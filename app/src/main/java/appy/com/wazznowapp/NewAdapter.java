@@ -2,6 +2,7 @@ package appy.com.wazznowapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.text.util.Linkify;
@@ -163,6 +164,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             comRL.setVisibility(View.GONE);
             if((fromUser.equals(MyApp.getDeviveID(con)))) {
                 tvMsg.setTextColor(con.getResources().getColor(R.color.white));
+                tvMsg.setLinkTextColor(con.getResources().getColor(R.color.white));
                 tvMsg.setPadding(25,15,70,15);
                 tvUser.setGravity(Gravity.RIGHT);
                 tvUser.setVisibility(View.GONE);
@@ -175,6 +177,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             }
             else{
                 tvMsg.setGravity(Gravity.LEFT);
+                tvMsg.setLinkTextColor(Color.parseColor("#8884f6"));
                 tvMsg.setPadding(40,5,10,15);
                 tvMsg.setTextColor(con.getResources().getColor(R.color.chat_text_color));
                 tvUser.setGravity(Gravity.LEFT);

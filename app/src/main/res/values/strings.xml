@@ -206,4 +206,11 @@
     <string name="com_facebook_loginview_log_in_button">Log in with Facebook\t\t\t</string>
     <string name="com_facebook_loginview_log_in_button_long">Log in with Facebook\t\t\t</string>
 
+
+
+    <string name="update_title">Time to level up!</string>
+    <string name="update_msg">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.</string>
+    <string name="positive_btn">Update</string>
+    <string name="negative_btn">Exit</string>
+
 </resources>

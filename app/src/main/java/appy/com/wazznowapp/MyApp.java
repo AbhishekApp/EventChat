@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.app.model.AdminMessage;
 import com.app.model.AnalyticsSingleton;
-import com.app.model.CannedMessage;
+import com.app.model.CannedCricketMessage;
 import com.app.model.ConnectDetector;
 import com.firebase.client.Firebase;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -35,7 +35,7 @@ public class MyApp extends Application {
     public static String USER_EMAIL = "UserEmail";
     public static String USER_TYPE = "UserType";
     public static String USER_PASSWORD = "UserPassword";
-    public static ArrayList<CannedMessage> alCanMsg;
+    public static ArrayList<CannedCricketMessage> alCanMsg;
     public static Typeface authorFont,authorMsg;
     public static int FeaturedMsgLimit = 3;
     public static int StadiumMsgLimit = 5;

@@ -21,7 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.app.model.AdminMessage;
-import com.app.model.CannedMessage;
+import com.app.model.CannedCricketMessage;
+import com.app.model.CannedFootballMessage;
 import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
 import com.app.model.EventDtList;
@@ -87,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     HashMap<String,EventDetail> hashMapEvent;
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
-    String cannedURL = MyApp.FIREBASE_BASE_URL+"/Canned.json";
+    String cannedCricketURL = MyApp.FIREBASE_BASE_URL+"/Canned/Cricket.json";
+    String cannedFootBallURL = MyApp.FIREBASE_BASE_URL+"/Canned/FootBall.json";
     String AdminURL = MyApp.FIREBASE_BASE_URL+"/admin_msg.json";
     String appVersion = MyApp.FIREBASE_BASE_URL+"/AppVersionInfo.json";
     int REQUEST_INVITE = 111;
@@ -591,8 +593,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             listMain.setAdapter(eventAdapter);
             eventAdapter.notifyDataSetChanged();
             //progressDialog.hide();
-            CannedTask cannedTask = new CannedTask();
-            cannedTask.execute();
+            CannedCricketTask cannedCricketTask = new CannedCricketTask();
+            cannedCricketTask.execute();
         }
     }
 
@@ -742,26 +744,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    class CannedTask extends AsyncTask<Void, Void, Void>{
+    class CannedCricketTask extends AsyncTask<Void, Void, Void>{
         MyUtill myUtill;
         JSONArray jsonArray;
-        CannedMessage message;
+        CannedCricketMessage message;
         AdminMessage admessage;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             myUtill = new MyUtill();
-            message = new CannedMessage();
+            message = new CannedCricketMessage();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            MyApp.alCanMsg = new ArrayList<CannedMessage>();
-            jsonArray = myUtill.getJSONFromServer(cannedURL);
+            MyApp.alCanMsg = new ArrayList<CannedCricketMessage>();
+            jsonArray = myUtill.getJSONFromServer(cannedCricketURL);
             for(int i = 0 ; i < jsonArray.length() ; i++){
                 try {
-                    message = new CannedMessage();
+                    message = new CannedCricketMessage();
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     message.setCanned_message(jsonObject.optString("Msg"));
                     MyApp.alCanMsg.add(message);
@@ -822,11 +824,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //progressDialog.hide();
             try{
 
-                Toast.makeText(MainActivity.this, "Version On Net "+VersionOnNet, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Version On Net "+VersionOnNet, Toast.LENGTH_SHORT).show();
 
                 String versionName = BuildConfig.VERSION_NAME;
 
-                Toast.makeText(MainActivity.this, "Version On Device "+versionName, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Version On Device "+versionName, Toast.LENGTH_SHORT).show();
 
                 if (VersionOnNet.equals(versionName)){
 
@@ -850,4 +852,58 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
+    class CannedFootBallTask extends AsyncTask<Void, Void, Void>{
+        MyUtill myUtill;
+        JSONArray jsonArray;
+        CannedFootballMessage message;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myUtill = new MyUtill();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            MyApp.alCanMsg = new ArrayList<CannedCricketMessage>();
+            jsonArray = myUtill.getJSONFromServer(cannedFootBallURL);
+            for(int i = 0 ; i < jsonArray.length() ; i++){
+                try {
+                    message = new CannedFootballMessage();
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    message.setCanned_message(jsonObject.optString("Msg"));
+                } catch (JSONException e) {
+                    Log.e("CannedTask","get canned message ERROR: "+e.toString());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

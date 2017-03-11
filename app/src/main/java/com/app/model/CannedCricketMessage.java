@@ -1,9 +1,9 @@
 package com.app.model;
 
 /**
- * Created by admin on 10/17/2016.
+ * Created by admin on 11/3/2017.
  */
-public class CannedMessage {
+public class CannedCricketMessage {
     String canned_message;
 
     public String getCanned_message() {

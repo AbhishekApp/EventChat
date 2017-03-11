@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import appy.com.wazznowapp.EventChatActivity;
 import appy.com.wazznowapp.MyApp;
+import appy.com.wazznowapp.R;
 
 import static appy.com.wazznowapp.HousePartyFragment.getCurrentTimeStamp;
 import static appy.com.wazznowapp.MyApp.FIREBASE_BASE_URL;
@@ -369,16 +370,16 @@ public class MyUtill {
     public static void alertDialogShowUpdate(final Activity activity)
     {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
-        alertDialog.setTitle("Time to level up!");
-        alertDialog.setMessage("It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.");
-        alertDialog.setPositiveButton("Update",
+        alertDialog.setTitle(activity.getResources().getString(R.string.update_title));
+        alertDialog.setMessage(activity.getResources().getString(R.string.update_msg));
+        alertDialog.setPositiveButton(activity.getResources().getString(R.string.positive_btn),
             new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     // DO TASK
                     activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
                 }
             });
-        alertDialog.setNegativeButton("Exit",
+        alertDialog.setNegativeButton(activity.getResources().getString(R.string.negative_btn),
             new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     // DO TASK
