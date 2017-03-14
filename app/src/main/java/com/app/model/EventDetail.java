@@ -3,6 +3,7 @@ package com.app.model;
 import android.text.TextUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by admin on 9/16/2016.
@@ -20,6 +21,18 @@ public class EventDetail implements Serializable{
     String event_start;
     String subscribed_user;
     String visibility;
+    ArrayList<String> cannedMessage;
+
+
+
+    public ArrayList<String> getCannedMessage(){
+        return cannedMessage;
+    }
+
+    public void setCannedMessage(ArrayList<String> cannedMessage){
+        this.cannedMessage = cannedMessage;
+    }
+
 
     public String getEvent_start() {
         return event_start;

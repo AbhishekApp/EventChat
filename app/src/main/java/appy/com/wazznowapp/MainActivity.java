@@ -21,8 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.app.model.AdminMessage;
-import com.app.model.CannedCricketMessage;
-import com.app.model.CannedFootballMessage;
 import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
 import com.app.model.EventDtList;
@@ -88,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     HashMap<String,EventDetail> hashMapEvent;
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
-    String cannedCricketURL = MyApp.FIREBASE_BASE_URL+"/Canned/Cricket.json";
-    String cannedFootBallURL = MyApp.FIREBASE_BASE_URL+"/Canned/FootBall.json";
+    String cannedCricketURL = MyApp.FIREBASE_BASE_URL+"/Canned/$.json";
+    //String cannedFootBallURL = MyApp.FIREBASE_BASE_URL+"/Canned/FootBall.json";
     String AdminURL = MyApp.FIREBASE_BASE_URL+"/admin_msg.json";
-    String appVersion = MyApp.FIREBASE_BASE_URL+"/AppVersionInfo.json";
+    String appInfo = MyApp.FIREBASE_BASE_URL+"/AppInfo.json";
     int REQUEST_INVITE = 111;
     //static boolean eventFLAG = false;
     InputMethodManager inputMethodManager;
@@ -476,10 +474,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     JSONObject jSon = jsonObject.getJSONObject(i);
                     EventModel model = new EventModel();
                     String superCateName = jSon.optString("event_superCategory");
+
+                    cannedCricketURL = cannedCricketURL.replace("$",superCateName);
+
                     String superCateID = jSon.optString("event_super_id");
                     model.setEvent_super_category(superCateName);
                     model.setEvent_super_id(superCateID);
                     model.Cate = new ArrayList<EventDetail>();
+
+                    JSONArray jArraycannedMessage = jSon.getJSONArray("cannedMessage");
+
+                    ArrayList <String> cannedArray = new ArrayList<String>();
+                    for(int k = 0; k <jArraycannedMessage.length() ; k++) {
+
+                        cannedArray.add(jArraycannedMessage.getString(k));
+                    }
+
                     JSONArray jArray = jSon.getJSONArray("Cate");
                     EventDetail detail = new EventDetail();
 
@@ -505,6 +515,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_visiblity(jOBJ.optString("visible"));
                             detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
                             detail.setSubscribed_user(subscribedUser);
+                            detail.setCannedMessage(cannedArray);
                             model.Cate.add(detail);
 
 
@@ -570,13 +581,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     alModel.add(model);
                 }
 
-
-
                 arrayListEvent.addAll(arrayListEvent_live);
 
                 Collections.sort(arrayListEvent, new CustomComparator());
                 Collections.sort(arrayListEvent_previous, new CustomComparator());
-
 
 
                 arrayListEvent.addAll(arrayListEvent_previous);
@@ -747,20 +755,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     class CannedCricketTask extends AsyncTask<Void, Void, Void>{
         MyUtill myUtill;
         JSONArray jsonArray;
-        CannedCricketMessage message;
+        //CannedCricketMessage message;
         AdminMessage admessage;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             myUtill = new MyUtill();
-            message = new CannedCricketMessage();
+            //message = new CannedCricketMessage();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            MyApp.alCanMsg = new ArrayList<CannedCricketMessage>();
-            jsonArray = myUtill.getJSONFromServer(cannedCricketURL);
+            //MyApp.alCanMsg = new ArrayList<CannedCricketMessage>();
+
+            //cannedCricketURL = cannedCricketURL.replace("$",)
+
+            /*jsonArray = myUtill.getJSONFromServer(cannedCricketURL);
             for(int i = 0 ; i < jsonArray.length() ; i++){
                 try {
                     message = new CannedCricketMessage();
@@ -770,7 +781,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 } catch (JSONException e) {
                     Log.e("CannedTask","get canned message ERROR: "+e.toString());
                 }
-            }
+            }*/
             alAdmMsg = new ArrayList<AdminMessage>();
             jsonArray = myUtill.getJSONFromServer(AdminURL);
             for(int i = 0 ; i < jsonArray.length() ; i++){
@@ -788,7 +799,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             HttpURLConnection urlConnection = null;
             URL url = null;
             try {
-                url = new URL(appVersion);
+                url = new URL(appInfo);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 StringBuilder sb = new StringBuilder();
@@ -798,7 +809,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 br.close();
 
-                VersionOnNet =sb.toString();
+                JSONObject jsonObject = new JSONObject(sb.toString());
+
+                myUtill.popupTitle = jsonObject.getString("PopupTitle");
+                myUtill.popupMessage = jsonObject.getString("PopupMessage");
+
+                VersionOnNet =jsonObject.getString("AppVersionInfo");
                 VersionOnNet = VersionOnNet.replace("\n","").replaceAll("^\"|\"$", "");
 
                 System.out.println("VERSION : "+sb.toString());
@@ -858,11 +874,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
 
-
-
-
-
-    class CannedFootBallTask extends AsyncTask<Void, Void, Void>{
+/*    class CannedFootBallTask extends AsyncTask<Void, Void, Void>{
         MyUtill myUtill;
         JSONArray jsonArray;
         CannedFootballMessage message;
@@ -894,7 +906,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             super.onPostExecute(aVoid);
 
         }
-    }
+    }*/
 
 
 

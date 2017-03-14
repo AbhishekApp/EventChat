@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.app.model.CannedCricketMessage;
-
 import java.util.ArrayList;
 
 import appy.com.wazznowapp.R;
@@ -17,10 +15,10 @@ import appy.com.wazznowapp.R;
  */
 public class CannedAdapter extends BaseAdapter {
     Context con;
-    ArrayList<CannedCricketMessage> alList;
+    ArrayList<String> alList;
     TextView tvCanMsg;
 
-    public CannedAdapter(Context context, ArrayList<CannedCricketMessage> alCan){
+    public CannedAdapter(Context context, ArrayList<String> alCan){
         con = context;
         alList = alCan;
     }
@@ -47,9 +45,9 @@ public class CannedAdapter extends BaseAdapter {
             view = inflate.inflate(R.layout.canned_row, null);
         }
         tvCanMsg = (TextView) view.findViewById(R.id.tvCanMsg);
-        CannedCricketMessage msg = alList.get(position);
+        String msg = alList.get(position);
         try{
-            tvCanMsg.setText(msg.getCanned_message());
+            tvCanMsg.setText(msg);
         }catch (Exception ex){
             Log.e("CannedAdapter", "Canned Message ERROR: "+ex.toString());
         }

@@ -44,6 +44,10 @@ public class MyUtill {
     HttpURLConnection urlConnection;
     JSONArray jsonObject;
     URL url = null;
+    public static String popupTitle = "";
+    public static String popupMessage = "";
+
+
 
     public JSONArray getJSONFromServer(String urlStr){
         try {
@@ -370,14 +374,16 @@ public class MyUtill {
     public static void alertDialogShowUpdate(final Activity activity)
     {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
-        alertDialog.setTitle(activity.getResources().getString(R.string.update_title));
-        alertDialog.setMessage(activity.getResources().getString(R.string.update_msg));
+        //alertDialog.setTitle(activity.getResources().getString(R.string.update_title));
+        alertDialog.setTitle(popupTitle);
+        //alertDialog.setMessage(activity.getResources().getString(R.string.update_msg));
+        alertDialog.setMessage(popupMessage);
         alertDialog.setPositiveButton(activity.getResources().getString(R.string.positive_btn),
             new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    // DO TASK
-                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
-                }
+            public void onClick(DialogInterface arg0, int arg1) {
+                // DO TASK
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
+            }
             });
         alertDialog.setNegativeButton(activity.getResources().getString(R.string.negative_btn),
             new DialogInterface.OnClickListener() {

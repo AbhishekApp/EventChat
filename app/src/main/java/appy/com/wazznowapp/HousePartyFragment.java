@@ -102,7 +102,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
         pdh = (ProgressBar) v.findViewById(R.id.pd);
 
-        cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
+        cannedAdapter = new CannedAdapter(getActivity(), eventDetail.getCannedMessage());
         viewLay.setAdapter(cannedAdapter);
         swipeRefreshLayout.setOnRefreshListener(this);
         imgEmoji.setOnClickListener(this);
@@ -311,7 +311,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //StadiumMsgLimit+=2;
-        String msg = MyApp.alCanMsg.get(position).getCanned_message();
+        String msg = eventDetail.getCannedMessage().get(position);
         try {
             if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatActivity.eventID, false)) {
                 //linearlayChat.setVisibility(View.VISIBLE);

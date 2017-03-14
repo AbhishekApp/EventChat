@@ -142,7 +142,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
         viewLay = (GridView) v.findViewById(R.id.viewLay);
-        cannedAdapter = new CannedAdapter(getActivity(), MyApp.alCanMsg);
+        cannedAdapter = new CannedAdapter(getActivity(), eventDetail.getCannedMessage());
         viewLay.setAdapter(cannedAdapter);
         linearCanMsg.setVisibility(View.GONE);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -516,8 +516,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     imm.toggleSoftInputFromWindow(etMsg.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
                     etMsg.requestFocus();
                 }
-                            /*}
-                        });*/
+                /*}
+            });*/
 
                 viewLay.setVisibility(View.GONE);
                 linearCanMsg.setVisibility(View.GONE);
@@ -639,7 +639,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //StadiumMsgLimit+=2;
-        String msg = MyApp.alCanMsg.get(position).getCanned_message();
+        String msg = eventDetail.getCannedMessage().get(position);
         sendMsg(msg,"canned"); //cannned message click
 
         etMsg.setText("");
