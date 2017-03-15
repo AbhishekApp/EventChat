@@ -106,6 +106,8 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             e.printStackTrace();
         }
         }
+
+        MyApp.CustomEventAnalytics("fragment_selected", "featured" , EventChatActivity.eventDetail.getCatergory_id());
     }
 
     @Override

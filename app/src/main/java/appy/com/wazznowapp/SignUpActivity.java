@@ -31,7 +31,6 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.HashMap;
 import java.util.Map;
 
-import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.NewSignUpActivity.closeSignup;
 import static appy.com.wazznowapp.R.id.progressBar2;
@@ -75,7 +74,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         btnSign.setOnClickListener(this);
         tvNahGuestUser.setOnClickListener(this);
         try {
-            MyApp.CustomEventAnalytics("signup_activity_loaded", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+            MyApp.CustomEventAnalytics("signup_activity_loaded", "", "");
         }
         catch (Exception e){
             e.printStackTrace();
@@ -196,8 +195,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 progressBar.setVisibility(View.GONE);
 
                 if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
-
-                    Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                    MyApp.PreDefinedEventAnalytics("sign_up","signup", email);
+                    //Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
                     userUpdateOnServer(uName, uLastName, uPhone, email, password);
                     SignUpActivity.makeClickable();
                     setResult(102);
@@ -206,8 +205,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
                 }else if(task.isSuccessful()){
 
-                    MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
-                    Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                    MyApp.PreDefinedEventAnalytics("sign_up","signup", email);
+                   // Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
                     userUpdateOnServer(uName, uLastName, uPhone, email, password);
                     setResult(102);
                     closeSignup=true;

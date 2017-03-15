@@ -105,6 +105,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+
+
+        MyApp.CustomEventAnalytics("fragment_selected", "stadium" , EventChatActivity.eventDetail.getCatergory_id());
     }
 
     @Override
@@ -674,10 +678,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
                 alanRef.push().setValue(alan);
                 if (messageType.equals("normal")) {
-                    MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+                    MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, eventDetail.getCatergory_id());
                 }
                 else if (messageType.equals("canned")){
-                    MyApp.CustomEventAnalytics("canned_sent", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+                    MyApp.CustomEventAnalytics("canned_sent", EventChatActivity.SuperCateName, eventDetail.getCatergory_id());
                 }
                 if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                     MyUtill.addMsgtoFeatured(getActivity(),msg);
@@ -694,9 +698,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             alanRef.push().setValue(alan);
                 try {
                     if (messageType.equals("normal")) {
-                        MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+                        MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, eventDetail.getCatergory_id());
                     } else if (messageType.equals("canned")) {
-                        MyApp.CustomEventAnalytics("canned_sent", EventChatActivity.SuperCateName, eventDetail.getCategory_name());
+                        MyApp.CustomEventAnalytics("canned_sent", EventChatActivity.SuperCateName, eventDetail.getCatergory_id());
                     }
                 }
                 catch (Exception ex){

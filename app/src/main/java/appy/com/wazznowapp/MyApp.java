@@ -94,79 +94,94 @@ public class MyApp extends Application {
         /********************************FIREBASE_ANALYTICS_CODE*****************************************/
         Bundle bundle = new Bundle();
         AnalyticsSingleton as = new AnalyticsSingleton();
-        if (AnalyticsName!=null) {
+        if (AnalyticsName!=null && AnalyticsValue!=null && Item_ID!=null) {
             //as.setId();
             // choose random food name from the list
-            as.setName(AnalyticsValue);
+            String MyAnalyticsValue = AnalyticsValue;
+            MyAnalyticsValue = MyAnalyticsValue.replace(" ","");
+            as.setName(MyAnalyticsValue);
+            String eventName;
+            switch (AnalyticsName) {
+                case FirebaseAnalytics.Event.SELECT_CONTENT:
+                    eventName = "select_content";
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, as.getName());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, Item_ID);
+                    break;
+
+                case FirebaseAnalytics.Event.JOIN_GROUP:
+                    eventName = "join_group";
+                    bundle.putString(FirebaseAnalytics.Param.GROUP_ID, Item_ID);
+                    break;
+
+                case FirebaseAnalytics.Event.SHARE:
+                    eventName = "share";
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, as.getName());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, Item_ID);
+                    break;
+
+                case FirebaseAnalytics.Event.SIGN_UP:
+                    eventName = "sign_up";
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, as.getName());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID,Item_ID );
+                    break;
+
+                case FirebaseAnalytics.Event.VIEW_ITEM_LIST:
+                    eventName = "view_item_list";
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, Item_ID);
+                    break;
+
+
+                case "signUp_email":
+                    eventName = "signUp_email";
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, as.getName());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID,Item_ID );
+                    break;
+
+                case "signUp_fb":
+                    eventName = "signUp_fb";
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, as.getName());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID,Item_ID );
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Invalid data: " + AnalyticsName);
+            }
+
+            //Logs an app event.
+            firebaseAnalytics.logEvent(eventName, bundle);
+            //Sets whether analytics collection is enabled for this app on this device.
+            firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+            //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
+            firebaseAnalytics.setMinimumSessionDuration(20000);
+            //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
+            firebaseAnalytics.setSessionTimeoutDuration(500); // in milli-seconds
+            //Sets the user ID property.
+            firebaseAnalytics.setUserId(String.valueOf(/*as.getId()*/Item_ID));
+            //Sets a user property to a given value.
+            firebaseAnalytics.setUserProperty("eventList", as.getName());
         }
-        String eventName;
-        switch (AnalyticsName) {
-            case FirebaseAnalytics.Event.SELECT_CONTENT:
-                eventName = "select_content";
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, as.getName());
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, Item_ID);
-                break;
 
-            case FirebaseAnalytics.Event.JOIN_GROUP:
-                eventName = "join_group";
-                bundle.putString(FirebaseAnalytics.Param.GROUP_ID, Item_ID);
-                break;
-
-            case FirebaseAnalytics.Event.SHARE:
-                eventName = "share";
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, as.getName());
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, Item_ID);
-                break;
-
-            case FirebaseAnalytics.Event.SIGN_UP:
-                eventName = "sign_up";
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, as.getName());
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID,Item_ID );
-                break;
-
-            case FirebaseAnalytics.Event.VIEW_ITEM_LIST:
-                eventName = "view_item_list";
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, as.getName());
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, Item_ID);
-                break;
-
-            default:
-                throw new IllegalArgumentException("Invalid data: " + AnalyticsName);
-        }
-
-        //Logs an app event.
-        firebaseAnalytics.logEvent(eventName, bundle);
-        //Sets whether analytics collection is enabled for this app on this device.
-        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
-        //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
-        firebaseAnalytics.setMinimumSessionDuration(20000);
-        //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
-        firebaseAnalytics.setSessionTimeoutDuration(500); // in milli-seconds
-        //Sets the user ID property.
-        firebaseAnalytics.setUserId(String.valueOf(/*as.getId()*/Item_ID));
-        //Sets a user property to a given value.
-        firebaseAnalytics.setUserProperty("eventList", as.getName());
     }
-
 
     public static void CustomEventAnalytics(String EventLogName, String customEventName, String customEventMessage){
         /*************************************Firebase Custom Events Analytics*********************************/
         String eventName = "A";
         switch (EventLogName) {
             case CHAT_SENT:
-                eventName = "chat_sent";
+                eventName = "chat_sent_"+customEventMessage;
                 break;
             case CANNED_SENT:
-                eventName = "canned_sent";
+                eventName = "canned_sent_"+customEventMessage;
                 break;
             case FEATURED_SENT:
-                eventName = "featured_sent";
+                eventName = "featured_sent_"+customEventMessage;
                 break;
             case FRAGMENT_SELECTED:
-                eventName = "fragment_selected";
+                eventName = customEventName+"_fragment_selected";
                 break;
             case SIGNUP_ACTIVITY_LOADED:
-                eventName = "signup_activity_loaded";
+                eventName = "signup_activity_loaded_";
                 break;
             default:
                 throw new IllegalArgumentException("Invalid data: " +EventLogName );

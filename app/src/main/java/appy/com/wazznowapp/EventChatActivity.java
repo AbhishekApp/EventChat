@@ -74,6 +74,8 @@ public class EventChatActivity extends AppCompatActivity {
                 eventID = eventDetail.getEvent_id();
                 NotificationMessageToShow = getIntent().getStringExtra("NotificationMessageToShow");
 
+                MyApp.PreDefinedEventAnalytics("view_item_list",eventDetail.getCategory_name(),eventID);
+
             }
         } catch (Exception e) {
              e.printStackTrace(); // for now eat exceptions

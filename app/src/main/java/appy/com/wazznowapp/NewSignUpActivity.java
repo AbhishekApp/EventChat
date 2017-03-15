@@ -1,7 +1,6 @@
 package appy.com.wazznowapp;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -29,8 +28,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.LoggingBehavior;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
@@ -39,9 +36,6 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.client.Firebase;
-import com.firebase.simplelogin.FirebaseSimpleLoginError;
-import com.firebase.simplelogin.SimpleLogin;
-import com.firebase.simplelogin.SimpleLoginCompletionHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -50,9 +44,6 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONObject;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +57,7 @@ import static appy.com.wazznowapp.SignUpActivity.btnSign;
  */
 public class NewSignUpActivity extends AppCompatActivity implements View.OnClickListener,Auth.OnAuthListener {
     ActionBar actionBar;
-    Button btnSignup;
+    //Button btnSignup;
     public ProgressBar progressBar;
     UserProfile userProfile;
     SharedPreferences.Editor editor;
@@ -223,7 +214,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
             }
         };
 
-        public void userLogin(Firebase myRef, final Activity con, String email, String password){
+/*        public void userLogin(Firebase myRef, final Activity con, String email, String password){
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.addAuthStateListener(mAuthListener);
             mAuth.signInWithEmailAndPassword(email, password)
@@ -239,9 +230,9 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                 }
                 }
             });
-        }
+        }*/
 
-        public void userChangePassword(Firebase myRef, final Context con, String email, String password, String newPassword){
+        /*public void userChangePassword(Firebase myRef, final Context con, String email, String password, String newPassword){
             SimpleLogin authClient = new SimpleLogin(myRef, con);
             authClient.changePassword(email, password, newPassword, new SimpleLoginCompletionHandler() {
                 public void completed(FirebaseSimpleLoginError error, boolean success) {
@@ -254,11 +245,11 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                 }
                 }
             });
-        }
+        }*/
 
-        public void userLogout(){
+        /*public void userLogout(){
             FirebaseAuth.getInstance().signOut();
-        }
+        }*/
 
         public void userUpdateOnServer(String uName, String uLastName, String uPhone, String email, String password){
             editor = MyApp.preferences.edit();
@@ -298,6 +289,16 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
 
         tvNahGuestUser = (TextView) findViewById(R.id.tvNahGuestUser);
         btnFb = (LoginButton) findViewById(R.id.btnFb);
+
+        btnFb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(NewSignUpActivity.this, "hi", Toast.LENGTH_SHORT).show();
+
+                MyApp.PreDefinedEventAnalytics("signUp_fb", "" , "");
+
+            }
+        });
 
         btnFb.setReadPermissions("email", "public_profile");
         btnFb.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -373,12 +374,15 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btnmySignup) {
+
+            MyApp.PreDefinedEventAnalytics("signUp_email", "" , "");
             startActivity(new Intent(NewSignUpActivity.this,SignUpActivity.class));
 
-        } else if (id == R.id.btnFb) {
+
+        } /*else if (id == R.id.btnFb) {
             //progressBar.setVisibility(View.VISIBLE);
            // fbConnect();
-        }
+        }*/
         else if (id == R.id.tvNahGuestUser) {
             ChatStadiumFragment.nahClicked =true;
             editor = MyApp.preferences.edit();
@@ -477,7 +481,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    public void fbConnect() {
+/*    public void fbConnect() {
         permissionNeeds = Arrays.asList("email","public_profile");
         LoginManager.getInstance().logInWithReadPermissions(this,permissionNeeds);
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -514,7 +518,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                     Log.i("fbLoginStatus", "Error "+error);
                 }
             });
-    }
+    }*/
 
     private void displayMessage(Profile profile) {
         if (profile != null) {
@@ -562,8 +566,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         // [END_EXCLUDE]
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());

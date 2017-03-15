@@ -78,6 +78,9 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         myFirebaseRef = new Firebase(firebaseURL);
         alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()  + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("HousepartyChat");
         alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
+
+
+        MyApp.CustomEventAnalytics("fragment_selected", "houseparty" , EventChatActivity.eventDetail.getCatergory_id());
     }
 
     @Override

@@ -8,28 +8,27 @@ import java.util.ArrayList;
 /**
  * Created by admin on 9/16/2016.
  */
-public class EventDetail implements Serializable{
+public class EventDetail implements Serializable {
 
-    String super_category_name;
-    String catergory_id;
-    String category_name;
-    String event_id;
-    String event_meta;
-    String event_title;
-    String event_image_url;
-    String event_exp;
-    String event_start;
-    String subscribed_user;
-    String visibility;
-    ArrayList<String> cannedMessage;
+    String super_category_name = "";
+    String catergory_id = "";
+    String category_name = "";
+    String event_id = "";
+    String event_meta = "";
+    String event_title = "";
+    String event_image_url = "";
+    String event_exp = "";
+    String event_start = "";
+    String subscribed_user = "";
+    String visibility = "";
+    ArrayList<String> cannedMessage = new ArrayList<>();
 
 
-
-    public ArrayList<String> getCannedMessage(){
+    public ArrayList<String> getCannedMessage() {
         return cannedMessage;
     }
 
-    public void setCannedMessage(ArrayList<String> cannedMessage){
+    public void setCannedMessage(ArrayList<String> cannedMessage) {
         this.cannedMessage = cannedMessage;
     }
 
@@ -41,7 +40,6 @@ public class EventDetail implements Serializable{
     public void setEvent_start(String event_start) {
         this.event_start = event_start;
     }
-
 
 
     public String getEvent_exp() {
@@ -57,7 +55,7 @@ public class EventDetail implements Serializable{
     }
 
     public String getEvent_visiblity() {
-        return  visibility;
+        return visibility;
     }
 
     public String getEvent_id() {
@@ -70,24 +68,25 @@ public class EventDetail implements Serializable{
 
 
     public String getSubscribed_user() {
-        if(TextUtils.isEmpty(subscribed_user)){
+        if (TextUtils.isEmpty(subscribed_user)) {
             subscribed_user = "0";
         }
         return subscribed_user;
     }
 
     public void setSubscribed_user(String subscribed_user) {
-           this.subscribed_user = subscribed_user;
+        this.subscribed_user = subscribed_user;
     }
-
 
 
     public void setSuper_category_name(String super_category_name) {
         this.super_category_name = super_category_name;
     }
-    public void setCatergory_id(String catergory_id){
+
+    public void setCatergory_id(String catergory_id) {
         this.catergory_id = catergory_id;
     }
+
     public void setCategory_name(String category_name) {
         this.category_name = category_name;
     }
@@ -105,12 +104,11 @@ public class EventDetail implements Serializable{
     }
 
 
-
     public String getSuper_category_name() {
         return super_category_name;
     }
 
-    public String getCatergory_id(){
+    public String getCatergory_id() {
         return this.catergory_id;
     }
 
