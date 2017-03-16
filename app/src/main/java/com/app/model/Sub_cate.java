@@ -15,6 +15,15 @@ public class Sub_cate implements Serializable {
     String event_exp;
     String event_date;
     String event_image_url;
+    String subscribed_user;
+
+    public String getSubscribed_user() {
+        return subscribed_user;
+    }
+
+    public void setSubscribed_user(String subscribed_user) {
+        this.subscribed_user = subscribed_user;
+    }
 
     public String getEvent_id() {
         return event_id;

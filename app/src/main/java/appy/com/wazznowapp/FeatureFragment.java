@@ -119,84 +119,6 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
 
-/*    private void getAdminSecondMessage(){
-        UserProfile profile = new UserProfile();
-        profile.updateUserGroup(getActivity(), eventDetail.getCatergory_id());
-        //updateEventList();
-        SharedPreferences.Editor editor = MyApp.preferences.edit();
-        editor.putBoolean(eventDetail.getCatergory_id(), true);
-        editor.commit();
-        if(!addHousePartyFLAG){
-            addHousePartyFLAG = true;
-            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-            View vi = inflater.inflate(R.layout.admin_msg, null);
-            listView.addHeaderView(vi);
-            LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
-            linearAdminBtn.setGravity(Gravity.CENTER);
-            TextView tvAdminMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
-            TextView btnYes = (TextView) vi.findViewById(R.id.btnAdminMsgYes);
-            TextView btnNo = (TextView) vi.findViewById(R.id.btnAdminMsgNo);
-
-            ImageView like = (ImageView) vi.findViewById(R.id.like);
-            ImageView dislike = (ImageView) vi.findViewById(R.id.dislike);
-
-            like.setImageResource(R.drawable.add);
-            dislike.setImageResource(R.drawable.nothanks);
-
-            btnYes.setText("Invite Friends");
-            btnNo.setText("No, Thanks");
-            //tvAdminMsg.setText("Start a House Party. There are most fun.");
-
-            if(MyUtill.isTimeBetweenTwoTime(eventDetail.getEvent_start(),eventDetail.getEvent_exp()))
-            {
-                //LIVE
-                String toDisplay = MyApp.alAdmMsg.get(1).get_admin_message().replace("<Event>",CateName);
-                tvAdminMsg.setText(toDisplay);
-
-            }else{
-                //FUTURE OR PAST
-                //Toast.makeText(getActivity(), ""+MyUtill.getDaysDifference(eventDetail.getEvent_start()), Toast.LENGTH_SHORT).show();
-
-                if(MyUtill.getDaysDifference(eventDetail.getEvent_start()).contains("-")){
-                    //PAST
-                    tvAdminMsg.setText(MyApp.alAdmMsg.get(4).get_admin_message());
-                }else{
-                    //FUTURE LESS THAN 30 DAYS
-                    tvAdminMsg.setText(
-                            MyApp.alAdmMsg.get(2).get_admin_message()
-                                    .replace("<Event>",CateName)
-                                    .replace(
-                                            "<days>",MyUtill.getDaysDifference(
-                                                    eventDetail.getEvent_start()
-                                            )
-                                    )
-                    );
-                    //FUTURE MORE THAN 30 DAYS
-                    if(tvAdminMsg.getText().toString().contains(" is coming soon")){
-                        tvAdminMsg.setText(MyApp.alAdmMsg.get(5).get_admin_message().replace("<Event>",CateName));
-                    }else{
-                        //Toast.makeText(getActivity(), "in Else", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            btnYes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    housePartyStarted();
-                }
-            });
-            btnNo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    linearLayout.removeAllViews();
-                }
-            });
-        }
-        if(alList.size() > 0) {
-            listView.setAdapter(chatAdapter);
-            chatAdapter.notifyDataSetChanged();
-        }
-    }*/
 
     private void housePartyStarted(){
         editor = MyApp.preferences.edit();
@@ -349,16 +271,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         MyApp.FeaturedMsgLimit=0;
     }
 
-    /*public String getCurrentTimeStamp() {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String currentDateTime = dateFormat.format(new Date()); // Find todays date
-            return currentDateTime;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }*/
+
 
     class FeaturedChatAdapter extends BaseAdapter {
         Context con;
@@ -466,7 +379,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
                     MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name(),eventID); //no message ID as all will be in same sub-category
 
-                    longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                    longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle();
 
                     msg = model.getTitle();
 
@@ -552,58 +465,16 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 JSONObject jsonObject = new JSONObject(response);
                 String id = jsonObject.getString("id");
                 shortLinkURL = id;
-                //Intent sendIntent = new Intent(getActivity(), ShareEventActivity.class);
-                /*Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
-                sendIntent.setType("text/plain");
-                if (!TextUtils.isEmpty(userName)) {
-                    if (!userName.contains("user")) {
-                        msg = "Hi, This is " + userName + ". Watch the " + id + " with me right here on WazzNow.";
-                    } else {
-                        msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
-                    }
-                } else {
-                    msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
-                }
-                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-                //  String dLink = longDeepLink.replace("SenderID", eventID);
-                //sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra("share", msg);
-                *//*sendIntent.setType("text/plain");*//*
-                //sendIntent.setPackage("com.whatsapp");
-                try {
-                    startActivity(sendIntent);
-                    //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-                } catch (Exception ex) {
-                    Toast.makeText(getActivity(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
-                }*/
-
-                //msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
-
                 msg = msg +" "+shortLinkURL;
-
-
-                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-                //  String dLink = longDeepLink.replace("SenderID", eventID);
-                //sendIntent.setAction(Intent.ACTION_SEND);
-                // sendIntent.putExtra("share", msg);
-                /*sendIntent.setType("text/plain");*/
-                //sendIntent.setPackage("com.whatsapp");
-
                 Intent intent2 = new Intent();
                 intent2.setAction(Intent.ACTION_SEND);
                 intent2.setType("text/plain");
                 intent2.putExtra(Intent.EXTRA_TEXT, msg );
                 getActivity().startActivity(Intent.createChooser(intent2, "Share "));
-
-
                 pd.setVisibility(View.GONE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
-
-
 }
-
-

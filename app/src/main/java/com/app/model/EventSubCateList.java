@@ -1,6 +1,5 @@
 package com.app.model;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -9,7 +8,7 @@ import java.util.ArrayList;
 
 public class EventSubCateList {
 
-    String subscribed_user;
+//    String subscribed_user;
     String event_sub_id;
     String event_category;
     ArrayList<Sub_cate> Sub_cate;
@@ -39,13 +38,13 @@ public class EventSubCateList {
     }
 
 
-    public String getSubscribed_user() {
+   /* public String getSubscribed_user() {
         return subscribed_user;
     }
 
     public void setSubscribed_user(String subscribed_user) {
         this.subscribed_user = subscribed_user;
-    }
+    }*/
 
 
 }

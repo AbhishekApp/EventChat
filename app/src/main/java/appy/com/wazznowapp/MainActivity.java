@@ -28,6 +28,7 @@ import com.app.model.EventModel;
 import com.app.model.EventSubCateList;
 import com.app.model.MyUtill;
 import com.app.model.Sub_cate;
+import com.app.model.UserProfile;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -63,6 +64,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventID;
+import static appy.com.wazznowapp.MyApp.HOUSE_PARTY_INVITATIONS;
 import static appy.com.wazznowapp.MyApp.alAdmMsg;
 import static appy.com.wazznowapp.MyApp.isSignupSuccessful;
 
@@ -207,6 +209,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                                getInvited = true;
 
+                               String invitation = uri.getQueryParameter("utm_source");
+
+
+                               if (invitation.contains("invi")){
+                                   //invited from house party
+                                   invitation = invitation.replace("invi","");
+                                UserProfile profile = new UserProfile();
+                                profile.update_house_party_invitations(MainActivity.this, invitation);
+                               }else{
+                                   //invited from somewhere else
+                               }
+
                            }catch (Exception ex){
                                Log.e("MainActivity", "get Deep link ERROR: "+ex.toString());
                                getInvited = false;
@@ -300,13 +314,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     EventDetail eventDetail = new EventDetail();
                     for(int i = 0; i < evList.getCate().size(); i++){
                         EventSubCateList subCtList = evList.getCate().get(i);
-                        String subscribedUser = subCtList.getSubscribed_user();
+                        //String subscribedUser = subCtList.getSubscribed_user();
                         for(int j = 0; j < subCtList.getSub_cate().size(); j++){
                             eventDetail = new EventDetail();
                             eventDetail.setSuper_category_name(evList.getEvent_super_category());
                             eventDetail.setCategory_name(subCtList.getEvent_category());
                             eventDetail.setCatergory_id(subCtList.getEvent_sub_id());
-                            eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
+//                            eventDetail.setSubscribed_user(subCtList.getSubscribed_user());
                             Sub_cate subCate = subCtList.getSub_cate().get(j);
                             eventDetail.setEvent_id(subCate.getEvent_id());
                             eventDetail.setEvent_start(subCate.getEvent_date());
@@ -314,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             eventDetail.setEvent_title(subCate.getEvent_title());
                             eventDetail.setEvent_exp(subCate.getEvent_exp());
                             eventDetail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+subCate.getEvent_id());
-                            eventDetail.setSubscribed_user(subscribedUser);
+                            eventDetail.setSubscribed_user(subCate.getSubscribed_user());
                             arrayListEvent.add(eventDetail);
                         }
                     }
@@ -497,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         JSONObject jsonDetail = jArray.getJSONObject(j);
                         String subCateName = jsonDetail.optString("event_category");
                         String subCateID = jsonDetail.optString("event_sub_id");
-                        String subscribedUser = jsonDetail.optString("subscribed_user");
+                        String subscribedUser ="";/* jsonDetail.optString("subscribed_user");*/
                         JSONArray jsArr = jsonDetail.getJSONArray("Sub_cate");
 
                         for(int t = 0 ; t < jsArr.length(); t++ ){
@@ -514,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_exp(jOBJ.optString("event_exp"));
                             detail.setEvent_visiblity(jOBJ.optString("visible"));
                             detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
-                            detail.setSubscribed_user(subscribedUser);
+                            detail.setSubscribed_user(jOBJ.optString("subscribed_user"));
                             detail.setCannedMessage(cannedArray);
                             model.Cate.add(detail);
 
@@ -706,6 +720,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                    String uType = jUser.optString("userType");
                    String uPhone = jUser.optString("phone");
                    String uJoinedGroup = jUser.optString("joined_group");
+                   String house_party_invitations = jUser.optString(HOUSE_PARTY_INVITATIONS);
                    SharedPreferences.Editor editor = MyApp.preferences.edit();
                    editor.putString(MyApp.USER_NAME, uName);
                    editor.putString(MyApp.USER_LAST_NAME, uLastName);
@@ -714,6 +729,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                    editor.putString(MyApp.USER_TYPE, uType);
                    editor.putString(MyApp.USER_PASSWORD, deviceID);
                    editor.putString(MyApp.USER_JOINED_GROUP, uJoinedGroup);
+
+
+                   editor.putString(HOUSE_PARTY_INVITATIONS, house_party_invitations);
+
+
                    editor.commit();
                } else {
                    String email = MyApp.preferences.getString(MyApp.USER_EMAIL, null);

@@ -35,6 +35,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventID;
+
 /**
  * Created by admin on 2/15/2017.
  */
@@ -52,9 +54,9 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
             "&apn=appy.com.wazznowapp"+
             "&afl=$"+
-            "&st=WazzNow+Title" +
-            "&sd=House+Party+Chat+Invitation" +
-            "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png"+
+            "&st=" +
+            "&sd=" +
+            "&si="+
             "&utm_source=";
     String userName = "";
 
@@ -89,8 +91,6 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         if(!share.isShown())
             share.setVisibility(View.VISIBLE);
 
-
-
         if(position < alList.size() ) {
             try {
                 ChatData model = alList.get(position);
@@ -107,8 +107,6 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     protected void populateView(final View v, final ChatData model) {
         tvUser.setTypeface(MyApp.authorFont);
         tvMsg.setTypeface(MyApp.authorMsg);
-
-
         if (model.getTitle().contains("http")){
             tvComMsg1.setText(Html.fromHtml(model.getTitle()));
             tvMsg.setText(Html.fromHtml(model.getTitle()));
@@ -121,9 +119,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         {
             tvComMsg1.setText(model.getTitle());
             tvMsg.setText(model.getTitle());
-
         }
-
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         String sender = model.getAuthor();
         String fromUser = model.getToUser();
@@ -144,11 +140,9 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
-                //openShareScreen
+                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), eventID);
 
-/*                housePartyStarted(model.getTitle());*/
-                longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle();
                 msg = model.getTitle();
                 new newShortAsync().execute();
 
@@ -185,10 +179,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 if(tvUser.getText().toString().length()>0){
                     tvUser.setPadding(35,5,10,5);
                     tvUser.setVisibility(View.VISIBLE);
-                }else{
-
                 }
-
                 relativeParam.addRule(Gravity.LEFT);
                 linear.setGravity(Gravity.LEFT);
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -207,13 +198,9 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
 
 
     public class newShortAsync extends AsyncTask<Void, Void, String> {
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //pd = new android.widget.ProgressBar(InviteFriendActivity.this,null,android.R.attr.progressBarStyleLarge);
-            //pd.getIndeterminateDrawable().setColorFilter(0xFFFF0000,android.graphics.PorterDuff.Mode.MULTIPLY);
-            //pd.setCancelable(false);
             ChatStadiumFragment.pd.setVisibility(View.VISIBLE);
         }
 
@@ -269,40 +256,8 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 JSONObject jsonObject = new JSONObject(response);
                 String id = jsonObject.getString("id");
                 shortLinkURL = id;
-                /*Intent sendIntent = new Intent(con, ShareEventActivity.class);
-                userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-                if (!TextUtils.isEmpty(userName)) {
-                    if (!userName.contains("user")) {
-                        msg = "Hi, This is " + userName + ". Watch the " + id + " with me right here on WazzNow.";
-                    } else {
-                        msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
-                    }
-                } else {
-                    msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
-                }
-                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-                //  String dLink = longDeepLink.replace("SenderID", eventID);
-                //sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra("share", msg);
-                *//*sendIntent.setType("text/plain");*//*
-                //sendIntent.setPackage("com.whatsapp");
-                try {
-                    con.startActivity(sendIntent);
-                    //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-                } catch (Exception ex) {
-                    Toast.makeText(con, "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
-                }*/
 
-                //msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
                 msg = msg +" "+shortLinkURL;
-
-                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-                //  String dLink = longDeepLink.replace("SenderID", eventID);
-                //sendIntent.setAction(Intent.ACTION_SEND);
-                // sendIntent.putExtra("share", msg);
-                /*sendIntent.setType("text/plain");*/
-                //sendIntent.setPackage("com.whatsapp");
-
                 Intent intent2 = new Intent();
                 intent2.setAction(Intent.ACTION_SEND);
                 intent2.setType("text/plain");

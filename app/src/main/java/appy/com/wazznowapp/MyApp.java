@@ -34,6 +34,7 @@ public class MyApp extends Application {
     public static String USER_EMAIL = "UserEmail";
     public static String USER_TYPE = "UserType";
     public static String USER_PASSWORD = "UserPassword";
+    public static String HOUSE_PARTY_INVITATIONS =  "house_party_invitations";
     //public static ArrayList<CannedCricketMessage> alCanMsg;
     public static Typeface authorFont,authorMsg;
     public static int FeaturedMsgLimit = 3;

@@ -214,42 +214,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
             }
         };
 
-/*        public void userLogin(Firebase myRef, final Activity con, String email, String password){
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            mAuth.addAuthStateListener(mAuthListener);
-            mAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(Task<AuthResult> task) {
-                Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
-                if (!task.isSuccessful()) {
-                    Log.w("Login", "signInWithEmail:failed", task.getException());
-                    Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
-                }
-                }
-            });
-        }*/
 
-        /*public void userChangePassword(Firebase myRef, final Context con, String email, String password, String newPassword){
-            SimpleLogin authClient = new SimpleLogin(myRef, con);
-            authClient.changePassword(email, password, newPassword, new SimpleLoginCompletionHandler() {
-                public void completed(FirebaseSimpleLoginError error, boolean success) {
-                if (error != null) {
-                    // There was an error processing this request
-                    Toast.makeText(con, "Password not changed", Toast.LENGTH_SHORT).show();
-                } else if (success) {
-                    // Password changed successfully
-                    Toast.makeText(con, "Password Changed Successfully", Toast.LENGTH_SHORT).show();
-                }
-                }
-            });
-        }*/
-
-        /*public void userLogout(){
-            FirebaseAuth.getInstance().signOut();
-        }*/
 
         public void userUpdateOnServer(String uName, String uLastName, String uPhone, String email, String password){
             editor = MyApp.preferences.edit();
@@ -269,8 +234,10 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
             alanisawesomeMap.put("authorType", "user");
             alanisawesomeMap.put("phone", uPhone);
             alanisawesomeMap.put("email", email);
-            //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
             alanisawesomeMap.put("userType", "user");
+            alanisawesomeMap.put("house_party_invitations","");
+
+            //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
             final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
             //System.out.println("USER List new length : " );
             //System.out.println("USER List new deviceID : " );
@@ -481,44 +448,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-/*    public void fbConnect() {
-        permissionNeeds = Arrays.asList("email","public_profile");
-        LoginManager.getInstance().logInWithReadPermissions(this,permissionNeeds);
-        LoginManager.getInstance().registerCallback(callbackManager,
-            new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(final LoginResult loginResult) {
-                    Log.e("fbLoginStatus:::::::::", "" + loginResult.getAccessToken());
-                    userId = loginResult.getAccessToken().getUserId();
-                    // sending a Graph request
-                    GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-                                Log.e("GraphResponse", "-------------" + response.toString());
-                                textView.setText(response.toString());
-                                //progressBar.setVisibility(View.GONE);
-                                handleFacebookAccessToken(loginResult.getAccessToken());
-                            }
-                        });
-                    Bundle parameters = new Bundle();
-                    //parameters.putString("fields", "id,name,link,gender,birthday,email,location");
-                    parameters.putString("fields", "email");
-                    request.setParameters(parameters);
-                    request.executeAsync();
-                }
 
-                @Override
-                public void onCancel() {
-                    Log.i("fbLoginStatus", "Cancelled");
-                }
-
-                @Override
-                public void onError(FacebookException error) {
-                    Log.i("fbLoginStatus", "Error "+error);
-                }
-            });
-    }*/
 
     private void displayMessage(Profile profile) {
         if (profile != null) {
@@ -534,28 +464,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    /*private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                // If sign in fails, display a message to the user. If sign in succeeds
-                // the auth state listener will be notified and logic to handle the
-                // signed in user can be handled in the listener.
-                if (!task.isSuccessful()) {
-                    Log.w(TAG, "signInWithCredential", task.getException());
-                    Toast.makeText(NewSignUpActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
-                }else{
-                    System.out.println("RESULT::::::"+task.getResult());
-                }
-                // ...
-            }
 
-
-                });
-    }*/
 
 
     // [START auth_with_facebook]

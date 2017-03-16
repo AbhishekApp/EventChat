@@ -11,6 +11,7 @@ public class EventDtList implements Serializable {
 
     String event_superCategory;
     String event_super_id;
+
     public ArrayList<EventSubCateList> Cate;
 
     public ArrayList<EventSubCateList> getCate() {

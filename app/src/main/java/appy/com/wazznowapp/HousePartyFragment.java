@@ -240,6 +240,8 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
+            String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, null);
+            if(!TextUtils.isEmpty(userGroup) && userGroup.equals(EventChatActivity.eventID)){
             userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
             if(!TextUtils.isEmpty(userName) || cannedFlag) {
                 if(cannedFlag){
@@ -287,6 +289,9 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                 //startActivityForResult(ii, 111);
             }
         }
+        else{
+            Toast.makeText(getActivity(), "Invite Some Friends First Captain!", Toast.LENGTH_SHORT).show();
+        }}
     }
 
     @Override

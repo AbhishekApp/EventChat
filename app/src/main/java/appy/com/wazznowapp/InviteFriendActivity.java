@@ -51,9 +51,9 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
             "&apn=appy.com.wazznowapp"+
             "&afl=$"+
-            "&st=WazzNow+Title" +
-            "&sd=House+Party+Chat+Invitation" +
-            "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png"+
+            "&st=" +
+            "&sd=" +
+            "&si="+
             "&utm_source=";
     ProgressBar pd;
     String shortLinkURL="";
@@ -79,8 +79,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         eventID = getIntent().getStringExtra("EventID");
         eventName  = getIntent().getStringExtra("Event");
         eventTime  = getIntent().getStringExtra("EventTime");
-      //http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk?utm_source=STR123&utm_medium=Whatsapp&utm_campaign=RN123
-        longDeepLink = longDeepLink + eventID+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventName;
+        longDeepLink = longDeepLink +"invi"+ eventID+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventName;
 
         eventTime = eventTime.split(" ")[0];
 
@@ -93,15 +92,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         actionBar.setDisplayHomeAsUpEnabled(true);
         tvMsg = (TextView) findViewById(R.id.tvInviteText);
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-        /*if(!TextUtils.isEmpty(userName)){
-            if(!userName.contains("user")){
-                tvMsg.setText("Hi..! This is "+ userName +" lets watch "+eventName+" match on "+eventTime+" on "+eventName.split(" ")[0]+" together");
-            }else{
-                tvMsg.setText("Hi..! lets watch "+eventName+" match on "+eventTime+" on "+eventName.split(" ")[0]+" together");
-            }
-        }else{
-            tvMsg.setText("Hi..! lets watch "+eventName+" match on "+eventTime+" on "+eventName.split(" ")[0]+" together");
-        }*/
+
         tvMsg.setText(msg.replace("event",eventName).replace("DeepLink",""));
 
 //        msg =msg.replace("event",eventCategory)
@@ -131,9 +122,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //pd = new android.widget.ProgressBar(InviteFriendActivity.this,null,android.R.attr.progressBarStyleLarge);
-            //pd.getIndeterminateDrawable().setColorFilter(0xFFFF0000,android.graphics.PorterDuff.Mode.MULTIPLY);
-            //pd.setCancelable(false);
             pd.setVisibility(View.VISIBLE);
 
         }
@@ -193,27 +181,8 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 JSONObject jsonObject=new JSONObject(response);
                 String id=jsonObject.getString("id");
                 shortLinkURL = id;
-                //Intent sendIntent = new Intent(InviteFriendActivity.this,ShareEventActivity.class);
-                //Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
-                //sendIntent.setType("text/plain");
-                /*if(!TextUtils.isEmpty(userName)){
-                    if(!userName.contains("user")){
-                        msg = "Hi, This is "+userName+". Watch the " + id+" with me right here on WazzNow.";
-                    }else{
-                        msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
-                    }
-                }else{
-                    msg = "Hi,  Watch the " + id+" with me right here on WazzNow.";
-                }*/
 
                 msg =msg.replace("event",eventName).replace("DeepLink",shortLinkURL);
-
-                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-                //  String dLink = longDeepLink.replace("SenderID", eventID);
-                //sendIntent.setAction(Intent.ACTION_SEND);
-               // sendIntent.putExtra("share", msg);
-                /*sendIntent.setType("text/plain");*/
-                //sendIntent.setPackage("com.whatsapp");
 
                 Intent intent2 = new Intent();
                 intent2.setAction(Intent.ACTION_SEND);
@@ -221,13 +190,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 intent2.putExtra(Intent.EXTRA_TEXT, msg );
                 startActivity(Intent.createChooser(intent2, "Share "));
 
-                /*try{
-                    startActivity(intent2);
-                    //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-                }catch (Exception ex){
-                    Toast.makeText(getBaseContext(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
-                }
-*/
                 pd.setVisibility(View.GONE);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -237,22 +199,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
     private void onInviteClicked() {
         //abhishek
-       /* try{
-        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
-                .setMessage(getString(R.string.invitation_message))
-                .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
-                .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
-                .setCallToActionText(getString(R.string.invitation_cta))
-                .build();
-            intent.putExtra("eventid", eventID);
-            Intent sendIntent = new Intent();
-            sendIntent .setPackage("com.whatsapp");
-            sendIntent.putExtra("intent", intent);
-            startActivityForResult(sendIntent, REQUEST_INVITE);
-        }catch (Exception ex){
-            Log.d("InviteFriendActivity", "onInviteClicked: Exception" + ex.toString());
-        }*/
-
 
        if (shortLinkURL.length()<=0 ){
            new newShortAsync().execute();
@@ -265,32 +211,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                intent2.setType("text/plain");
                intent2.putExtra(Intent.EXTRA_TEXT, msg );
                startActivity(Intent.createChooser(intent2, "Share"));
-              // Intent sendIntent = new Intent(android.content.Intent.ACTION_SEND);
-               //sendIntent.setType("text/plain");
-          /* if(!TextUtils.isEmpty(userName)){
-               if(!userName.contains("user")){
-                   msg = "Hi, This is "+userName+". Watch the " + shortLinkURL+" with me right here on WazzNow.";
-               }else{
-                   msg = "Hi,  Watch the " + shortLinkURL+" with me right here on WazzNow.";
-               }
-           }else{
-               msg = "Hi,  Watch the " + shortLinkURL+" with me right here on WazzNow.";
-           }*/
 
-
-               //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-               //  String dLink = longDeepLink.replace("SenderID", eventID);
-               //sendIntent.setAction(Intent.ACTION_SEND);
-               //sendIntent.putExtra("share", msg);
-                /*sendIntent.setType("text/plain");*/
-               //sendIntent.setPackage("com.whatsapp");
-               /*try {
-                   startActivity(intent2);
-                   overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-               } catch (Exception ex) {
-                   //Toast.makeText(getBaseContext(), "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
-                   Toast.makeText(getBaseContext(), "can't share.", Toast.LENGTH_SHORT).show();
-               }*/
            }
            else{
                Toast.makeText(this, "no content", Toast.LENGTH_SHORT).show();
