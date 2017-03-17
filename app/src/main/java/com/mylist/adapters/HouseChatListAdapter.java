@@ -65,21 +65,6 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         this.activity = activity;
     }
 
-    /*private void housePartyStarted(String message){
-        //editor = MyApp.preferences.edit();
-        //editor.putBoolean(EventChatActivity.eventID + "HouseParty", true);
-        //editor.commit();
-        Intent ii = new Intent(activity, InviteFriendActivity.class);
-        ii.putExtra("EventName", eventDetail.getCatergory_id());
-        ii.putExtra("EventID", eventDetail.getEvent_id());
-        ii.putExtra("Event", eventDetail.getEvent_title());
-        ii.putExtra("message", message);
-        ii.putExtra("EventTime", eventDetail.getEvent_start());
-        activity.startActivity(ii);
-    }*/
-
-
-
 
     @Override
     protected void populateView(final View v,final ChatData model, int position) {
@@ -95,8 +80,6 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         tvUser.setText(model.getAuthor());
         tvComMsg1.setText(model.getTitle());
         //linearBtn.setVisibility(View.GONE);..
-
-
 
         ImageView share = (ImageView) v.findViewById(R.id.share);
         share.setOnClickListener(new View.OnClickListener() {
@@ -187,9 +170,6 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //pd = new android.widget.ProgressBar(InviteFriendActivity.this,null,android.R.attr.progressBarStyleLarge);
-            //pd.getIndeterminateDrawable().setColorFilter(0xFFFF0000,android.graphics.PorterDuff.Mode.MULTIPLY);
-            //pd.setCancelable(false);
             pdh.setVisibility(View.VISIBLE);
         }
 
@@ -245,39 +225,9 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
                 JSONObject jsonObject = new JSONObject(response);
                 String id = jsonObject.getString("id");
                 shortLinkURL = id;
-                /*Intent sendIntent = new Intent(con, ShareEventActivity.class);
-                userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-                if (!TextUtils.isEmpty(userName)) {
-                    if (!userName.contains("user")) {
-                        msg = "Hi, This is " + userName + ". Watch the " + id + " with me right here on WazzNow.";
-                    } else {
-                        msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
-                    }
-                } else {
-                    msg = "Hi,  Watch the " + id + " with me right here on WazzNow.";
-                }
-                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-                //  String dLink = longDeepLink.replace("SenderID", eventID);
-                //sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra("share", msg);
-                *//*sendIntent.setType("text/plain");*//*
-                //sendIntent.setPackage("com.whatsapp");
-                try {
-                    con.startActivity(sendIntent);
-                    //overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
-                } catch (Exception ex) {
-                    Toast.makeText(con, "Whatsapp not installed.", Toast.LENGTH_SHORT).show();
-                }*/
 
-                //msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
+                                //msg =msg.replace("event",eventDetail.getEvent_title()).replace("DeepLink",shortLinkURL);
                 msg = msg +" "+shortLinkURL;
-
-                //Uri uri = buildDeepLink("http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk", 2, true);
-                //  String dLink = longDeepLink.replace("SenderID", eventID);
-                //sendIntent.setAction(Intent.ACTION_SEND);
-                // sendIntent.putExtra("share", msg);
-                /*sendIntent.setType("text/plain");*/
-                //sendIntent.setPackage("com.whatsapp");
 
                 Intent intent2 = new Intent();
                 intent2.setAction(Intent.ACTION_SEND);

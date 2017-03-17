@@ -247,10 +247,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     listView.setAdapter(null);
                     LinearLayout linearAdminLay = (LinearLayout) v.findViewById(R.id.linearAdmin);
 
-
                     TextView tvAdminMsg = (TextView) v.findViewById(tvAdminMsg1);
                     tvAdminMsg.setBackgroundResource(R.drawable.chat_head_);
-
 
                     LinearLayout linearAdminBtn = (LinearLayout) v.findViewById(R.id.linearAdminBtn);
                     linearAdminBtn.setBackgroundResource(R.drawable.admin_bg);

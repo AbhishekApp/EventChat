@@ -64,6 +64,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static appy.com.wazznowapp.EventChatActivity.eventID;
+import static appy.com.wazznowapp.MyApp.FireBaseHousePartyChatNode;
 import static appy.com.wazznowapp.MyApp.HOUSE_PARTY_INVITATIONS;
 import static appy.com.wazznowapp.MyApp.alAdmMsg;
 import static appy.com.wazznowapp.MyApp.isSignupSuccessful;
@@ -681,8 +682,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 jUser = jsonArray.getJSONObject(0);
                 String devID = jUser.optString(deviceID);
                 String joinedGroup = jUser.optString("joined_group");
+                String HousePartyChat = jUser.optString("house_party_invitations");
+
+                    SharedPreferences.Editor editor =  MyApp.preferences.edit();
+                    editor.putString(HOUSE_PARTY_INVITATIONS, HousePartyChat);
+                    if (HousePartyChat.contains(",")){
+                        FireBaseHousePartyChatNode =  HousePartyChat.split(",")[0];
+                    }else{
+                        FireBaseHousePartyChatNode =  HousePartyChat;
+                    }
                 String jnGrp[] = joinedGroup.split(",");
-                SharedPreferences.Editor editor =  MyApp.preferences.edit();
+
+
                 for(int i=0; i < jnGrp.length ; i++){
                     editor.putBoolean(jnGrp[i], true);
                 }
@@ -871,8 +882,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }else{
                     MyUtill.alertDialogShowUpdate(MainActivity.this);
                 }
-
                 if(getInvited){
+                    invitedEventid = invitedEventid.replace("invi","");
                     EventDetail detail = hashMapEvent.get(invitedEventid);
                     if(detail.getEvent_id().length()>0){
                         Intent iChat = new Intent(MainActivity.this, EventChatActivity.class);

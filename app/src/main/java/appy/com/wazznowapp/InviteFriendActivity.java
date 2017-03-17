@@ -1,4 +1,5 @@
 package appy.com.wazznowapp;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +38,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import static appy.com.wazznowapp.MyApp.FireBaseHousePartyChatNode;
 
 /**
  * Created by admin on 8/3/2016.
@@ -80,9 +87,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         eventName  = getIntent().getStringExtra("Event");
         eventTime  = getIntent().getStringExtra("EventTime");
         longDeepLink = longDeepLink +"invi"+ eventID+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventName;
-
         eventTime = eventTime.split(" ")[0];
-
         init();
     }
 
@@ -92,11 +97,9 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         actionBar.setDisplayHomeAsUpEnabled(true);
         tvMsg = (TextView) findViewById(R.id.tvInviteText);
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-
         tvMsg.setText(msg.replace("event",eventName).replace("DeepLink",""));
 
 //        msg =msg.replace("event",eventCategory)
-
         btnShare = (Button) findViewById(R.id.btnInviteFriend);
         btnShare.setOnClickListener(this);
     }
@@ -123,7 +126,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         protected void onPreExecute() {
             super.onPreExecute();
             pd.setVisibility(View.VISIBLE);
-
         }
 
         @Override
@@ -174,7 +176,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
             //System.out.println("JSON RESP:" + s);
             String response=s;
             try {
@@ -183,13 +184,11 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 shortLinkURL = id;
 
                 msg =msg.replace("event",eventName).replace("DeepLink",shortLinkURL);
-
                 Intent intent2 = new Intent();
                 intent2.setAction(Intent.ACTION_SEND);
                 intent2.setType("text/plain");
                 intent2.putExtra(Intent.EXTRA_TEXT, msg );
                 startActivity(Intent.createChooser(intent2, "Share "));
-
                 pd.setVisibility(View.GONE);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -198,12 +197,13 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void onInviteClicked() {
-        //abhishek
 
+        new addRandomAlphaNumericKeytoEventNode().execute();
+
+        //abhishek
        if (shortLinkURL.length()<=0 ){
            new newShortAsync().execute();
        }else{
-
            if(msg.length()>0) {
                //Intent sendIntent = new Intent(InviteFriendActivity.this, ShareEventActivity.class);
                Intent intent2 = new Intent();
@@ -211,21 +211,98 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                intent2.setType("text/plain");
                intent2.putExtra(Intent.EXTRA_TEXT, msg );
                startActivity(Intent.createChooser(intent2, "Share"));
-
            }
            else{
                Toast.makeText(this, "no content", Toast.LENGTH_SHORT).show();
            }
        }
-
-
     }
+
+
+
+    class addRandomAlphaNumericKeytoEventNode extends AsyncTask<String, Void, String> {
+
+        protected String doInBackground(String... urls) {
+
+                /*String URL = MyApp.FIREBASE_BASE_URL + "/users/" + MyApp.getDeviveID(InviteFriendActivity.this) + "/0.json";
+                HttpURLConnection urlConnection;
+                JSONObject jsonObject = null;
+                URL url = null;
+                try {
+                    Log.e("MyUtill", "getJSONFromServer URL : " + URL);
+                    url = new URL(URL);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    br.close();
+                    //System.out.println(sb.toString());
+                    jsonObject = new JSONObject(sb.toString());
+
+                    String house_party_invitations = jsonObject.getString("house_party_invitations");*/
+                    //if (house_party_invitations.length()>0) {
+                    //Add to Users Table
+                    Random random = new Random();
+                    String myRandom = String.format("%04d", random.nextInt(10000));
+                    Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
+                    String deviceID = MyApp.getDeviveID(InviteFriendActivity.this);
+                    Firebase alanRef = usersRef.child("users/" + deviceID + "/0");
+                    Map<String, Object> nickname = new HashMap<String, Object>();
+
+                    //System.out.println("tttttttttt : "+ FireBaseHousePartyChatNode.substring(4));
+
+                    if (FireBaseHousePartyChatNode.length()>0 ){
+
+                        if (!FireBaseHousePartyChatNode.substring(4).equals(eventID)){
+                            nickname.put("house_party_invitations", FireBaseHousePartyChatNode+","+myRandom + eventID);
+                        }else{
+                            nickname.put("house_party_invitations", FireBaseHousePartyChatNode);
+                        }
+
+                    }else {
+                        nickname.put("house_party_invitations", myRandom + eventID);
+                    }
+                    alanRef.updateChildren(nickname);
+
+                    //Add to HousepartyChat Table
+
+                    /*Firebase HousepartyChatRef = new Firebase(MyApp.FIREBASE_BASE_URL);
+                    Firebase HousepartyChatAlanRef = HousepartyChatRef.child(eventCategory+"/" +eventName+"/"+eventID+"/HousepartyChat"+ deviceID );
+                    Map<String, Object> newname = new HashMap<String, Object>();
+                    newname.put("house_party_invitations", myRandom+eventID);
+                    HousepartyChatAlanRef.updateChildren(newname);*/
+
+
+                    //}
+                /*} catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();// for now eat exceptions
+                } catch (Exception ex) {
+                    Log.e("MyUtill", "Get Data From Server ERROR: " + ex.toString());
+                }*/
+
+            return "";
+        }
+
+        protected void onPostExecute(String feed) {
+            //onPost
+        }
+    }
+
+
 
     @VisibleForTesting
     public Uri buildDeepLink(@NonNull String deepLink, int minVersion, boolean isAd) {
         // Get the unique appcode for this app.
         String appCode = getString(R.string.app_code);
-
         // Get this app's package name.
         String packageName = getApplicationContext().getPackageName();
 
@@ -238,12 +315,10 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 .appendQueryParameter("apn", packageName)
                 .appendQueryParameter("eventid", eventID);
 
-
         // Minimum version is optional.
         if (minVersion > 0) {
             builder.appendQueryParameter("amv", Integer.toString(minVersion));
         }
-
         // Return the completed deep link.
         return builder.build();
     }
@@ -251,8 +326,8 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         int id = v.getId();
-//        Intent iChat = new Intent(this, SignUpActivity.class);
-//        startActivity(iChat);
+        //        Intent iChat = new Intent(this, SignUpActivity.class);
+        //        startActivity(iChat);
         try {
             if (id == R.id.btnInviteFriend) {
                 onInviteClicked();

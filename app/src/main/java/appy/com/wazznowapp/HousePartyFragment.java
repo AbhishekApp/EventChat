@@ -36,6 +36,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventID;
+import static appy.com.wazznowapp.MyApp.FireBaseHousePartyChatNode;
 import static appy.com.wazznowapp.R.id.tvAdminMsg1;
 
 /**
@@ -76,9 +78,12 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         myFirebaseRef = new Firebase(firebaseURL);
-        alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()  + "/ " + EventChatActivity.CateName + "/ " + EventChatActivity.eventID).child("HousepartyChat");
-        alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
 
+        //https://console.firebase.google.com/project/wazznow-cd155/database/data/Cricket/%20IPL/HousepartyChat
+        //https://wazznow-cd155.firebaseio.com/Cricket/%20IPL/%20Sunrisers%20Vs%20RCB/%20/HousepartyChat
+
+        alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName+"/ " +eventDetail.getCategory_name()+"/HousepartyChat").child(""+ FireBaseHousePartyChatNode+"/0");
+        alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
 
         MyApp.CustomEventAnalytics("fragment_selected", "houseparty" , EventChatActivity.eventDetail.getCatergory_id());
     }
@@ -122,7 +127,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     public void onStart() {
         super.onStart();
         try {
-            if(!MyApp.preferences.getBoolean(EventChatActivity.eventID+"HouseParty", false) && !addHousePartyFLAG){
+            if(!MyApp.preferences.getBoolean(eventID+"HouseParty", false) && !addHousePartyFLAG){
                 //linearLayout.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
                 vi = inflater.inflate(R.layout.admin_msg,null);
@@ -241,57 +246,64 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
             String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, null);
-            if(!TextUtils.isEmpty(userGroup) && userGroup.equals(EventChatActivity.eventID)){
-            userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
-            if(!TextUtils.isEmpty(userName) || cannedFlag) {
-                if(cannedFlag){
-                    if (view != null) {
-                        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-                    if (viewLay.getVisibility() == View.VISIBLE) {
-                        viewLay.setVisibility(View.GONE);
-                    } else {
-                        viewLay.setVisibility(View.VISIBLE);
-                        Toast.makeText(getActivity(),"Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
-                    }
-                }else if(!TextUtils.isEmpty(userName)){
-                    String msg = etMsg.getText().toString();
-                    if (!TextUtils.isEmpty(msg)) {
-                        //al.add(msg);
-                        try {
-                            if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatActivity.eventID, false)) {
-                                //linearlayChat.setVisibility(View.VISIBLE);
-                                adapter.notifyDataSetChanged();
-                                etMsg.setText("");
-                                ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),"normal");
-                                alanRef.push().setValue(alan);
-                                MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName , " : House Party : "+ eventDetail.getCategory_name());
-
-                                if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
-                                    MyUtill.addMsgtoFeatured(getActivity(),msg);
-                                }
-                            }else{
-                                //linearlayChat.setVisibility(View.GONE);
-                                Toast.makeText(getActivity(),"You are not eligible to this group.", Toast.LENGTH_SHORT).show();
+            if(FireBaseHousePartyChatNode.length()>0){
+            if (!FireBaseHousePartyChatNode.substring(4).equals(eventID)){
+                Toast.makeText(getActivity(), "Invite Some Friends First Captain!", Toast.LENGTH_SHORT).show();
+            }else {
+                {
+                    userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+                    if (!TextUtils.isEmpty(userName) || cannedFlag) {
+                        if (cannedFlag) {
+                            if (view != null) {
+                                imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                             }
-                        } catch (Exception ex) {
-                            Log.e("StadiumFragment", "sendMsg ERROR: " + ex.toString());
+                            if (viewLay.getVisibility() == View.VISIBLE) {
+                                viewLay.setVisibility(View.GONE);
+                            } else {
+                                viewLay.setVisibility(View.VISIBLE);
+                                Toast.makeText(getActivity(), "Guest User can send only Canned Messages", Toast.LENGTH_SHORT).show();
+                            }
+                        } else if (!TextUtils.isEmpty(userName)) {
+                            String msg = etMsg.getText().toString();
+                            if (!TextUtils.isEmpty(msg)) {
+                                //al.add(msg);
+                                try {
+                                    if (!MyApp.preferences.getBoolean("HousePartyMessage" + eventID, false)) {
+                                        //linearlayChat.setVisibility(View.VISIBLE);
+                                        adapter.notifyDataSetChanged();
+                                        etMsg.setText("");
+                                        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(getActivity()), getCurrentTimeStamp(), MyApp.preferences.getString(MyApp.USER_TYPE, ""), "normal");
+                                        alanRef.push().setValue(alan);
+                                        MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, " : House Party : " + eventDetail.getCategory_name());
 
+                                        if (msg.contains("#featured") || msg.contains("#Featured") || msg.contains("#FEATURED")) {
+                                            MyUtill.addMsgtoFeatured(getActivity(), msg);
+                                        }
+                                    } else {
+                                        //linearlayChat.setVisibility(View.GONE);
+                                        Toast.makeText(getActivity(), "You are not eligible to this group.", Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (Exception ex) {
+                                    Log.e("StadiumFragment", "sendMsg ERROR: " + ex.toString());
+
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }else{
-                        Toast.makeText(getActivity(),"Blank message not send", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
+                        startActivity(ii);
+                        //startActivityForResult(ii, 111);
                     }
                 }
+              }
             }else{
-                Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
-                startActivity(ii);
-                //startActivityForResult(ii, 111);
+                Toast.makeText(getActivity(), "Invite Some Friends First Captain!", Toast.LENGTH_SHORT).show();
             }
         }
-        else{
-            Toast.makeText(getActivity(), "Invite Some Friends First Captain!", Toast.LENGTH_SHORT).show();
-        }}
+
     }
 
     @Override
@@ -321,7 +333,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         //StadiumMsgLimit+=2;
         String msg = eventDetail.getCannedMessage().get(position);
         try {
-            if (!MyApp.preferences.getBoolean("HousePartyMessage" + EventChatActivity.eventID, false)) {
+            if (!MyApp.preferences.getBoolean("HousePartyMessage" + eventID, false)) {
                 //linearlayChat.setVisibility(View.VISIBLE);
                 adapter.notifyDataSetChanged();
                 etMsg.setText("");

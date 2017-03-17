@@ -47,6 +47,7 @@ public class MyApp extends Application {
     public static final String SIGNUP_ACTIVITY_LOADED = "signup_activity_loaded";
     public static ArrayList<AdminMessage> alAdmMsg;
     public static boolean isSignupSuccessful= false;
+    public static String FireBaseHousePartyChatNode= "";
 
     @Override
     public void onCreate() {

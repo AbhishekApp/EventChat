@@ -16,7 +16,6 @@ import appy.com.wazznowapp.MyApp;
  * Created by admin on 8/12/2016.
  */
 public class UserProfile {
-
     private String userName;
     private String userLastName;
     private String userEmail;
@@ -107,7 +106,6 @@ public class UserProfile {
         }else
         {
             userGroup = newGroup;
-            //Toast.makeText(con, "Invited successfully", Toast.LENGTH_SHORT).show();
         }
         Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
         String deviceID = MyApp.getDeviveID(con);
