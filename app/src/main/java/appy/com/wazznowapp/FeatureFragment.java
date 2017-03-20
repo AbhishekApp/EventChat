@@ -77,9 +77,9 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
     String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
             "&apn=appy.com.wazznowapp" +
             "&afl=$" +
-            "&st=WazzNow+Title" +
-            "&sd=House+Party+Chat+Invitation" +
-            "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png" +
+            "&st=" +
+            "&sd=" +
+            "&si=" +
             "&utm_source=";
     ProgressBar pd;
     String shortLinkURL = "";
@@ -379,7 +379,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
                     MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name(),eventID); //no message ID as all will be in same sub-category
 
-                    longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle();
+                    longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle()+"&utm_campaign="+eventID;
 
                     msg = model.getTitle();
 

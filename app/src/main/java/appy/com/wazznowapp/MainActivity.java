@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     final String TAG = "MainActivity";
     Handler handler;
     boolean getInvited = false;
-    String invitedEventid, invitedGroup;
+    String invitedEventid;
     HashMap<String,EventDetail> hashMapEvent;
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String NotificationMessageToShow = "";
     ProgressBar pd;
     String VersionOnNet="";
+    String invitedEevntID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,9 +206,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                Log.e("MainActivity", "get Deep link uri "+uri.toString());
                                invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
                                Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
-                               invitedGroup = deepLink.split("utm_campaign=")[1];
-                               Log.e("MainActivity", "get Deep link group "+invitedGroup);
 
+                               try {
+                                   invitedEevntID = deepLink.split("utm_campaign=")[1];
+                                   Log.e("MainActivity", "get Deep link group " + invitedEevntID);
+                               }
+                               catch (Exception e){
+                                   e.printStackTrace();
+                               }
                                getInvited = true;
 
                                String invitation = uri.getQueryParameter("utm_source");
@@ -533,7 +539,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setCannedMessage(cannedArray);
                             model.Cate.add(detail);
 
-
                             if(jOBJ.optString("visible").equals("true")) {
 
                                 SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -740,11 +745,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                    editor.putString(MyApp.USER_TYPE, uType);
                    editor.putString(MyApp.USER_PASSWORD, deviceID);
                    editor.putString(MyApp.USER_JOINED_GROUP, uJoinedGroup);
-
-
                    editor.putString(HOUSE_PARTY_INVITATIONS, house_party_invitations);
-
-
                    editor.commit();
                } else {
                    String email = MyApp.preferences.getString(MyApp.USER_EMAIL, null);
@@ -755,8 +756,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                        firebase.child("users/" + deviceID).setValue(users);
                    }
                }
-
-
                if(flagExist){
                /*old user*/
                     /*check for user already signed in */
@@ -766,7 +765,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                    /*new user*/
                    isSignupSuccessful = false;
                }
-
            }catch (Exception ex){
                System.out.println("EVENT DATA onPostExecute Exception : "+ex.toString());
            }finally {
@@ -883,15 +881,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     MyUtill.alertDialogShowUpdate(MainActivity.this);
                 }
                 if(getInvited){
-                    invitedEventid = invitedEventid.replace("invi","");
-                    EventDetail detail = hashMapEvent.get(invitedEventid);
-                    if(detail.getEvent_id().length()>0){
-                        Intent iChat = new Intent(MainActivity.this, EventChatActivity.class);
-                        iChat.putExtra("EventDetail", detail);
-                        iChat.putExtra("NotificationMessageToShow",NotificationMessageToShow);
-                        startActivity(iChat);
+                    invitedEevntID = invitedEevntID.replace("invi","");
+                    if (hashMapEvent.containsKey(invitedEevntID)){
+                        EventDetail detail = hashMapEvent.get(invitedEevntID);
+                        if(detail.getEvent_id().length()>0){
+                            Intent iChat = new Intent(MainActivity.this, EventChatActivity.class);
+                            iChat.putExtra("EventDetail", detail);
+                            iChat.putExtra("NotificationMessageToShow",NotificationMessageToShow);
+                            startActivity(iChat);
+                        }else{
+                            Toast.makeText(MainActivity.this, "Event not exist anymore!!", Toast.LENGTH_SHORT).show();
+                        }
                     }else{
-                        Toast.makeText(MainActivity.this, "Event not exist anymore!!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "no", Toast.LENGTH_SHORT).show();
+
+
+
                     }
                 }
             }catch (Exception ex){

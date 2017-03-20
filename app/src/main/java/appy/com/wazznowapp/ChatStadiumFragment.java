@@ -105,9 +105,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
-
-
         MyApp.CustomEventAnalytics("fragment_selected", "stadium" , EventChatActivity.eventDetail.getCatergory_id());
     }
 

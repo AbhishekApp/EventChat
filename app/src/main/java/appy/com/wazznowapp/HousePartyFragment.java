@@ -35,6 +35,7 @@ import com.mylist.adapters.HouseChatListAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static appy.com.wazznowapp.EventChatActivity.CatID;
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
 import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.MyApp.FireBaseHousePartyChatNode;
@@ -247,7 +248,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         } else if (id == R.id.imgSendChat) {
             String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, null);
             if(FireBaseHousePartyChatNode.length()>0){
-            if (!FireBaseHousePartyChatNode.substring(4).equals(eventID)){
+            if (!(userGroup.contains(CatID))){
                 Toast.makeText(getActivity(), "Invite Some Friends First Captain!", Toast.LENGTH_SHORT).show();
             }else {
                 {
@@ -269,7 +270,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                             if (!TextUtils.isEmpty(msg)) {
                                 //al.add(msg);
                                 try {
-                                    if (!MyApp.preferences.getBoolean("HousePartyMessage" + eventID, false)) {
+                                    if (!MyApp.preferences.getBoolean("HousePartyMessage" + CatID, false)) {
                                         //linearlayChat.setVisibility(View.VISIBLE);
                                         adapter.notifyDataSetChanged();
                                         etMsg.setText("");
@@ -333,7 +334,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         //StadiumMsgLimit+=2;
         String msg = eventDetail.getCannedMessage().get(position);
         try {
-            if (!MyApp.preferences.getBoolean("HousePartyMessage" + eventID, false)) {
+            if (!MyApp.preferences.getBoolean("HousePartyMessage" + CatID, false)) {
                 //linearlayChat.setVisibility(View.VISIBLE);
                 adapter.notifyDataSetChanged();
                 etMsg.setText("");

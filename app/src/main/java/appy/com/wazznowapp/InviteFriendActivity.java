@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -42,8 +41,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static appy.com.wazznowapp.EventChatActivity.CatID;
 import static appy.com.wazznowapp.MyApp.FireBaseHousePartyChatNode;
-
 /**
  * Created by admin on 8/3/2016.
  */
@@ -86,7 +85,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         eventID = getIntent().getStringExtra("EventID");
         eventName  = getIntent().getStringExtra("Event");
         eventTime  = getIntent().getStringExtra("EventTime");
-        longDeepLink = longDeepLink +"invi"+ eventID+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventName;
+        longDeepLink = longDeepLink +"invi"+ eventCategory+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventID;
         eventTime = eventTime.split(" ")[0];
         init();
     }
@@ -224,31 +223,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
         protected String doInBackground(String... urls) {
 
-                /*String URL = MyApp.FIREBASE_BASE_URL + "/users/" + MyApp.getDeviveID(InviteFriendActivity.this) + "/0.json";
-                HttpURLConnection urlConnection;
-                JSONObject jsonObject = null;
-                URL url = null;
-                try {
-                    Log.e("MyUtill", "getJSONFromServer URL : " + URL);
-                    url = new URL(URL);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    br.close();
-                    //System.out.println(sb.toString());
-                    jsonObject = new JSONObject(sb.toString());
-
-                    String house_party_invitations = jsonObject.getString("house_party_invitations");*/
-                    //if (house_party_invitations.length()>0) {
-                    //Add to Users Table
                     Random random = new Random();
                     String myRandom = String.format("%04d", random.nextInt(10000));
                     Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
@@ -256,38 +230,17 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                     Firebase alanRef = usersRef.child("users/" + deviceID + "/0");
                     Map<String, Object> nickname = new HashMap<String, Object>();
 
-                    //System.out.println("tttttttttt : "+ FireBaseHousePartyChatNode.substring(4));
-
                     if (FireBaseHousePartyChatNode.length()>0 ){
 
                         if (!FireBaseHousePartyChatNode.substring(4).equals(eventID)){
-                            nickname.put("house_party_invitations", FireBaseHousePartyChatNode+","+myRandom + eventID);
+                            nickname.put("house_party_invitations", FireBaseHousePartyChatNode+","+myRandom + CatID);
                         }else{
                             nickname.put("house_party_invitations", FireBaseHousePartyChatNode);
                         }
-
                     }else {
-                        nickname.put("house_party_invitations", myRandom + eventID);
+                        nickname.put("house_party_invitations", myRandom + CatID);
                     }
                     alanRef.updateChildren(nickname);
-
-                    //Add to HousepartyChat Table
-
-                    /*Firebase HousepartyChatRef = new Firebase(MyApp.FIREBASE_BASE_URL);
-                    Firebase HousepartyChatAlanRef = HousepartyChatRef.child(eventCategory+"/" +eventName+"/"+eventID+"/HousepartyChat"+ deviceID );
-                    Map<String, Object> newname = new HashMap<String, Object>();
-                    newname.put("house_party_invitations", myRandom+eventID);
-                    HousepartyChatAlanRef.updateChildren(newname);*/
-
-
-                    //}
-                /*} catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();// for now eat exceptions
-                } catch (Exception ex) {
-                    Log.e("MyUtill", "Get Data From Server ERROR: " + ex.toString());
-                }*/
 
             return "";
         }
@@ -351,18 +304,15 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 }
             } else {
                 // Sending failed or it was canceled, show failure message to the user
-                // ...
             }
         }
     }
-
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         shortLinkURL="";
     }
-
 
     @Override
     public void onBackPressed() {

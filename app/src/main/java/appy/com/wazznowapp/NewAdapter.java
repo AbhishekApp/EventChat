@@ -142,7 +142,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             public void onClick(View v) {
                 MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), eventID);
 
-                longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle();
+                longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle()+"&utm_campaign="+eventID;
                 msg = model.getTitle();
                 new newShortAsync().execute();
 

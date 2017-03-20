@@ -96,27 +96,32 @@ public class UserProfile {
 
     public void update_house_party_invitations(Context con, String newGroup) {
         String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, null);
-        if(userGroup != null && !TextUtils.isEmpty(userGroup)){
-            if(!userGroup.contains(newGroup)){
-                userGroup = userGroup +","+ newGroup;
-            }else
-            {
-                return;
-            }
-        }else
-        {
-            userGroup = newGroup;
+
+        if (userGroup.contains(newGroup)) {
+
         }
-        Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
-        String deviceID = MyApp.getDeviveID(con);
-        Firebase alanRef = usersRef.child("users/"+deviceID+"/0");
-        Map<String, Object> nickname = new HashMap<String, Object>();
-        nickname.put("house_party_invitations", userGroup);
-        alanRef.updateChildren(nickname);
-        // Toast.makeText(con, "User group update successfully "+newGroup, Toast.LENGTH_SHORT).show();
-        SharedPreferences.Editor editor = MyApp.preferences.edit();
-        editor.putString(MyApp.HOUSE_PARTY_INVITATIONS, userGroup);
-        editor.commit();
+        else {
+            if (userGroup != null && !TextUtils.isEmpty(userGroup)) {
+                if (!userGroup.contains(newGroup)) {
+                    userGroup = userGroup + "," + newGroup;
+                } else {
+                    return;
+                }
+            } else {
+                userGroup = newGroup;
+            }
+
+            Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
+            String deviceID = MyApp.getDeviveID(con);
+            Firebase alanRef = usersRef.child("users/" + deviceID + "/0");
+            Map<String, Object> nickname = new HashMap<String, Object>();
+            nickname.put("house_party_invitations", userGroup);
+            alanRef.updateChildren(nickname);
+            // Toast.makeText(con, "User group update successfully "+newGroup, Toast.LENGTH_SHORT).show();
+            SharedPreferences.Editor editor = MyApp.preferences.edit();
+            editor.putString(MyApp.HOUSE_PARTY_INVITATIONS, userGroup);
+            editor.commit();
+        }
     }
 
 

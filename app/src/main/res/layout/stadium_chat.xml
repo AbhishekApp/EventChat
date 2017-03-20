@@ -76,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.44"
                         android:padding="2dp"
-                        android:src="@mipmap/bulb" />
+                        android:src="@mipmap/bulab" />
 
                     <ImageView
                         android:id="@+id/keyboard"

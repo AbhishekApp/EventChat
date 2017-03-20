@@ -49,6 +49,7 @@ public class EventChatActivity extends AppCompatActivity {
     public static String CateName;
     public static String SuperCateName;
     public static String eventID = "";
+    public static String CatID = "";
     public static EventDetail eventDetail;
     ListView left_drawer;
     private static final int ID_UP = 1;
@@ -72,6 +73,7 @@ public class EventChatActivity extends AppCompatActivity {
                 SuperCateName = eventDetail.getSuper_category_name();
                 CateName = eventDetail.getEvent_title();
                 eventID = eventDetail.getEvent_id();
+                CatID = eventDetail.getCatergory_id();
                 NotificationMessageToShow = getIntent().getStringExtra("NotificationMessageToShow");
 
                 MyApp.PreDefinedEventAnalytics("view_item_list",eventDetail.getCategory_name(),eventID);
