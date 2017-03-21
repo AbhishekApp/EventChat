@@ -38,13 +38,6 @@ public class EventSubCateList {
     }
 
 
-   /* public String getSubscribed_user() {
-        return subscribed_user;
-    }
-
-    public void setSubscribed_user(String subscribed_user) {
-        this.subscribed_user = subscribed_user;
-    }*/
 
 
 }

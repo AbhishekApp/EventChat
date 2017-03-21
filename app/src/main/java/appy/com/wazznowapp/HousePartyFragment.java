@@ -33,7 +33,9 @@ import com.mylist.adapters.CannedAdapter;
 import com.mylist.adapters.HouseChatListAdapter;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static appy.com.wazznowapp.EventChatActivity.CatID;
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
@@ -57,9 +59,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     private SwipeRefreshLayout swipeRefreshLayout;
     FragmentActivity activity;
     final static String firebaseURL = MyApp.FIREBASE_BASE_URL;
-//    final static String firebaseURL = "https://wazznow-cd155.firebaseio.com/EventList/1/Event_Category/2/HouseParty";
-    //private ValueEventListener mConnectedListener;
-    //private ValueEventListener mDataRetrieveListener;
     boolean cannedFlag = false;
     String userName="";
     int msgLimit = 10;
@@ -83,8 +82,20 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         //https://console.firebase.google.com/project/wazznow-cd155/database/data/Cricket/%20IPL/HousepartyChat
         //https://wazznow-cd155.firebaseio.com/Cricket/%20IPL/%20Sunrisers%20Vs%20RCB/%20/HousepartyChat
 
-        alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName+"/ " +eventDetail.getCategory_name()+"/HousepartyChat").child(""+ FireBaseHousePartyChatNode+"/0");
-        alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
+
+        String SubDomain = "";
+
+        if (FireBaseHousePartyChatNode.contains(CatID)){
+            List<String> items = Arrays.asList(FireBaseHousePartyChatNode.split(","));
+            for (int i = 0; i <items.size() ; i++) {
+                String j = items.get(i);
+                if(j.contains(CatID)){
+                    SubDomain = j;
+                }
+            }
+            alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName+"/ " +eventDetail.getCategory_name()+"/HousepartyChat").child(""+ SubDomain+"/0");
+            alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
+        }
 
         MyApp.CustomEventAnalytics("fragment_selected", "houseparty" , EventChatActivity.eventDetail.getCatergory_id());
     }
@@ -120,7 +131,8 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         viewLay.setOnItemClickListener(this);
 
         editor = MyApp.preferences.edit();
-        adapter = new HouseChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+        try{adapter = new HouseChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+        }catch (Exception e){}
     }
 
 
@@ -224,16 +236,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         int id = v.getId();
         View view = getActivity().getCurrentFocus();
         if (id == R.id.imgEmoji) {
-            /*if (view != null) {
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-            if (viewLay.getVisibility() == View.VISIBLE) {
-                viewLay.setVisibility(View.GONE);
-            } else {
-                viewLay.setVisibility(View.VISIBLE);
-                Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
-            }*/
 
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -246,7 +248,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         } else if (id == R.id.etChatMsg) {
             viewLay.setVisibility(View.GONE);
         } else if (id == R.id.imgSendChat) {
-            String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, null);
+            String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, "");
             if(FireBaseHousePartyChatNode.length()>0){
             if (!(userGroup.contains(CatID))){
                 Toast.makeText(getActivity(), "Invite Some Friends First Captain!", Toast.LENGTH_SHORT).show();
@@ -287,7 +289,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                                     }
                                 } catch (Exception ex) {
                                     Log.e("StadiumFragment", "sendMsg ERROR: " + ex.toString());
-
                                 }
                             } else {
                                 Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
@@ -304,7 +305,6 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                 Toast.makeText(getActivity(), "Invite Some Friends First Captain!", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
 
     @Override

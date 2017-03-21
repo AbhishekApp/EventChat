@@ -204,8 +204,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                            try{
                                Log.e("MainActivity", "get Deep link URL "+deepLink);
                                Log.e("MainActivity", "get Deep link uri "+uri.toString());
-                               invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
-                               Log.e("MainActivity", "get Deep link eventid "+invitedEventid);
+
+                               try {
+                                   invitedEventid = deepLink.split("utm_source=")[1].split("&")[0];
+                                   Log.e("MainActivity", "get Deep link eventid " + invitedEventid);
+                               }
+                               catch (Exception e){
+                                   e.printStackTrace();
+                               }
 
                                try {
                                    invitedEevntID = deepLink.split("utm_campaign=")[1];
@@ -221,9 +227,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                                if (invitation.contains("invi")){
                                    //invited from house party
-                                   invitation = invitation.replace("invi","");
-                                UserProfile profile = new UserProfile();
-                                profile.update_house_party_invitations(MainActivity.this, invitation);
+                                    invitation = invitation.replace("invi","");
+                                    UserProfile profile = new UserProfile();
+                                    profile.update_house_party_invitations(MainActivity.this, invitation);
                                }else{
                                    //invited from somewhere else
                                }
@@ -589,13 +595,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             }
 
                             String strTime = myUtill.getTimeDifference(detail.getEvent_start()).trim();
-                            /*if(!TextUtils.isEmpty(strTime)) {
-                                model.Cate.add(detail);
-                                arrayListEvent.add(detail);
-                                hashMapEvent.put(detail.getEvent_id(), detail);
-                            }else{
-                                System.out.println("Event Expire Date & Time:  "+detail.getEvent_date()+", "+detail.getEvent_time());
-                            }*/
+
                         }
                     }
                     alModel.add(model);
@@ -691,13 +691,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     SharedPreferences.Editor editor =  MyApp.preferences.edit();
                     editor.putString(HOUSE_PARTY_INVITATIONS, HousePartyChat);
-                    if (HousePartyChat.contains(",")){
-                        FireBaseHousePartyChatNode =  HousePartyChat.split(",")[0];
-                    }else{
+                    //if (HousePartyChat.contains(",")){
+                    //    FireBaseHousePartyChatNode =  HousePartyChat.split(",")[0];
+                   // }else{
                         FireBaseHousePartyChatNode =  HousePartyChat;
-                    }
+                   // }
                 String jnGrp[] = joinedGroup.split(",");
-
 
                 for(int i=0; i < jnGrp.length ; i++){
                     editor.putBoolean(jnGrp[i], true);
@@ -796,21 +795,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         protected Void doInBackground(Void... params) {
-            //MyApp.alCanMsg = new ArrayList<CannedCricketMessage>();
 
-            //cannedCricketURL = cannedCricketURL.replace("$",)
-
-            /*jsonArray = myUtill.getJSONFromServer(cannedCricketURL);
-            for(int i = 0 ; i < jsonArray.length() ; i++){
-                try {
-                    message = new CannedCricketMessage();
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    message.setCanned_message(jsonObject.optString("Msg"));
-                    MyApp.alCanMsg.add(message);
-                } catch (JSONException e) {
-                    Log.e("CannedTask","get canned message ERROR: "+e.toString());
-                }
-            }*/
             alAdmMsg = new ArrayList<AdminMessage>();
             jsonArray = myUtill.getJSONFromServer(AdminURL);
             for(int i = 0 ; i < jsonArray.length() ; i++){
@@ -837,17 +822,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     sb.append(line + "\n");
                 }
                 br.close();
-
                 JSONObject jsonObject = new JSONObject(sb.toString());
-
                 myUtill.popupTitle = jsonObject.getString("PopupTitle");
                 myUtill.popupMessage = jsonObject.getString("PopupMessage");
-
                 VersionOnNet =jsonObject.getString("AppVersionInfo");
                 VersionOnNet = VersionOnNet.replace("\n","").replaceAll("^\"|\"$", "");
-
                 System.out.println("VERSION : "+sb.toString());
-
             } catch (MalformedURLException e) {
                 System.out.println("VERSION DATA MalfomedURL Exception : " + e.toString());
             } catch (IOException e) {
@@ -868,15 +848,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             super.onPostExecute(aVoid);
             //progressDialog.hide();
             try{
-
-                //Toast.makeText(MainActivity.this, "Version On Net "+VersionOnNet, Toast.LENGTH_SHORT).show();
-
                 String versionName = BuildConfig.VERSION_NAME;
-
-                //Toast.makeText(MainActivity.this, "Version On Device "+versionName, Toast.LENGTH_SHORT).show();
-
                 if (VersionOnNet.equals(versionName)){
-
                 }else{
                     MyUtill.alertDialogShowUpdate(MainActivity.this);
                 }
@@ -894,9 +867,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         }
                     }else{
                         Toast.makeText(MainActivity.this, "no", Toast.LENGTH_SHORT).show();
-
-
-
                     }
                 }
             }catch (Exception ex){

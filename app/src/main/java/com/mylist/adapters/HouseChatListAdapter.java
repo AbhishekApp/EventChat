@@ -28,11 +28,11 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import appy.com.wazznowapp.EventChatActivity;
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
 
 import static appy.com.wazznowapp.EventChatActivity.eventDetail;
+import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.HousePartyFragment.pdh;
 
 /**
@@ -52,9 +52,9 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
     String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
             "&apn=appy.com.wazznowapp"+
             "&afl=$"+
-            "&st=WazzNow+Title" +
-            "&sd=House+Party+Chat+Invitation" +
-            "&si=http://media.appypie.com/appypie-slider-video/images/logo_new.png"+
+            "&st=" +
+            "&sd=" +
+            "&si="+
             "&utm_source=";
 
     String shortLinkURL = "";
@@ -85,16 +85,11 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), EventChatActivity.eventID);
+                MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), eventID);
                 //openShareScreen
-
-                /*housePartyStarted(model.getTitle());*/
-
-                longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle();
+                longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle()+"&utm_campaign="+eventID;
                 msg = model.getTitle();
                 new newShortAsync().execute();
-
-
             }
         });
 

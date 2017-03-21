@@ -95,10 +95,10 @@ public class UserProfile {
 
 
     public void update_house_party_invitations(Context con, String newGroup) {
-        String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, null);
+        String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, "");
 
-        if (userGroup.contains(newGroup)) {
-
+        if (userGroup.contains(newGroup.substring(4))) {
+            System.out.println("it have so no update");
         }
         else {
             if (userGroup != null && !TextUtils.isEmpty(userGroup)) {

@@ -371,24 +371,17 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             linear.setVisibility(View.VISIBLE);
             linear.setPadding(35, 5, 80, 5);
 
-
             //share = (ImageView) v.findViewById(R.id.share);
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
                     MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name(),eventID); //no message ID as all will be in same sub-category
-
                     longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle()+"&utm_campaign="+eventID;
-
                     msg = model.getTitle();
-
                     new newShortAsync().execute();
                 }
             });
-
-
-
 
             if (model.getAuthor().equalsIgnoreCase("Admin")) {
                 imgIcon.setVisibility(View.VISIBLE);

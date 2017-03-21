@@ -85,25 +85,15 @@ public class EventModelAdapter extends BaseAdapter {
         viewHolder.tvCateName.setText(detail.getCategory_name());
         viewHolder.tvEventName.setText(detail.getEvent_title());
 
-        /*String event_detail = detail.getEvent_meta();
-        event_detail = event_detail.replace(",","\n");*/
         viewHolder.tvEventPlace.setText(detail.getEvent_meta());
 
         if(!TextUtils.isEmpty(detail.getEvent_image_url())) {
             downloadImageURL(detail.getEvent_id(), viewHolder.img);
         }
 
-        //System.out.println("isTimeBetweenTwoTime :::: "+myUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp()));
 
-        //if(myUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp())){
-          //  viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-          //  viewHolder.tvHour.setText("LIVE!    ");
-       // }/*else {*/
             String strTime = String.valueOf(myUtill.getTimeDifference(detail.getEvent_start())).trim();
-            //System.out.println("Line 89 event Time Difference :"+strTime+":");
-        /*if(!TextUtils.isEmpty(strTime)){
-            viewHolder.tvHour.setText(strTime);
-        }*/
+
             if (strTime.contains("Ago")) {
                 if(myUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp())){
                     viewHolder.tvHour.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -149,17 +139,7 @@ public class EventModelAdapter extends BaseAdapter {
             viewHolder.tvNoOfTune.setVisibility(View.VISIBLE);
             viewHolder.tvNoOfTune.setText(Html.fromHtml( "<b> "+subscribed_user + " </b> Tuned In"));
         }
-        /*try {
-            if (groupRec != null && detail.getCatergory_id() != null) {
-                if (MyApp.preferences.getBoolean(detail.getEvent_id (), false)) {
-                    viewHolder.imgChat.setImageResource(R.mipmap.chat_subscribe);
-                } else {
-                    viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
-                }
-            }
-        }catch (Exception ex){
-            viewHolder.imgChat.setImageResource(R.mipmap.chat_icon);
-        }*/
+
         try{
             if(colorIndex >= mycolor.length-1){
                 colorIndex = 0;

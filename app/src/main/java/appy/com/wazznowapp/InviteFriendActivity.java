@@ -1,4 +1,5 @@
 package appy.com.wazznowapp;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -37,7 +38,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -85,7 +88,10 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         eventID = getIntent().getStringExtra("EventID");
         eventName  = getIntent().getStringExtra("Event");
         eventTime  = getIntent().getStringExtra("EventTime");
-        longDeepLink = longDeepLink +"invi"+ eventCategory+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventID;
+
+        //Random random = new Random();
+        //String myRandom = String.format("%04d", random.nextInt(10000));
+
         eventTime = eventTime.split(" ")[0];
         init();
     }
@@ -197,34 +203,65 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
     private void onInviteClicked() {
 
-        new addRandomAlphaNumericKeytoEventNode().execute();
+        String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, "");
+        String SubDomain = "";
+        if(FireBaseHousePartyChatNode.length()>0) {
+            if ((userGroup.contains(CatID))) {
+                Toast.makeText(InviteFriendActivity.this, "userGroup already have house_party_invitations key", Toast.LENGTH_SHORT).show();
 
-        //abhishek
-       if (shortLinkURL.length()<=0 ){
-           new newShortAsync().execute();
-       }else{
-           if(msg.length()>0) {
-               //Intent sendIntent = new Intent(InviteFriendActivity.this, ShareEventActivity.class);
-               Intent intent2 = new Intent();
-               intent2.setAction(Intent.ACTION_SEND);
-               intent2.setType("text/plain");
-               intent2.putExtra(Intent.EXTRA_TEXT, msg );
-               startActivity(Intent.createChooser(intent2, "Share"));
-           }
-           else{
-               Toast.makeText(this, "no content", Toast.LENGTH_SHORT).show();
-           }
-       }
+                if (FireBaseHousePartyChatNode.contains(CatID)){
+                    List<String> items = Arrays.asList(FireBaseHousePartyChatNode.split(","));
+                    for (int i = 0; i <items.size() ; i++) {
+                        String j = items.get(i);
+                        if(j.contains(CatID)){
+                            SubDomain = j;
+                        }
+                    }
+
+                    longDeepLink = longDeepLink +"invi"+SubDomain+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventID;
+                }
+
+
+                //abhishek
+                if (shortLinkURL.length()<=0 ){
+                    new newShortAsync().execute();
+                }else{
+                    if(msg.length()>0) {
+                        //Intent sendIntent = new Intent(InviteFriendActivity.this, ShareEventActivity.class);
+                        Intent intent2 = new Intent();
+                        intent2.setAction(Intent.ACTION_SEND);
+                        intent2.setType("text/plain");
+                        intent2.putExtra(Intent.EXTRA_TEXT, msg );
+                        startActivity(Intent.createChooser(intent2, "Share"));
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "no content", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                new addRandomAlphaNumericKeytoEventNode().execute();
+            }
+        }
+        else{
+            //Toast.makeText(getApplicationContext(), "key is blank", Toast.LENGTH_SHORT).show();
+            new addRandomAlphaNumericKeytoEventNode().execute();
+        }
+
+
+
     }
 
 
 
     class addRandomAlphaNumericKeytoEventNode extends AsyncTask<String, Void, String> {
+        public String myRandom = "";
 
+        addRandomAlphaNumericKeytoEventNode(){
+            Random random = new Random();
+            myRandom = String.format("%04d", random.nextInt(10000));
+        }
         protected String doInBackground(String... urls) {
 
-                    Random random = new Random();
-                    String myRandom = String.format("%04d", random.nextInt(10000));
                     Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
                     String deviceID = MyApp.getDeviveID(InviteFriendActivity.this);
                     Firebase alanRef = usersRef.child("users/" + deviceID + "/0");
@@ -232,7 +269,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
 
                     if (FireBaseHousePartyChatNode.length()>0 ){
 
-                        if (!FireBaseHousePartyChatNode.substring(4).equals(eventID)){
+                        if (!FireBaseHousePartyChatNode.contains(CatID)){
                             nickname.put("house_party_invitations", FireBaseHousePartyChatNode+","+myRandom + CatID);
                         }else{
                             nickname.put("house_party_invitations", FireBaseHousePartyChatNode);
@@ -242,11 +279,33 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                     }
                     alanRef.updateChildren(nickname);
 
+                    FireBaseHousePartyChatNode = nickname.get("house_party_invitations").toString();
+
             return "";
         }
 
         protected void onPostExecute(String feed) {
             //onPost
+            //Toast.makeText(getApplicationContext(), "key is blank inserted :"+myRandom + CatID, Toast.LENGTH_SHORT).show();
+
+            longDeepLink = longDeepLink +"invi"+myRandom+ eventCategory+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventID;
+
+            //abhishek
+            if (shortLinkURL.length()<=0 ){
+                new newShortAsync().execute();
+            }else{
+                if(msg.length()>0) {
+                    //Intent sendIntent = new Intent(InviteFriendActivity.this, ShareEventActivity.class);
+                    Intent intent2 = new Intent();
+                    intent2.setAction(Intent.ACTION_SEND);
+                    intent2.setType("text/plain");
+                    intent2.putExtra(Intent.EXTRA_TEXT, msg );
+                    startActivity(Intent.createChooser(intent2, "Share"));
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "no content", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 

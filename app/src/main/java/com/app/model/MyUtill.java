@@ -159,8 +159,6 @@ public class MyUtill {
 
 
 
-
-
     public void JODATimeDiff(String today, String StartTime1){
         Period p = new Period(new DateTime(today), new DateTime(StartTime1), PeriodType.dayTime());
         int month = p.getMonths();
@@ -168,53 +166,16 @@ public class MyUtill {
         int hours = p.getHours();
         int mints = p.getMinutes();
         int seconds = p.getSeconds();
-
     }
 
 
 
-
-
-
     public static boolean isTimeBetweenTwoTime(String initialTime, String finalTime)  {
-        /*String reg = "^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$";
-        if (initialTime.matches(reg) && finalTime.matches(reg) && currentTime.matches(reg)) {
-            boolean valid = false;
-            //Start Time
-            java.util.Date inTime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(initialTime);
-            Calendar calendar1 = Calendar.getInstance();
-            calendar1.setTime(inTime);
-
-            //Current Time
-            java.util.Date checkTime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(currentTime);
-            Calendar calendar3 = Calendar.getInstance();
-            calendar3.setTime(checkTime);
-
-            //End Time
-            java.util.Date finTime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(finalTime);
-            Calendar calendar2 = Calendar.getInstance();
-            calendar2.setTime(finTime);
-
-            if (finalTime.compareTo(initialTime) < 0) {
-                calendar2.add(Calendar.DATE, 1);
-                calendar3.add(Calendar.DATE, 1);
-            }
-
-            java.util.Date actualTime = calendar3.getTime();
-            if ((actualTime.after(calendar1.getTime()) || actualTime.compareTo(calendar1.getTime()) == 0)&& actualTime.before(calendar2.getTime())) {
-                valid = true;
-            }
-            return valid;
-        } else {
-            throw new IllegalArgumentException("Not a valid time, expecting MM/dd/yyyy HH:mm:ss format");
-        }*/
-
         long mills = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         Date resultdate = new Date(mills);
         String currentTime = sdf.format(resultdate);
         System.out.println(sdf.format(resultdate));
-
         try{
             java.util.Date inTime1 = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(initialTime);
             java.util.Date inTime2 = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(finalTime);
@@ -231,122 +192,6 @@ public class MyUtill {
             e.printStackTrace();
             return false;
         }
-
-
-        /*
-
-
-        try {
-            String string1 = "20:11:13";
-            Date time1 = new SimpleDateFormat("HH:mm:ss").parse(string1);
-            Calendar calendar1 = Calendar.getInstance();
-            calendar1.setTime(time1);
-
-            String string2 = "14:49:00";
-            Date time2 = new SimpleDateFormat("HH:mm:ss").parse(string2);
-            Calendar calendar2 = Calendar.getInstance();
-            calendar2.setTime(time2);
-            calendar2.add(Calendar.DATE, 1);
-
-            String someRandomTime = "01:00:00";
-            Date d = new SimpleDateFormat("HH:mm:ss").parse(someRandomTime);
-            Calendar calendar3 = Calendar.getInstance();
-            calendar3.setTime(d);
-            calendar3.add(Calendar.DATE, 1);
-
-            Date x = calendar3.getTime();
-            if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
-                //checkes whether the current time is between 14:49:00 and 20:11:13.
-                System.out.println(true);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-      */
-
-
-
-
-
-        /*
-
-          public static boolean isTimeBetweenTwoTime(String argStartTime,
-            String argEndTime, String argCurrentTime) throws ParseException {
-        String reg = "^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$";
-        //
-        if (argStartTime.matches(reg) && argEndTime.matches(reg)
-                && argCurrentTime.matches(reg)) {
-            boolean valid = false;
-            // Start Time
-            java.util.Date startTime = new SimpleDateFormat("HH:mm:ss")
-                    .parse(argStartTime);
-            Calendar startCalendar = Calendar.getInstance();
-            startCalendar.setTime(startTime);
-
-            // Current Time
-            java.util.Date currentTime = new SimpleDateFormat("HH:mm:ss")
-                    .parse(argCurrentTime);
-            Calendar currentCalendar = Calendar.getInstance();
-            currentCalendar.setTime(currentTime);
-
-            // End Time
-            java.util.Date endTime = new SimpleDateFormat("HH:mm:ss")
-                    .parse(argEndTime);
-            Calendar endCalendar = Calendar.getInstance();
-            endCalendar.setTime(endTime);
-
-            //
-            if (currentTime.compareTo(endTime) < 0) {
-
-                currentCalendar.add(Calendar.DATE, 1);
-                currentTime = currentCalendar.getTime();
-
-            }
-
-            if (startTime.compareTo(endTime) < 0) {
-
-                startCalendar.add(Calendar.DATE, 1);
-                startTime = startCalendar.getTime();
-
-            }
-            //
-            if (currentTime.before(startTime)) {
-
-                System.out.println(" Time is Lesser ");
-
-                valid = false;
-            } else {
-
-                if (currentTime.after(endTime)) {
-                    endCalendar.add(Calendar.DATE, 1);
-                    endTime = endCalendar.getTime();
-
-                }
-
-                System.out.println("Comparing , Start Time /n " + startTime);
-                System.out.println("Comparing , End Time /n " + endTime);
-                System.out
-                        .println("Comparing , Current Time /n " + currentTime);
-
-                if (currentTime.before(endTime)) {
-                    System.out.println("RESULT, Time lies b/w");
-                    valid = true;
-                } else {
-                    valid = false;
-                    System.out.println("RESULT, Time does not lies b/w");
-                }
-
-            }
-            return valid;
-
-        } else {
-            throw new IllegalArgumentException(
-                    "Not a valid time, expecting HH:MM:SS format");
-        }
-
-    }
-        */
 
     }
 
