@@ -14,9 +14,6 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
-import org.joda.time.DateTime;
-import org.joda.time.Period;
-import org.joda.time.PeriodType;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -70,7 +67,7 @@ public class MyUtill {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
-            //e.printStackTrace();// for now eat exceptions
+            e.printStackTrace();// for now eat exceptions
         } catch (Exception ex){
             Log.e("MyUtill", "Get Data From Server ERROR: "+ex.toString());
         }
@@ -156,18 +153,6 @@ public class MyUtill {
         }
         return diff;
     }
-
-
-
-    public void JODATimeDiff(String today, String StartTime1){
-        Period p = new Period(new DateTime(today), new DateTime(StartTime1), PeriodType.dayTime());
-        int month = p.getMonths();
-        int days = p.getDays();
-        int hours = p.getHours();
-        int mints = p.getMinutes();
-        int seconds = p.getSeconds();
-    }
-
 
 
     public static boolean isTimeBetweenTwoTime(String initialTime, String finalTime)  {

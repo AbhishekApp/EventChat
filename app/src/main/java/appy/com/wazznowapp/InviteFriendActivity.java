@@ -1,5 +1,4 @@
 package appy.com.wazznowapp;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -89,9 +88,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         eventName  = getIntent().getStringExtra("Event");
         eventTime  = getIntent().getStringExtra("EventTime");
 
-        //Random random = new Random();
-        //String myRandom = String.format("%04d", random.nextInt(10000));
-
         eventTime = eventTime.split(" ")[0];
         init();
     }
@@ -103,8 +99,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         tvMsg = (TextView) findViewById(R.id.tvInviteText);
         userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
         tvMsg.setText(msg.replace("event",eventName).replace("DeepLink",""));
-
-//        msg =msg.replace("event",eventCategory)
         btnShare = (Button) findViewById(R.id.btnInviteFriend);
         btnShare.setOnClickListener(this);
     }
@@ -187,7 +181,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 JSONObject jsonObject=new JSONObject(response);
                 String id=jsonObject.getString("id");
                 shortLinkURL = id;
-
                 msg =msg.replace("event",eventName).replace("DeepLink",shortLinkURL);
                 Intent intent2 = new Intent();
                 intent2.setAction(Intent.ACTION_SEND);
@@ -202,13 +195,11 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void onInviteClicked() {
-
         String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, "");
         String SubDomain = "";
         if(FireBaseHousePartyChatNode.length()>0) {
             if ((userGroup.contains(CatID))) {
                 Toast.makeText(InviteFriendActivity.this, "userGroup already have house_party_invitations key", Toast.LENGTH_SHORT).show();
-
                 if (FireBaseHousePartyChatNode.contains(CatID)){
                     List<String> items = Arrays.asList(FireBaseHousePartyChatNode.split(","));
                     for (int i = 0; i <items.size() ; i++) {
@@ -217,11 +208,8 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                             SubDomain = j;
                         }
                     }
-
                     longDeepLink = longDeepLink +"invi"+SubDomain+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventID;
                 }
-
-
                 //abhishek
                 if (shortLinkURL.length()<=0 ){
                     new newShortAsync().execute();
@@ -236,8 +224,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                     }
                     else{
                         Toast.makeText(getApplicationContext(), "no content", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                    }}
             } else {
                 new addRandomAlphaNumericKeytoEventNode().execute();
             }
@@ -246,9 +233,6 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             //Toast.makeText(getApplicationContext(), "key is blank", Toast.LENGTH_SHORT).show();
             new addRandomAlphaNumericKeytoEventNode().execute();
         }
-
-
-
     }
 
 
@@ -261,35 +245,28 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             myRandom = String.format("%04d", random.nextInt(10000));
         }
         protected String doInBackground(String... urls) {
-
-                    Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
-                    String deviceID = MyApp.getDeviveID(InviteFriendActivity.this);
-                    Firebase alanRef = usersRef.child("users/" + deviceID + "/0");
-                    Map<String, Object> nickname = new HashMap<String, Object>();
-
-                    if (FireBaseHousePartyChatNode.length()>0 ){
-
-                        if (!FireBaseHousePartyChatNode.contains(CatID)){
-                            nickname.put("house_party_invitations", FireBaseHousePartyChatNode+","+myRandom + CatID);
-                        }else{
-                            nickname.put("house_party_invitations", FireBaseHousePartyChatNode);
-                        }
-                    }else {
-                        nickname.put("house_party_invitations", myRandom + CatID);
-                    }
-                    alanRef.updateChildren(nickname);
-
-                    FireBaseHousePartyChatNode = nickname.get("house_party_invitations").toString();
-
+            Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
+            String deviceID = MyApp.getDeviveID(InviteFriendActivity.this);
+            Firebase alanRef = usersRef.child("users/" + deviceID + "/0");
+            Map<String, Object> nickname = new HashMap<String, Object>();
+            if (FireBaseHousePartyChatNode.length()>0 ){
+                if (!FireBaseHousePartyChatNode.contains(CatID)){
+                    nickname.put("house_party_invitations", FireBaseHousePartyChatNode+","+myRandom + CatID);
+                }else{
+                    nickname.put("house_party_invitations", FireBaseHousePartyChatNode);
+                }
+            }else {
+                nickname.put("house_party_invitations", myRandom + CatID);
+            }
+            alanRef.updateChildren(nickname);
+            FireBaseHousePartyChatNode = nickname.get("house_party_invitations").toString();
             return "";
         }
 
         protected void onPostExecute(String feed) {
             //onPost
             //Toast.makeText(getApplicationContext(), "key is blank inserted :"+myRandom + CatID, Toast.LENGTH_SHORT).show();
-
             longDeepLink = longDeepLink +"invi"+myRandom+ eventCategory+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventID;
-
             //abhishek
             if (shortLinkURL.length()<=0 ){
                 new newShortAsync().execute();

@@ -108,7 +108,7 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
             linear.setVisibility(View.VISIBLE);
             comRL.setVisibility(View.GONE);
             if((fromUser.equals(MyApp.getDeviveID(activity)))) {
-//                tvMsg.setGravity(Gravity.RIGHT);
+                //tvMsg.setGravity(Gravity.RIGHT);
                 tvMsg.setTextColor(activity.getResources().getColor(R.color.white));
                 tvMsg.setPadding(25,15,70,15);
                 tvUser.setGravity(Gravity.RIGHT);

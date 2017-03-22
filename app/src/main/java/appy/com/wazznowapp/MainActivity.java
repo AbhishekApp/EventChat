@@ -284,15 +284,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         iChat.putExtra("EventDetail", eventDetail);
         startActivity(iChat);
 
-      /*  for(int i = 0; i < arrayListEvent.size() ; i++){
-            EventDetail event = arrayListEvent.get(i);
-            if(eventName.equals(event.getCategory_name())){
-                Intent iChat = new Intent(this, EventChatActivity.class);
-                iChat.putExtra("EventDetail", event);
-                startActivity(iChat);
-                break;
-            }
-        }*/
     }
 
 
@@ -682,20 +673,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 flagExist = jsonObject.has(deviceID);
 
                 //System.out.println("EVENT DATA  Found : "+flagExist);
-          //    jUser = jsonObject.getJSONObject(deviceID);
+                //jUser = jsonObject.getJSONObject(deviceID);
                 jsonArray = jsonObject.getJSONArray(deviceID);
                 jUser = jsonArray.getJSONObject(0);
                 String devID = jUser.optString(deviceID);
                 String joinedGroup = jUser.optString("joined_group");
                 String HousePartyChat = jUser.optString("house_party_invitations");
 
-                    SharedPreferences.Editor editor =  MyApp.preferences.edit();
-                    editor.putString(HOUSE_PARTY_INVITATIONS, HousePartyChat);
-                    //if (HousePartyChat.contains(",")){
-                    //    FireBaseHousePartyChatNode =  HousePartyChat.split(",")[0];
-                   // }else{
-                        FireBaseHousePartyChatNode =  HousePartyChat;
-                   // }
+                SharedPreferences.Editor editor =  MyApp.preferences.edit();
+                editor.putString(HOUSE_PARTY_INVITATIONS, HousePartyChat);
+                editor.putString("commentator_privilege", jUser.optString("commentator_privilege"));
+                //if (HousePartyChat.contains(",")){
+                //    FireBaseHousePartyChatNode =  HousePartyChat.split(",")[0];
+                // }else{
+                FireBaseHousePartyChatNode =  HousePartyChat;
+                // }
                 String jnGrp[] = joinedGroup.split(",");
 
                 for(int i=0; i < jnGrp.length ; i++){

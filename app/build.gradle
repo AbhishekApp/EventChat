@@ -42,11 +42,9 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:10.0.1' //for firebase images storage
     compile 'com.google.firebase:firebase-database:10.0.1'
     compile 'com.google.firebase:firebase-core:10.0.1' //for firebase analytics
-    //compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.google.apis:google-api-services-urlshortener:v1-rev47-1.22.0'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     compile 'com.facebook.android:facebook-android-sdk:4.0.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'joda-time:joda-time:2.9.4'
 }
 apply plugin: 'com.google.gms.google-services'

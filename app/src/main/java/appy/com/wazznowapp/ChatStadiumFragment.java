@@ -558,8 +558,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         }
                         if (!TextUtils.isEmpty(msg)) {
                          // chatAdapter.notifyDataSetChanged();
-
-                          sendMsg(msg,"normal");
+                            sendMsg(msg,"normal");
                             etMsg.setText("");
                           if(MyApp.preferences.getString(MyApp.USER_TYPE, "").equals("com")){
                               System.out.println("com");
@@ -570,11 +569,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                           Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
                         }
                     }else{
-
                         Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                         startActivityForResult(ii, 111);
-
-
                     }
                 }else{
                     if (view != null) {
@@ -670,7 +666,15 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor.putString("SendTime: " + EventChatActivity.eventID, String.valueOf(noSend));
                 editor.putBoolean(EventChatActivity.eventID, true);
                 editor.commit();
-                ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
+
+                String commentator_privilege = MyApp.preferences.getString("commentator_privilege", "");
+                ChatData alan;
+                if (commentator_privilege.contains(eventDetail.getCatergory_id())){
+                    alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),"com",messageType);
+                }else{
+                     alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
+                }
+
                 alanRef.push().setValue(alan);
                 if (messageType.equals("normal")) {
                     MyApp.CustomEventAnalytics("chat_sent", EventChatActivity.SuperCateName, eventDetail.getCatergory_id());
@@ -689,7 +693,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
          }
         }else{
-            ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
+
+            String commentator_privilege = MyApp.preferences.getString("commentator_privilege", "");
+            ChatData alan;
+            if (commentator_privilege.contains(eventDetail.getCatergory_id())){
+                alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),"com",messageType);
+            }else{
+                alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
+            }
+
+            //ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
             alanRef.push().setValue(alan);
                 try {
                     if (messageType.equals("normal")) {

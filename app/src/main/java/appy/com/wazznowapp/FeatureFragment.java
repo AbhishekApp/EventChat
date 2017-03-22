@@ -400,9 +400,6 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //pd = new android.widget.ProgressBar(InviteFriendActivity.this,null,android.R.attr.progressBarStyleLarge);
-            //pd.getIndeterminateDrawable().setColorFilter(0xFFFF0000,android.graphics.PorterDuff.Mode.MULTIPLY);
-            //pd.setCancelable(false);
             pd.setVisibility(View.VISIBLE);
         }
 

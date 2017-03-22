@@ -123,6 +123,4 @@ public class UserProfile {
             editor.commit();
         }
     }
-
-
 }

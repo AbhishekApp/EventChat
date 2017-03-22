@@ -88,7 +88,6 @@ public class EventChatActivity extends AppCompatActivity {
         if (MyApp.firebaseFlag && connectDetector.getConnection()) {
             init();
             /**************************************************Fetching Commentator from Stadium***********************************************************/
-
             alList.clear();
 
             mDatabaseRefrenceSync = new Firebase(MyApp.FIREBASE_BASE_URL).child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + EventChatActivity.eventID).child("StadiumChat");
@@ -116,7 +115,6 @@ public class EventChatActivity extends AppCompatActivity {
                             mKeys.add(nextIndex, key);
                         }
                     }
-                        //System.out.println(alList.toString());
                     }
                 }
 
@@ -157,9 +155,6 @@ public class EventChatActivity extends AppCompatActivity {
                 }
             };
             mDatabaseRefrenceSync.addChildEventListener(childEventListener);
-
-
-
 
             /**************************************************Fetching Commentator from House Party ***********************************************************/
 
@@ -231,14 +226,9 @@ public class EventChatActivity extends AppCompatActivity {
                 }
             };
             mDatabaseRefrenceSync1.addChildEventListener(childEventListener1);
-
-
-
         } else {
             Toast.makeText(this, "Please check internet connection. Server Error.", Toast.LENGTH_SHORT).show();
-            //finish();
         }
-        //init();
     }
 
     public class CustomComparator implements Comparator<ChatData> {
@@ -247,27 +237,6 @@ public class EventChatActivity extends AppCompatActivity {
             return o1.getTimestamp().compareTo(o2.getTimestamp());
         }
     }
-
-
-    /*public static class MyObject implements Comparable<MyObject> {
-
-        private Date dateTime;
-
-        public Date getDateTime() {
-            return dateTime;
-        }
-
-        public void setDateTime(Date datetime) {
-            this.dateTime = datetime;
-        }
-
-        @Override
-        public int compareTo(MyObject o) {
-            return getDateTime().compareTo(o.getDateTime());
-        }
-    }*/
-
-
 
 
     private void init() {
@@ -295,8 +264,6 @@ public class EventChatActivity extends AppCompatActivity {
                 System.out.println("onPageScrollStateChanged tab selected");
             }
         });
-
-
 
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -328,7 +295,6 @@ public class EventChatActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.chat_menu, menu);
-
         MenuItem signup = menu.findItem(R.id.menu_signup);
         if (isSignupSuccessful) {
             signup.setVisible(false);
@@ -371,13 +337,6 @@ public class EventChatActivity extends AppCompatActivity {
         } else if (id == R.id.menu_noti) {
             //Toast.makeText(this, "Notification is coming soon", Toast.LENGTH_SHORT).show();
         }
-        /*ImageButton locButton = (ImageButton) findViewById(R.id.menu_noti);
-        locButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopup(v);
-            }
-        });*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -454,20 +413,8 @@ public class EventChatActivity extends AppCompatActivity {
                     //System.out.println("future date");
                     //future date
                     moreThanDay = Math.abs(new Date().getTime() - sDate.getTime()) > MILLIS_PER_DAY;
-                    //System.out.println("date is more than a Day:  "+moreThanDay);
-                    /*if (moreThanDay){
-                        Date ssDate = sdf.parse(alList.get(i).getTimestamp());
-                        String newDate= new SimpleDateFormat("hh:mm a dd-MMM-yyyy").format(ssDate);
-
-                        String[] parts = newDate.split(" ");
-
-                        ActionItemAddText("<br>"+*//*toTitleCase(*//*alList.get(i).getTitle()*//*)*//*+"<br><font color='grey'>"+parts[0]+" "+parts[1].toLowerCase()+" "+parts[2] +"</font><br>");
-                        //put content here
-                    }else
-                    {*/
                         time = new SimpleDateFormat("hh:mm a").format(new Date(sDate.getTime())) ;
                         ActionItemAddText("<br>"+/*toTitleCase(*/alList.get(i).getTitle()/*)*/+"<br><br><font color='grey'>"+time.toLowerCase()+"</font><br>");
-                    //}
                 }
                 else{
                     //back date

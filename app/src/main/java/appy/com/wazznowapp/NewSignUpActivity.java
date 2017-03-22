@@ -236,6 +236,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
             alanisawesomeMap.put("email", email);
             alanisawesomeMap.put("userType", "user");
             alanisawesomeMap.put("house_party_invitations","");
+            alanisawesomeMap.put("commentator_privilege","");
 
             //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
             final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
