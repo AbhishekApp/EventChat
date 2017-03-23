@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedCricketURL = MyApp.FIREBASE_BASE_URL+"/Canned/$.json";
-    //String cannedFootBallURL = MyApp.FIREBASE_BASE_URL+"/Canned/FootBall.json";
     String AdminURL = MyApp.FIREBASE_BASE_URL+"/admin_msg.json";
     String appInfo = MyApp.FIREBASE_BASE_URL+"/AppInfo.json";
     int REQUEST_INVITE = 111;
@@ -737,6 +736,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                    editor.putString(MyApp.USER_PASSWORD, deviceID);
                    editor.putString(MyApp.USER_JOINED_GROUP, uJoinedGroup);
                    editor.putString(HOUSE_PARTY_INVITATIONS, house_party_invitations);
+                   editor.putString("user_enabled", jUser.optString("user_enabled"));
+
                    editor.commit();
                } else {
                    String email = MyApp.preferences.getString(MyApp.USER_EMAIL, null);

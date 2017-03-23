@@ -159,8 +159,8 @@ public class EventModelAdapter extends BaseAdapter {
             Glide.with(con)
             .using(new FirebaseImageLoader())
             .load(pathReference)
-            .diskCacheStrategy
-            (DiskCacheStrategy.SOURCE) //Unfortunately there isn't any way to influence the contents of the cache directly.
+            .placeholder(R.drawable.def_orig)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE) //Unfortunately there isn't any way to influence the contents of the cache directly.
                                  // You cannot either remove an item explicitly, or force one to be kept.
                                  // In practice with an appropriate disk cache size you usually don't need to worry about doing either.
                                  // If you display your image often enough, it won't be evicted.

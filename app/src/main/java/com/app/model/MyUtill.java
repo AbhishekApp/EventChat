@@ -31,6 +31,8 @@ import appy.com.wazznowapp.EventChatActivity;
 import appy.com.wazznowapp.MyApp;
 import appy.com.wazznowapp.R;
 
+import static appy.com.wazznowapp.EventChatActivity.CatID;
+import static appy.com.wazznowapp.EventChatActivity.eventID;
 import static appy.com.wazznowapp.HousePartyFragment.getCurrentTimeStamp;
 import static appy.com.wazznowapp.MyApp.FIREBASE_BASE_URL;
 
@@ -71,7 +73,6 @@ public class MyUtill {
         } catch (Exception ex){
             Log.e("MyUtill", "Get Data From Server ERROR: "+ex.toString());
         }
-        //System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
         return jsonObject;
     }
 
@@ -86,7 +87,15 @@ public class MyUtill {
     }
 
 
-
+    public static void addMsgToCommentatorNotifier(Activity act,String msg){
+        Firebase myFirebaseRef = new Firebase(FIREBASE_BASE_URL);
+        Firebase alanRef = myFirebaseRef.child("/").child("commentator_notifier");
+        String userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+        alanRef.keepSynced(true);
+        ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(act), getCurrentTimeStamp(),"com","normal");
+        NotifierChatData notaln = new NotifierChatData(alan,CatID,eventID);
+        alanRef.push().setValue(notaln);
+    }
 
     public static String getDaysDifference(String startDate){
         String diff="";
@@ -118,7 +127,6 @@ public class MyUtill {
             long mills = Date2.getTime() - System.currentTimeMillis();
             long seconds = mills/1000;
             long days = seconds / 86400;
-
             String temp = ""+seconds;
             if (temp.contains("-")){
                     diff="Ago";
@@ -200,10 +208,8 @@ public class MyUtill {
     }
 
 
-
     public static void alertDialogShowUpdate(final Activity activity)
-    {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+    {   final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
         //alertDialog.setTitle(activity.getResources().getString(R.string.update_title));
         alertDialog.setTitle(popupTitle);
         //alertDialog.setMessage(activity.getResources().getString(R.string.update_msg));

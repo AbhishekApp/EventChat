@@ -12,8 +12,6 @@ public class ChatData {
     private String authorType="";
     private String messageType;
 
-
-
     public ChatData() {}
     /*  public ChatData(String author, String title)
    {

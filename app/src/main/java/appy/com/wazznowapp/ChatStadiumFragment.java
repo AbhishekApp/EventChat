@@ -551,23 +551,28 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             } else if (id == R.id.imgSendChat) {
                 if(!TextUtils.isEmpty(userName)) {
                   if(!TextUtils.isEmpty(userName) && !userName.contains("Guest")) {
-                         msg = etMsg.getText().toString();
-                        subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
-                        if (!subscribedGroup.contains(eventDetail.getCatergory_id())) {
-                            getAdminSecondMessage();
-                        }
-                        if (!TextUtils.isEmpty(msg)) {
-                         // chatAdapter.notifyDataSetChanged();
-                            sendMsg(msg,"normal");
-                            etMsg.setText("");
-                          if(MyApp.preferences.getString(MyApp.USER_TYPE, "").equals("com")){
-                              System.out.println("com");
-                          }else{
-                              System.out.println("user");
+
+                      if (MyApp.preferences.getString("user_enabled", "").length() > 0 && MyApp.preferences.getString("user_enabled", "").equals("true")) {
+                          msg = etMsg.getText().toString();
+                          subscribedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
+                          if (!subscribedGroup.contains(eventDetail.getCatergory_id())) {
+                              getAdminSecondMessage();
                           }
-                        } else {
-                          Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
-                        }
+                          if (!TextUtils.isEmpty(msg)) {
+                              // chatAdapter.notifyDataSetChanged();
+                              sendMsg(msg, "normal");
+                              etMsg.setText("");
+                              if (MyApp.preferences.getString(MyApp.USER_TYPE, "").equals("com")) {
+                                  System.out.println("com");
+                              } else {
+                                  System.out.println("user");
+                              }
+                          } else {
+                              Toast.makeText(getActivity(), "Blank message not send", Toast.LENGTH_SHORT).show();
+                          }
+                      }else{
+                          Toast.makeText(getActivity(), "User has been Disabled", Toast.LENGTH_SHORT).show();
+                      }
                     }else{
                         Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                         startActivityForResult(ii, 111);
@@ -633,11 +638,17 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //StadiumMsgLimit+=2;
-        String msg = eventDetail.getCannedMessage().get(position);
-        sendMsg(msg,"canned"); //cannned message click
 
-        etMsg.setText("");
+        if (MyApp.preferences.getString("user_enabled", "").length() > 0 && MyApp.preferences.getString("user_enabled", "").equals("true")) {
+            //StadiumMsgLimit+=2;
+            String msg = eventDetail.getCannedMessage().get(position);
+            sendMsg(msg, "canned"); //cannned message click
+
+            etMsg.setText("");
+        }else
+        {
+            Toast.makeText(getActivity(), "User has been Disabled", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void sendMsg(String msg,String messageType){
@@ -671,6 +682,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 ChatData alan;
                 if (commentator_privilege.contains(eventDetail.getCatergory_id())){
                     alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),"com",messageType);
+
+                    if(msg.contains("#notifier")){
+                        MyUtill.addMsgToCommentatorNotifier(getActivity(), msg);
+                    }
                 }else{
                      alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
                 }
@@ -698,6 +713,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             ChatData alan;
             if (commentator_privilege.contains(eventDetail.getCatergory_id())){
                 alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),"com",messageType);
+                if(msg.contains("#notifier")){
+                    MyUtill.addMsgToCommentatorNotifier(getActivity(), msg);
+                }
             }else{
                 alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
             }

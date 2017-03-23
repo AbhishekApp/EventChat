@@ -228,6 +228,8 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
 
             Firebase firebase = new Firebase(firebaseUserURL);
             Map<String, String> alanisawesomeMap = new HashMap<String, String>();
+            String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, "");
+            String commentator_privilege = MyApp.preferences.getString("commentator_privilege","");
             alanisawesomeMap.put("name", uName);
             alanisawesomeMap.put("lastName", uLastName);
             alanisawesomeMap.put("passKey", password);
@@ -235,8 +237,9 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
             alanisawesomeMap.put("phone", uPhone);
             alanisawesomeMap.put("email", email);
             alanisawesomeMap.put("userType", "user");
-            alanisawesomeMap.put("house_party_invitations","");
-            alanisawesomeMap.put("commentator_privilege","");
+            alanisawesomeMap.put("house_party_invitations",""+userGroup);
+            alanisawesomeMap.put("commentator_privilege",""+commentator_privilege);
+            alanisawesomeMap.put("user_enabled","true");
 
             //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
             final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
