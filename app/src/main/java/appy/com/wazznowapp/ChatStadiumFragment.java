@@ -275,6 +275,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     btnYes.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
+                       // MyUtill.subscribeUserForEvents(eventID)
+
+
                         MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name(),eventID);
                         editor = MyApp.preferences.edit();
                         editor.putBoolean(eventDetail.getCatergory_id(), true);
@@ -312,13 +316,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             View vi = inflater.inflate(R.layout.admin_msg, null);
             LinearLayout linearAdminLay = (LinearLayout) vi.findViewById(R.id.linearAdmin);
 
-
             listView.addHeaderView(vi);
             LinearLayout linearAdminBtn = (LinearLayout) vi.findViewById(R.id.linearAdminBtn);
             linearAdminBtn.setVisibility(View.GONE);
-
             linearAdminBtn.setGravity(Gravity.CENTER);
-
             TextView tvAdminMsg = (TextView) vi.findViewById(tvAdminMsg1);
             LinearLayout.LayoutParams relativeParam;
             relativeParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -627,13 +628,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onRefresh() {
 
         StadiumMsgLimit = StadiumMsgLimit+5;
-
         swipeRefreshLayout.setRefreshing(false);
-
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this).attach(ChatStadiumFragment.this).commit();
-
-
     }
 
     @Override

@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,6 +97,14 @@ public class MyUtill {
         NotifierChatData notaln = new NotifierChatData(alan,CatID,eventID);
         alanRef.push().setValue(notaln);
     }
+
+
+
+    public static  void subscribeUserForEvents(String eventID){
+        FirebaseMessaging.getInstance().subscribeToTopic(eventID);
+    }
+
+
 
     public static String getDaysDifference(String startDate){
         String diff="";

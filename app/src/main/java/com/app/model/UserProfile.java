@@ -89,6 +89,8 @@ public class UserProfile {
         SharedPreferences.Editor editor = MyApp.preferences.edit();
         editor.putString(MyApp.USER_JOINED_GROUP, userGroup);
         editor.commit();
+
+        MyUtill.subscribeUserForEvents(userGroup);
     }
 
 

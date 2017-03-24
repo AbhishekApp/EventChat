@@ -14,7 +14,7 @@
         android:layout_weight="0.7"
         android:background="@color/white"
         android:scaleType="fitXY"
-        android:src="@drawable/def_orig" />
+        android:src="@drawable/def_orig_" />
 
     <LinearLayout
         android:layout_width="match_parent"
