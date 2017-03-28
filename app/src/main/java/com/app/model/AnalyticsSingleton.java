@@ -1,7 +1,7 @@
 package com.app.model;
 
 /**
- * Created by admin on 1/27/2017.
+ * Created by manish on 1/27/2017.
  */
 
 public class AnalyticsSingleton {

@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "866557244649",
-    "firebase_url": "https://wazznow-cd155.firebaseio.com",
-    "project_id": "wazznow-cd155",
-    "storage_bucket": "wazznow-cd155.appspot.com"
+    "project_number": "1070660793005",
+    "firebase_url": "https://wazzon-bec6a.firebaseio.com",
+    "project_id": "wazzon-bec6a",
+    "storage_bucket": "wazzon-bec6a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:866557244649:android:82500e4e8f87f37f",
+        "mobilesdk_app_id": "1:1070660793005:android:a10621ea66906a4d",
         "android_client_info": {
-          "package_name": "appy.com.wazznowapp"
+          "package_name": "com.get.wazzon"
         }
       },
       "oauth_client": [
         {
-          "client_id": "866557244649-0rist97q22beqo645pq2k81kqv7nd5rj.apps.googleusercontent.com",
+          "client_id": "1070660793005-vr3riuv4c7iksac6diidadmhc367svmk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "appy.com.wazznowapp",
-            "certificate_hash": "7E25BA0C63264EDF8ECA3FB8B732143CDD289B20"
+            "package_name": "com.get.wazzon",
+            "certificate_hash": "3812788a61870c9b0b03405036d54525e4dea12b"
           }
         },
         {
-          "client_id": "866557244649-kjaot0eq6aut6gcb8e9c3q695oq0tdto.apps.googleusercontent.com",
+          "client_id": "1070660793005-h67p62l27p0k6fe9pfc03j87g69802e9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAj6g7L2CVtsUM1pTaQHb6eJW_qIXvoiRs"
+          "current_key": "AIzaSyDmWZqj6o169fGG9qKi3z4-w9lwQOlVSeA"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "866557244649-kjaot0eq6aut6gcb8e9c3q695oq0tdto.apps.googleusercontent.com",
+              "client_id": "1070660793005-h67p62l27p0k6fe9pfc03j87g69802e9.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

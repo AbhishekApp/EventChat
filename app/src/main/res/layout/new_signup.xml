@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Sign up First Captain"
+            android:text="@string/signup_tv"
             android:textColor="#605f64"
             android:textSize="20dp"
             android:textStyle="bold" />

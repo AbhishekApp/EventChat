@@ -1,4 +1,5 @@
 package com.mylist.adapters;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,9 +8,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.get.wazzon.R;
+
 import java.util.ArrayList;
 
-import appy.com.wazznowapp.R;
 /**
  * Created by admin on 10/21/2016.
  */

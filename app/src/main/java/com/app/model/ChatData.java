@@ -5,18 +5,15 @@ package com.app.model;
  */
 public class ChatData {
 
-    private String author;
-    private String title;
-    private String toUser;
-    private String timestamp;
+    private String author="";
+    private String title="";
+    private String toUser="";
+    private String timestamp="";
     private String authorType="";
-    private String messageType;
+    private String messageType="";
 
     public ChatData() {}
-    /*  public ChatData(String author, String title)
-   {
-       this(author, title, " ");
-   }*/
+
     public ChatData(String author, String title, String toUser, String timestamp, String authorType, String messageType)
     {
         this.author = author;

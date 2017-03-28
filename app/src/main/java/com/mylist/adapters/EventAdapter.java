@@ -7,8 +7,8 @@ import android.widget.TextView;
 
 import com.app.model.EventData;
 import com.firebase.client.Query;
+import com.get.wazzon.R;
 
-import appy.com.wazznowapp.R;
 
 /**
  * Created by admin on 9/8/2016.

@@ -18,10 +18,11 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.get.wazzon.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import appy.com.wazznowapp.R;
 
 
 /**

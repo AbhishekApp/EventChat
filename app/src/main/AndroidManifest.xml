@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="appy.com.wazznowapp">
+    package="com.get.wazzon">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -30,23 +30,24 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
+                <!-- Sets the intent action to view the activity -->
                 <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
+                <!-- Allows the link to be opened from a web browser -->
                 <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Allows the deep link to be used without specifying the app name -->
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- URI tutsplus://deeplink -->
 
-                <data
-                    android:host="https://ry5a4.app.goo.gl/pGuk"
-                    android:scheme="wazznow" />
-                <data
-                    android:host="http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk"
-                    android:scheme="wazznow" />
+                <data android:scheme="WazzOn" android:host="https://chmy5.app.goo.gl"/>
+
+
             </intent-filter>
         </activity>
         <activity

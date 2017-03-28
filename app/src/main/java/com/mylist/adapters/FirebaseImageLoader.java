@@ -1,7 +1,7 @@
 package com.mylist.adapters;
 
 /**
- * Created by admin on 1/10/2017.
+ * Created by manish on 1/10/2017.
  */
 import android.util.Log;
 

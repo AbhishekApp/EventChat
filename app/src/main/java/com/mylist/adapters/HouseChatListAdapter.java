@@ -3,15 +3,19 @@ package com.mylist.adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.model.ChatData;
 import com.firebase.client.Query;
+import com.get.wazzon.MyApp;
+import com.get.wazzon.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,12 +32,11 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import appy.com.wazznowapp.MyApp;
-import appy.com.wazznowapp.R;
+import static com.get.wazzon.EventChatActivity.eventDetail;
+import static com.get.wazzon.EventChatActivity.eventID;
+import static com.get.wazzon.HousePartyFragment.pdh;
+import static com.get.wazzon.MyApp.DEEPLINK_BASE_URL;
 
-import static appy.com.wazznowapp.EventChatActivity.eventDetail;
-import static appy.com.wazznowapp.EventChatActivity.eventID;
-import static appy.com.wazznowapp.HousePartyFragment.pdh;
 
 /**
  * Created by admin on 8/11/2016.
@@ -43,14 +46,14 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
     Activity activity;
     TextView tvUser;
     TextView tvMsg;
-    TextView btnYes, btnNo;
+    //TextView btnYes, btnNo;
     LinearLayout linear;//, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
     ImageView imgIcon;
     RelativeLayout comRL;
     TextView tvComMsg1;
-    String longDeepLink = "https://ry5a4.app.goo.gl/?link=$" +
-            "&apn=appy.com.wazznowapp"+
+    String longDeepLink = DEEPLINK_BASE_URL+"?link=$" +
+            "&apn=com.get.wazzon"+
             "&afl=$"+
             "&st=" +
             "&sd=" +
@@ -63,6 +66,8 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
     public HouseChatListAdapter(Query ref, Activity activity, int layout){
         super(ref, ChatData.class, layout, activity);
         this.activity = activity;
+
+
     }
 
 
@@ -76,7 +81,10 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         linear = (LinearLayout) v.findViewById(R.id.linearMsgChat);
         //linearBtn = (LinearLayout) v.findViewById(linearBtn);
 
+
+
         tvMsg.setText(model.getTitle());
+        //tvMsg.setMaxWidth(300);
         tvUser.setText(model.getAuthor());
         tvComMsg1.setText(model.getTitle());
         //linearBtn.setVisibility(View.GONE);..
@@ -94,10 +102,10 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
         });
 
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        String sender = model.getAuthor();
+        //String sender = model.getAuthor();
         String fromUser = model.getToUser();
-        String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
-        boolean isEqual = sender.equalsIgnoreCase(userName);
+        //String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
+        //boolean isEqual = sender.equalsIgnoreCase(userName);
 
         if(model.getAuthorType().equals("com")){
             //System.out.println("commmmenttttttaaaatooorrrr");

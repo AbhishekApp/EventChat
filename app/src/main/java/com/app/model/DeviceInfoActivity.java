@@ -10,9 +10,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.get.wazzon.R;
+
 import java.net.URL;
 
-import appy.com.wazznowapp.R;
 
 /**
  * Created by admin on 2/2/2017.

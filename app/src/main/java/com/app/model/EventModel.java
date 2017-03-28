@@ -3,7 +3,7 @@ package com.app.model;
 import java.util.ArrayList;
 
 /**
- * Created by admin on 9/16/2016.
+ * Created by manish on 9/16/2016.
  */
 public class EventModel {
 

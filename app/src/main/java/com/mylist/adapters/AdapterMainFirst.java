@@ -9,10 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.model.EventData;
+import com.get.wazzon.R;
 
 import java.util.ArrayList;
 
-import appy.com.wazznowapp.R;
+
 
 /**
  * Created by admin on 8/1/2016.

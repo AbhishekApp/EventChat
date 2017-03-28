@@ -13,6 +13,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.get.wazzon.EventChatActivity;
+import com.get.wazzon.MyApp;
+import com.get.wazzon.R;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
@@ -28,21 +31,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import appy.com.wazznowapp.EventChatActivity;
-import appy.com.wazznowapp.MyApp;
-import appy.com.wazznowapp.R;
+import static com.get.wazzon.EventChatActivity.CatID;
+import static com.get.wazzon.EventChatActivity.eventDetail;
+import static com.get.wazzon.EventChatActivity.eventID;
+import static com.get.wazzon.HousePartyFragment.getCurrentTimeStamp;
+import static com.get.wazzon.MyApp.FIREBASE_BASE_URL;
 
-import static appy.com.wazznowapp.EventChatActivity.CatID;
-import static appy.com.wazznowapp.EventChatActivity.eventID;
-import static appy.com.wazznowapp.HousePartyFragment.getCurrentTimeStamp;
-import static appy.com.wazznowapp.MyApp.FIREBASE_BASE_URL;
 
 /**
  * Created by admin on 10/17/2016.
  */
 public class MyUtill {
     HttpURLConnection urlConnection;
-    JSONArray jsonObject;
+    JSONArray jsonObject = new JSONArray();
     URL url = null;
     public static String popupTitle = "";
     public static String popupMessage = "";
@@ -79,19 +80,19 @@ public class MyUtill {
 
     public static void addMsgtoFeatured(Activity act,String msg){
         Firebase myFirebaseRef = new Firebase(FIREBASE_BASE_URL);
-        Firebase alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + EventChatActivity.eventDetail.getCategory_name()).child("FeatureChat");
-        String userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+        Firebase alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child("FeatureChat");
+        String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         alanRef.keepSynced(true);
         ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(act), getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),"normal");
         alanRef.push().setValue(alan);
-        MyApp.CustomEventAnalytics("featured_sent", EventChatActivity.SuperCateName , EventChatActivity.eventDetail.getCatergory_id());
+        MyApp.CustomEventAnalytics("featured_sent",  eventDetail.getEvent_id()+"_featured");
     }
 
 
     public static void addMsgToCommentatorNotifier(Activity act,String msg){
         Firebase myFirebaseRef = new Firebase(FIREBASE_BASE_URL);
         Firebase alanRef = myFirebaseRef.child("/").child("commentator_notifier");
-        String userName = MyApp.preferences.getString(MyApp.USER_NAME, null);
+        String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         alanRef.keepSynced(true);
         ChatData alan = new ChatData(userName, msg, MyApp.getDeviveID(act), getCurrentTimeStamp(),"com","normal");
         NotifierChatData notaln = new NotifierChatData(alan,CatID,eventID);

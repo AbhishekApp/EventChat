@@ -17,16 +17,17 @@ import com.app.model.EventDetail;
 import com.app.model.MyUtill;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.get.wazzon.MyApp;
+import com.get.wazzon.R;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-import appy.com.wazznowapp.MyApp;
-import appy.com.wazznowapp.R;
+
 
 /**
- * Created by admin on 9/17/2016.
+ * Created by manish on 9/17/2016.
  */
 public class EventModelAdapter extends BaseAdapter {
 

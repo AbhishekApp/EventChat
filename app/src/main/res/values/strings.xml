@@ -5,7 +5,7 @@
     <string name="linear_layout_manager">Linear Layout Manager</string>
     <string name="setting">setting</string>
     <string name="logout">logout</string>
-    <string name="info">Information</string>
+    <string name="info">About</string>
     <string name="noti">Notification</string>
     <string name="mute">Mute</string>
     <string name="signup">Signup</string>
@@ -19,18 +19,15 @@
     <string name="signupbtn">Sign up</string>
     <string name="nosignupmsg">Nah! I will use Predefined Messages</string>
     <string name="inviteMsg">Hi..! This is Rohan Sharma lets watch Mumbai vs Pune match on June 21 on Pune together</string>
-    <string name="sharewhatsapp">Share Event</string>
-    <string name="invitation_title">WazzNow</string>
-    <string name="invitation_message">Install wazznow app and get updated on our events.</string>
-    <string name="invitation_deep_link">https://ry5a4.app.goo.gl/pGuk</string>
-    <string name="app_code">ry5a4</string>
-    <string name="invitation_custom_image">http://media.appypie.com/appypie-slider-video/images/logo_new.png</string>
+    <string name="sharewhatsapp">Invite Friends</string>
+    <string name="signup_tv">Let\'s put a name to the message</string>
+    <string name="app_code">chmy5</string>
     <string name="invitation_cta">Call to Action</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="notuser_signup">Not a user signup</string>
-    <string name="google_shortlink_api_key">AIzaSyAj6g7L2CVtsUM1pTaQHb6eJW_qIXvoiRs</string>
-    <string name="apk_link">http://d2wuvg8krwnvon.cloudfront.net/customapps/WazzNow.apk</string>
+    <string name="google_shortlink_api_key">AIzaSyDmWZqj6o169fGG9qKi3z4-w9lwQOlVSeA</string>
+    <string name="apk_link">https://play.google.com/store/apps/details?id=com.get.wazzon</string>
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
     <string-array name="mycolor">
         <item>#24FA08</item>
@@ -49,9 +46,7 @@
 
 
     <string name="facebook_title_text">Facebook Login</string>
-    <string name="facebook_app_id">266320550472950</string>
-
-
+    <string name="facebook_app_id">404547739879304</string>
 
     <string name="label_google_sign_in">Firebase + Google Sign In</string>
     <string name="desc_google_sign_in">Use a Google Sign In credential to authenticate with Firebase.</string>
@@ -212,5 +207,11 @@
     <string name="update_msg">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.</string>
     --><string name="positive_btn">Update</string>
     <string name="negative_btn">Exit</string>
+
+    <string name="about_text">Feel like you are in the Stadium as you Chat with All watching your Favorite Matches and Shows at the same time on WazzOn.
+    Whats more you can invite your Friends and watch your Favorite Matches and Shows together and feel like you are in an House Party.
+    Switch modes between Stadium(all watching) and HouseParty(just your friends).With WazzOn never watch Alone!\n\nFor any feedback drop us a line here: </string>
+
+    <string name="user_disabled">Please contact us using the about screen.</string>
 
 </resources>

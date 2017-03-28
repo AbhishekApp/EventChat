@@ -3,7 +3,7 @@ package com.app.model;
 import java.io.Serializable;
 
 /**
- * Created by admin on 1/2/2017.
+ * Created by manish on 1/2/2017.
  */
 
 public class Sub_cate implements Serializable {

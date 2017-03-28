@@ -6,24 +6,10 @@
         android:icon="@android:drawable/title_bar"
         android:orderInCategory="1"
         android:title="@string/info" />
-
-    <item
-        android:id="@+id/menu_mute"
-        android:icon="@android:drawable/title_bar"
-        android:orderInCategory="1"
-        android:title="@string/mute" />
-
     <item
         android:id="@+id/menu_signup"
         android:icon="@android:drawable/title_bar"
         android:orderInCategory="1"
         android:title="@string/signup"
         android:visible="false" />
-
-    <item
-        android:id="@+id/menu_more"
-        android:icon="@android:drawable/title_bar"
-        android:orderInCategory="1"
-        android:title="@string/more" />
-
 </menu>

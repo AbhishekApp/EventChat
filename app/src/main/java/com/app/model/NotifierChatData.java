@@ -1,7 +1,7 @@
 package com.app.model;
 
 /**
- * Created by admin on 3/23/2017.
+ * Created by manish on 3/23/2017.
  */
 
 public class NotifierChatData  extends ChatData {

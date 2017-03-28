@@ -3,7 +3,7 @@ package com.app.model;
 import java.util.ArrayList;
 
 /**
- * Created by admin on 1/2/2017.
+ * Created by manish on 1/2/2017.
  */
 
 public class EventSubCateList {

@@ -98,7 +98,8 @@
             android:gravity="center_horizontal"
             android:padding="10dp"
             android:text="@string/nosignupmsg"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:visibility="gone" />
 
 
     </LinearLayout>

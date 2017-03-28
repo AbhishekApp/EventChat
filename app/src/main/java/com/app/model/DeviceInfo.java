@@ -43,7 +43,7 @@ import static com.app.model.DeviceInfoActivity.progressBar;
 import static com.app.model.DeviceInfoActivity.tv;
 
 /**
- * Created by admin on 2/2/2017.
+ * Created by manish on 2/2/2017.
  */
 
 
