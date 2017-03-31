@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     InputMethodManager inputMethodManager;
     private String NotificationMessageToShow = "";
     ProgressBar pd;
-    String VersionOnNet="";
+    Double VersionOnNet = 0.0;
     String invitedEevntID = "";
 
     SharedPreferences.Editor editor = MyApp.preferences.edit();
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // getIntent() should always return the most recent
         //setIntent(intent);
 
-        if (intent != null) {
+        if (intent != null && intent.getExtras()!=null) {
             Object value;
             for (String key : intent.getExtras().keySet()) {
                 value = intent.getExtras().get(key);
@@ -626,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                         System.out.println(detail.getEvent_title());
 
 
-                                       if(myUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp())){
+                                       if(MyUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp())){
 
                                             //FOR LIVE!
                                            arrayListEvent_live.add(detail);
@@ -660,7 +660,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 System.out.println("in else can't parse");
                             }
 
-                            String strTime = myUtill.getTimeDifference(detail.getEvent_start()).trim();
+                            String strTime = MyUtill.getTimeDifference(detail.getEvent_start()).trim();
 
                         }
                     }
@@ -862,6 +862,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         JSONArray jsonArray;
         //CannedCricketMessage message;
         AdminMessage admessage;
+        String local="";
 
         @Override
         protected void onPreExecute() {
@@ -900,10 +901,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 br.close();
                 JSONObject jsonObject = new JSONObject(sb.toString());
-                myUtill.popupTitle = jsonObject.getString("PopupTitle");
-                myUtill.popupMessage = jsonObject.getString("PopupMessage");
-                VersionOnNet =jsonObject.getString("AppVersionInfo");
-                VersionOnNet = VersionOnNet.replace("\n","").replaceAll("^\"|\"$", "");
+                MyUtill.popupTitle = jsonObject.getString("PopupTitle");
+                MyUtill.popupMessage = jsonObject.getString("PopupMessage");
+                //VersionOnNet =jsonObject.getString("AppVersionInfo");
+                local = jsonObject.getString("AppVersionInfo").replace("\n","").replaceAll("^\"|\"$", "");
                 System.out.println("VERSION : "+sb.toString());
             } catch (MalformedURLException e) {
                 System.out.println("VERSION DATA MalfomedURL Exception : " + e.toString());
@@ -925,11 +926,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             super.onPostExecute(aVoid);
             //progressDialog.hide();
             try{
-                String versionName = BuildConfig.VERSION_NAME;
-                if (VersionOnNet.equals(versionName)){
+                //String versionName = BuildConfig.VERSION_NAME;
+                Double versioName = Double.valueOf(BuildConfig.VERSION_NAME);
+                VersionOnNet = Double.valueOf(local);
+
+
+
+                int retrieval = Double.compare(versioName, VersionOnNet);
+
+                if(retrieval > 0) {
+                    System.out.println("versioName is greater than VersionOnNet");
+                } else if(retrieval < 0) {
+                    System.out.println("versioName is less than VersionOnNet");
+                    MyUtill.alertDialogShowUpdate(MainActivity.this);
+                } else {
+                    System.out.println("versioName is equal to VersionOnNet");
+                }
+
+
+
+                /*if (VersionOnNet.equals(versioName)){
                 }else{
                     MyUtill.alertDialogShowUpdate(MainActivity.this);
-                }
+                }*/
                 if(getInvited){
                     invitedEevntID = invitedEevntID.replace("invi","");
                     if (hashMapEvent.containsKey(invitedEevntID)){

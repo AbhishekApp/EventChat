@@ -44,10 +44,7 @@
                 <!-- Allows the deep link to be used without specifying the app name -->
                 <category android:name="android.intent.category.DEFAULT" />
                 <!-- URI tutsplus://deeplink -->
-
                 <data android:scheme="WazzOn" android:host="https://chmy5.app.goo.gl"/>
-
-
             </intent-filter>
         </activity>
         <activity

@@ -1,11 +1,12 @@
 package com.get.wazzon;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.app.model.AdminMessage;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 /**
  * Created by manish on 8/9/2016.
  */
-public class MyApp extends Application {
+public class MyApp extends MultiDexApplication {
     ConnectDetector connectDetector;
     public static boolean firebaseFlag = false;
     //public static boolean USER_LOGIN = false;
@@ -54,6 +55,7 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        MultiDex.install(this);
         connectDetector = new ConnectDetector(this);
         if(connectDetector.getConnection()) {
             Firebase.setAndroidContext(this);
