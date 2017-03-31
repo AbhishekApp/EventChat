@@ -31,6 +31,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -66,6 +67,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+
             String key = "";
             String value = "";
             for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
@@ -73,10 +75,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 value = entry.getValue();
                 Log.d(TAG, "key, '" + key + "' value '" + value+"'");
             }
+
+            Log.d(TAG, "getTitle" + remoteMessage.getNotification().getTitle());
+            /*try {
+                JSONObject obj = new JSONObject(remoteMessage.getNotification().getBody().toString());
+
+                obj.get
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }*/
             //This is where you get your click_action
-            //Log.d(TAG, "Notification Click Action: " + remoteMessage.getNotification().getClickAction());  //commented as not working
+            Log.d(TAG, "Notification Click Action: " + remoteMessage.getNotification().getClickAction());  //commented as not working
             //put code here to navigate based on click_action
             sendNotification(remoteMessage.getNotification().getBody(),key,value);
+
+
         }
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
@@ -91,15 +105,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(String messageBody , String key, String value) {
         Intent intent = new Intent(this, MainActivity.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("title",messageBody);
-        intent.putExtra(key,value);
+        //value = messageBody.split("$$")[1];
+        //messageBody = messageBody.split("$$")[0];
+
+        intent.putExtra("title",messageBody.split(Pattern.quote("$$"))[0]);
+        intent.putExtra("eventID",messageBody.split(Pattern.quote("$$"))[1]);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon_admin)
-                .setContentTitle("WazzNow")
-                .setContentText(messageBody)
+                .setContentTitle("WazzoN")
+                .setContentText(messageBody.split(Pattern.quote("$$"))[0])
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);

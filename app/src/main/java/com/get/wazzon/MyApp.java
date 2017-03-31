@@ -12,10 +12,12 @@ import android.util.Log;
 import com.app.model.AdminMessage;
 import com.app.model.AnalyticsSingleton;
 import com.app.model.ConnectDetector;
+import com.app.model.EventDetail;
 import com.firebase.client.Firebase;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by manish on 8/9/2016.
@@ -49,6 +51,7 @@ public class MyApp extends MultiDexApplication {
     public static final String FRAGMENT_SELECTED = "fragment_selected";
     public static final String SIGNUP_ACTIVITY_LOADED = "signup_activity_loaded";
     public static ArrayList<AdminMessage> alAdmMsg;
+    public static HashMap<String,EventDetail> hashMapEvent;
     //public static boolean isSignupSuccessful= false;
     public static String FireBaseHousePartyChatNode= "";
 

@@ -65,6 +65,7 @@ import java.util.Map;
 
 import static com.get.wazzon.MyApp.HOUSE_PARTY_INVITATIONS;
 import static com.get.wazzon.MyApp.alAdmMsg;
+import static com.get.wazzon.MyApp.hashMapEvent;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     ListView listMain;
@@ -83,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Handler handler;
     boolean getInvited = false;
     String invitedEventid;
-    HashMap<String,EventDetail> hashMapEvent;
     private String firebaseURL = MyApp.FIREBASE_BASE_URL;
     String eventURL = MyApp.FIREBASE_BASE_URL+"/EventList.json";
     String cannedCricketURL = MyApp.FIREBASE_BASE_URL+"/Canned/$.json";
@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ProgressBar pd;
     Double VersionOnNet = 0.0;
     String invitedEevntID = "";
-
     SharedPreferences.Editor editor = MyApp.preferences.edit();
 
 
@@ -207,11 +206,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                     //Toast.makeText(MainActivity.this, "from notification: custom message: " + getIntent().getStringExtra("data").toString().split("$")[1], Toast.LENGTH_LONG).show();
                 }catch (Exception e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
             //System.out.println("from notification: "+getIntent().getStringExtra("data").toString());
 
+            if (invitedEevntID.length()>0) {
+                invitedEevntID = invitedEevntID.replace("invi", "");
+                if (hashMapEvent.containsKey(invitedEevntID)) {
+                    EventDetail detail = hashMapEvent.get(invitedEevntID);
+                    if (detail.getEvent_id().length() > 0) {
+                        Intent iChat = new Intent(MainActivity.this, EventChatActivity.class);
+                        iChat.putExtra("EventDetail", detail);
+                        iChat.putExtra("NotificationMessageToShow", NotificationMessageToShow);
+                        startActivity(iChat);
+                        getInvited = false;
+                    } else {
+                        Toast.makeText(MainActivity.this, "Event not exist anymore!!", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "no", Toast.LENGTH_SHORT).show();
+                }
+            }
         }else{
             getInvited = false;
         }

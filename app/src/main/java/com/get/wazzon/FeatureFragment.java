@@ -318,7 +318,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         @Override
         public View getView(int position, View view, ViewGroup parent) {
             if (view == null) {
-                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(con.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.featured_layout, null);
                 imgIcon = (ImageView) view.findViewById(R.id.imgIcon);
                 tvUser = (TextView) view.findViewById(R.id.tvChatUser);
@@ -347,7 +347,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
             }
             catch(Exception e){
                 // for now eat exceptions
-                e.printStackTrace();
+                //e.printStackTrace();
             }
            // } else {
             //    System.out.println("error");
