@@ -24,6 +24,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.get.wazzon.MainActivity;
 import com.get.wazzon.R;
@@ -103,26 +104,31 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody , String key, String value) {
-        Intent intent = new Intent(this, MainActivity.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //value = messageBody.split("$$")[1];
-        //messageBody = messageBody.split("$$")[0];
+        if (messageBody.contains("$")) {
 
-        intent.putExtra("title",messageBody.split(Pattern.quote("$$"))[0]);
-        intent.putExtra("eventID",messageBody.split(Pattern.quote("$$"))[1]);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,PendingIntent.FLAG_ONE_SHOT);
+            Intent intent = new Intent(this, MainActivity.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //value = messageBody.split("$$")[1];
+            //messageBody = messageBody.split("$$")[0];
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.icon_admin)
-                .setContentTitle("WazzoN")
-                .setContentText(messageBody.split(Pattern.quote("$$"))[0])
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+            intent.putExtra("title", messageBody.split(Pattern.quote("$$"))[0]);
+            intent.putExtra("eventID", messageBody.split(Pattern.quote("$$"))[1]);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationManager notificationManager =(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.icon_admin)
+                    .setContentTitle("WazzoN")
+                    .setContentText(messageBody.split(Pattern.quote("$$"))[0])
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        }else{
+            Toast.makeText(this, "invalid notification format", Toast.LENGTH_SHORT).show();
+        }
     }
 }
