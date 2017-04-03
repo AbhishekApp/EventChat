@@ -6,8 +6,8 @@ android {
         applicationId "com.get.wazzon"
         minSdkVersion 11
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.1"
+        versionCode 4
+        versionName "1.2"
 
         // Enabling multidex support.
         multiDexEnabled true
