@@ -322,10 +322,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                     invitation = invitation.replace("invi","");
                                     UserProfile profile = new UserProfile();
                                     profile.update_house_party_invitations(MainActivity.this, invitation);
-                                   MyUtill.subscribeUserForEvents(invitation+"_hp");
+                                   String invi = invitation.substring(0, 5);
+                                   MyUtill.subscribeUserForEvents(invi+"_hp");
                                }else{
                                    //invited from somewhere else
-                                   MyUtill.subscribeUserForEvents(invitation+"_stad");
+                                   String invi = invitation.substring(0, 5);
+                                   MyUtill.subscribeUserForEvents(invi+"_stad");
                                }
 
                            }catch (Exception ex){
@@ -997,119 +999,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    public void getEventDetail(){
-        try {
-            hashMapEvent = new HashMap<String,EventDetail>();
-            arrayListEvent = new ArrayList<EventDetail>();
-            JSONArray jsonArray = new JSONArray(preferences.getString("jsonEventData", null));
-            if(!TextUtils.isEmpty(jsonArray.toString())){
-                String eventUpdateUrl = MyApp.FIREBASE_BASE_URL;
-                for(int i = 0 ; i < jsonArray.length(); i++){
-                    JSONObject jSon = jsonArray.getJSONObject(i);
-                    EventModel model = new EventModel();
-                    String superCateName = jSon.optString("event_superCategory");
 
-                    cannedCricketURL = cannedCricketURL.replace("$",superCateName);
-
-                    String superCateID = jSon.optString("event_super_id");
-                    model.setEvent_super_category(superCateName);
-                    model.setEvent_super_id(superCateID);
-                    model.Cate = new ArrayList<EventDetail>();
-
-                    JSONArray jArraycannedMessage = jSon.getJSONArray("cannedMessage");
-
-                    ArrayList <String> cannedArray = new ArrayList<String>();
-                    for(int k = 0; k <jArraycannedMessage.length() ; k++) {
-
-                        cannedArray.add(jArraycannedMessage.getString(k));
-                    }
-
-                    JSONArray jArray = jSon.getJSONArray("Cate");
-                    EventDetail detail = new EventDetail();
-
-                    for(int j = 0; j <jArray.length() ; j++){
-                        JSONObject jsonDetail = jArray.getJSONObject(j);
-                        String subCateName = jsonDetail.optString("event_category");
-                        String subCateID = jsonDetail.optString("event_sub_id");
-                        String subscribedUser ="";/* jsonDetail.optString("subscribed_user");*/
-                        JSONArray jsArr = jsonDetail.getJSONArray("Sub_cate");
-
-                        for(int t = 0 ; t < jsArr.length(); t++ ){
-                            detail = new EventDetail();
-                            JSONObject jOBJ = jsArr.getJSONObject(t);
-                            detail.setSuper_category_name(superCateName);
-                            detail.setCategory_name(subCateName);
-                            detail.setCatergory_id(subCateID);
-                            //    detail.setCatergory_id(jOBJ.optString("event_sub_id"));
-                            detail.setEvent_id(jOBJ.optString("event_id"));
-                            detail.setEvent_meta(jOBJ.optString("event_meta"));
-                            detail.setEvent_title(jOBJ.optString("event_title"));
-                            detail.setEvent_start(jOBJ.optString("event_start"));
-                            detail.setEvent_exp(jOBJ.optString("event_exp"));
-                            detail.setEvent_visiblity(jOBJ.optString("visible"));
-                            detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
-                            detail.setSubscribed_user(jOBJ.optString("subscribed_user"));
-                            detail.setCannedMessage(cannedArray);
-                            model.Cate.add(detail);
-
-                            if(jOBJ.optString("visible").equals("true")) {
-
-                                SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-                                try{
-                                    Date Date2 = format.parse(jOBJ.optString("event_start"));
-                                    long mills = Date2.getTime() - System.currentTimeMillis();
-
-                                    String temp = ""+mills;
-
-                                    if(temp.contains("-")){
-                                        // This is for past events store it in different list and merge afterwards.
-
-                                        System.out.println(detail.getEvent_title());
-
-
-                                        if(MyUtill.isTimeBetweenTwoTime(detail.getEvent_start(),detail.getEvent_exp())){
-
-                                            //FOR LIVE!
-                                            arrayListEvent_live.add(detail);
-                                            hashMapEvent.put(detail.getEvent_id(), detail);
-
-                                        }else{
-                                            //FOR PAST
-                                            arrayListEvent_previous.add(detail);
-                                            hashMapEvent.put(detail.getEvent_id(), detail);
-                                        }
-
-                                    }else{
-                                        // FOR UPCOMMING
-                                        arrayListEvent.add(detail);
-                                        hashMapEvent.put(detail.getEvent_id(), detail);
-                                    }
-                                    /*arrayListEvent.add(detail);
-                                    hashMapEvent.put(detail.getEvent_id(), detail);*/
-                                }catch (Exception e){
-
-                                    // NO DATE
-                       //             arrayListEvent_previous.add(detail);
-                                    hashMapEvent.put(detail.getEvent_id(), detail);
-                                    e.printStackTrace();
-                                }
-                            }else if(jOBJ.optString("visible").equals("false"))
-                            {
-                                System.out.println("else if false");
-
-                            }else{
-                                System.out.println("in else can't parse");
-                            }
-
-                            String strTime = MyUtill.getTimeDifference(detail.getEvent_start()).trim();
-
-                        }
-                    }
-//                    alModel.add(model);
-                }
-            }
-        } catch (JSONException e) {
-            Log.i("StadiumFragment", "Subscribed user Data ERROR: " + e.toString());
-        }
-    }
 }
