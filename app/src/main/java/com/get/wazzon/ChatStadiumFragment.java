@@ -282,8 +282,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         public void onClick(View v) {
 
                        // MyUtill.subscribeUserForEvents(eventID)
-
-                        MyUtill.subscribeUserForEvents(eventDetail.getEvent_id()+"_stad");
+                        String evntid = eventDetail.getEvent_id().substring(0, 5);
+                        MyUtill.subscribeUserForEvents(evntid+"_stad");
 
 
                         MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name(),eventID);
@@ -572,8 +572,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                           }
                           if (!TextUtils.isEmpty(msg)) {
                               // chatAdapter.notifyDataSetChanged();
-
-                              MyUtill.subscribeUserForEvents(eventDetail.getEvent_id()+"_stad");
+                              String evntid = eventDetail.getEvent_id().substring(0, 5);
+                              MyUtill.subscribeUserForEvents(evntid+"_stad");
                               sendMsg(msg, "normal");
                               etMsg.setText("");
                               if (preferences.getString(MyApp.USER_TYPE, "").equals("com")) {

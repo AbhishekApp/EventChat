@@ -79,12 +79,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         tvNahGuestUser.setOnClickListener(this);
         try {
             MyApp.CustomEventAnalytics("signup_activity_loaded", eventDetail.getEvent_id());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -100,13 +99,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             if (flag) {
                 userSignup = new UserLoginSignupAction();
                 userSignup.userSignup(SignUpActivity.this, uName, uLastName, uPhone, uEmail, uPass);
-            }else{
+            } else {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(this, "Credentials can't be validated", Toast.LENGTH_SHORT).show();
             }
 
         } else if (id == R.id.tvNahGuestUser) {
-            ChatStadiumFragment.nahClicked =true;
+            ChatStadiumFragment.nahClicked = true;
             editor = MyApp.preferences.edit();
             editor.putString(MyApp.USER_NAME, "Guest User");
             editor.commit();
@@ -138,7 +137,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onResume() {
         super.onResume();
-        if(closeSignup){
+        if (closeSignup) {
             finish();
         }
     }
@@ -187,111 +186,112 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         SharedPreferences.Editor editor;
         String firebaseUserURL = FIREBASE_BASE_URL;
 
-        public void userSignup(final Activity con, final String uName, final String uLastName, final String uPhone, final String email, final String password){
-            if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            mAuth.addAuthStateListener(mAuthListener);
+        public void userSignup(final Activity con, final String uName, final String uLastName, final String uPhone, final String email, final String password) {
+            if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                mAuth.addAuthStateListener(mAuthListener);
 
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(Task<AuthResult> task) {
-                Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
-                progressBar.setVisibility(View.GONE);
+                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(Task<AuthResult> task) {
+                        Log.d("Signup", "createUserWithEmail:onComplete:" + task.isSuccessful());
+                        progressBar.setVisibility(View.GONE);
 
-                if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
-                    //isSignupSuccessful = true;
+                        if (!task.isSuccessful() && task.getException().toString().contains("The email address is already in use by another account")) {
+                            //isSignupSuccessful = true;
 
-                    editor = MyApp.preferences.edit();
-                    editor.putString("isSignupSuccessful", "true");
-                    editor.commit();
+                            editor = MyApp.preferences.edit();
+                            editor.putString("isSignupSuccessful", "true");
+                            editor.commit();
 
-                    MyApp.PreDefinedEventAnalytics("sign_up","signup", email);
-                    //Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
-                    userUpdateOnServer(uName, uLastName, uPhone, email, password);
-                    SignUpActivity.makeClickable();
-                    setResult(102);
-                    closeSignup=true;
-                    finish();
+                            MyApp.PreDefinedEventAnalytics("sign_up", "signup", email);
+                            //Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                            userUpdateOnServer(uName, uLastName, uPhone, email, password);
+                            SignUpActivity.makeClickable();
+                            setResult(102);
+                            closeSignup = true;
+                            finish();
 
-                }else if(task.isSuccessful()){
-                    //isSignupSuccessful = true;
+                        } else if (task.isSuccessful()) {
+                            //isSignupSuccessful = true;
 
-                    editor = MyApp.preferences.edit();
-                    editor.putString("isSignupSuccessful", "true");
-                    editor.commit();
+                            editor = MyApp.preferences.edit();
+                            editor.putString("isSignupSuccessful", "true");
+                            editor.commit();
 
-                    MyApp.PreDefinedEventAnalytics("sign_up","signup", email);
-                   // Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
-                    userUpdateOnServer(uName, uLastName, uPhone, email, password);
-                    setResult(102);
-                    closeSignup=true;
-                    finish();
+                            MyApp.PreDefinedEventAnalytics("sign_up", "signup", email);
+                            // Toast.makeText(con, "Success", Toast.LENGTH_SHORT).show();
+                            userUpdateOnServer(uName, uLastName, uPhone, email, password);
+                            setResult(102);
+                            closeSignup = true;
+                            finish();
 
-                }
-                }
+                        }
+                    }
 
 
-            });
-            }else{
+                });
+            } else {
                 Toast.makeText(con, "Please fill all the required field", Toast.LENGTH_SHORT).show();
             }
         }
+
         FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            if (user != null) {
-                // User is signed in
-                Log.d("Signup", "onAuthStateChanged:signed_in:" + user.getUid());
-            } else {
-                // User is signed out
-                Log.d("Signup", "onAuthStateChanged:signed_out");
-            }
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d("Signup", "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d("Signup", "onAuthStateChanged:signed_out");
+                }
             }
         };
 
-        public void userLogin(Firebase myRef, final Activity con, String email, String password){
+        public void userLogin(Firebase myRef, final Activity con, String email, String password) {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.addAuthStateListener(mAuthListener);
 
             mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(Task<AuthResult> task) {
-                    Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
-                    if (!task.isSuccessful()) {
-                        Log.w("Login", "signInWithEmail:failed", task.getException());
-                        Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
-                    }
-                    }
-                });
+                    .addOnCompleteListener(con, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(Task<AuthResult> task) {
+                            Log.d("Login", "signInWithEmail:onComplete:" + task.isSuccessful());
+                            if (!task.isSuccessful()) {
+                                Log.w("Login", "signInWithEmail:failed", task.getException());
+                                Toast.makeText(con, "Login Fail", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(con, "User logged in", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 
         }
 
-        public void userChangePassword(Firebase myRef, final Context con, String email, String password, String newPassword){
+        public void userChangePassword(Firebase myRef, final Context con, String email, String password, String newPassword) {
             SimpleLogin authClient = new SimpleLogin(myRef, con);
             authClient.changePassword(email, password, newPassword, new SimpleLoginCompletionHandler() {
                 public void completed(FirebaseSimpleLoginError error, boolean success) {
-                if (error != null) {
-                    // There was an error processing this request
-                    Toast.makeText(con, "Password not changed", Toast.LENGTH_SHORT).show();
-                } else if (success) {
-                    // Password changed successfully
-                    Toast.makeText(con, "Password Changed Successfully", Toast.LENGTH_SHORT).show();
-                }
+                    if (error != null) {
+                        // There was an error processing this request
+                        Toast.makeText(con, "Password not changed", Toast.LENGTH_SHORT).show();
+                    } else if (success) {
+                        // Password changed successfully
+                        Toast.makeText(con, "Password Changed Successfully", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
 
-        public void userLogout(){
+        public void userLogout() {
             FirebaseAuth.getInstance().signOut();
         }
 
-        public void userUpdateOnServer(String uName, String uLastName, String uPhone, String email, String password){
+        public void userUpdateOnServer(String uName, String uLastName, String uPhone, String email, String password) {
             editor = MyApp.preferences.edit();
-            editor.putString(MyApp.USER_NAME, uName+" "+uLastName);
+            editor.putString(MyApp.USER_NAME, uName + " " + uLastName);
             editor.putString(MyApp.USER_LAST_NAME, uLastName);
             editor.putString(MyApp.USER_PHONE, uPhone);
             editor.putString(MyApp.USER_EMAIL, email);
@@ -302,8 +302,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             Firebase firebase = new Firebase(firebaseUserURL);
             Map<String, String> alanisawesomeMap = new HashMap<String, String>();
             String userGroup = MyApp.preferences.getString(MyApp.HOUSE_PARTY_INVITATIONS, "");
-            String UserJoinedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP,"");
-            String commentator_privilege = MyApp.preferences.getString("commentator_privilege","");
+            String UserJoinedGroup = MyApp.preferences.getString(MyApp.USER_JOINED_GROUP, "");
+            String commentator_privilege = MyApp.preferences.getString("commentator_privilege", "");
             alanisawesomeMap.put("name", uName);
             alanisawesomeMap.put("lastName", uLastName);
             alanisawesomeMap.put("passKey", password);
@@ -311,10 +311,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             alanisawesomeMap.put("phone", uPhone);
             alanisawesomeMap.put("email", email);
             alanisawesomeMap.put("userType", "user");
-            alanisawesomeMap.put("house_party_invitations",""+userGroup);
-            alanisawesomeMap.put("commentator_privilege",""+commentator_privilege);
-            alanisawesomeMap.put("user_enabled","true");
-            alanisawesomeMap.put("joined_group",UserJoinedGroup);
+            alanisawesomeMap.put("house_party_invitations", "" + userGroup);
+            alanisawesomeMap.put("commentator_privilege", "" + commentator_privilege);
+            alanisawesomeMap.put("user_enabled", "true");
+            alanisawesomeMap.put("joined_group", UserJoinedGroup);
 
             //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
             final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
@@ -322,7 +322,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             //System.out.println("USER List new deviceID : " );
             users.put("0", alanisawesomeMap);
             firebase.child("users/" + password).setValue(users);
-            MyApp.PreDefinedEventAnalytics("sign_up",email,eventID);
+            MyApp.PreDefinedEventAnalytics("sign_up", email, eventID);
         }
     }
 }

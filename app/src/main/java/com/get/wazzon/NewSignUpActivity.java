@@ -128,9 +128,19 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                 try {
                     //String[] nameSplit = "Manish".split(" ");
                     String[] nameSplit = user.getDisplayName().split(" ");
-                    String first = nameSplit[0];
-                    String last = nameSplit[1];
-                    userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
+                    if (nameSplit.length > 0) {
+                        String first = nameSplit[0];
+                        String last = nameSplit[1];
+                        if (!TextUtils.isEmpty(user.getEmail()))
+                            userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
+                        else
+                            userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getUid()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
+                    }else{
+                        if (!TextUtils.isEmpty(user.getEmail()))
+                            userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
+                        else
+                            userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, user.getUid()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
+                    }
                 }
                 catch (ArrayIndexOutOfBoundsException  e) {
                     // no last name case
@@ -355,11 +365,8 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btnmySignup) {
-
             MyApp.PreDefinedEventAnalytics("signUp_email", "" , "");
             startActivity(new Intent(NewSignUpActivity.this,SignUpActivity.class));
-
-
         } /*else if (id == R.id.btnFb) {
             //progressBar.setVisibility(View.VISIBLE);
            // fbConnect();
@@ -495,7 +502,6 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -503,9 +509,8 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(NewSignUpActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
                         }
-
                         // [START_EXCLUDE]
-                        //hideProgressDialog();
+                        // hideProgressDialog();
                         // [END_EXCLUDE]
                     }
                 });
