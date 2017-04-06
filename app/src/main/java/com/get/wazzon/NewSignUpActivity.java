@@ -134,12 +134,12 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                         if (!TextUtils.isEmpty(user.getEmail()))
                             userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
                         else
-                            userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, user.getUid()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
+                            userSignup.userSignup(NewSignUpActivity.this, first/*username*/, last/*last name*/, ""/*phone number*/, "wazzon.app@gmail.com"/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
                     }else{
                         if (!TextUtils.isEmpty(user.getEmail()))
                             userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, user.getEmail()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
                         else
-                            userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, user.getUid()/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
+                            userSignup.userSignup(NewSignUpActivity.this, user.getDisplayName()/*username*/, ""/*last name*/, ""/*phone number*/, "wazzon.app@gmail.com"/*email id*/, MyApp.getDeviveID(NewSignUpActivity.this)/*password*/);
                     }
                 }
                 catch (ArrayIndexOutOfBoundsException  e) {
@@ -202,8 +202,9 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
                         editor = MyApp.preferences.edit();
                         editor.putString("isSignupSuccessful", "true");
                         editor.commit();
-
-                        MyApp.PreDefinedEventAnalytics("sign_up",eventDetail.getEvent_title(), eventID);
+                        try {
+                            MyApp.PreDefinedEventAnalytics("sign_up", eventDetail.getEvent_title(), eventID);
+                        }catch (Exception ex){ex.printStackTrace();}
                         //Toast.makeText(con, "new signup", Toast.LENGTH_SHORT).show();
                         userUpdateOnServer(uName, uLastName, uPhone, email, password);
                         setResult(102);
