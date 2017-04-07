@@ -437,13 +437,17 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onRefresh() {
-        msgLimit+=10;
-        alanRef.limit(msgLimit);
+        try {
+            msgLimit += 10;
+            alanRef.limit(msgLimit);
+        }catch (Exception ex){ex.printStackTrace();}
         //alanRef.
-        adapter = new HouseChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);
+        try {
+            adapter = new HouseChatListAdapter(alanRef.limit(msgLimit), getActivity(), R.layout.chat_layout);
+            listView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+        }catch (Exception ex){}
     }
 
     public static String getCurrentTimeStamp(){
