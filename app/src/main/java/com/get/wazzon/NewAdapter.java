@@ -1,11 +1,14 @@
 package com.get.wazzon;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.text.util.Linkify;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,11 +63,16 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             "&si="+
             "&utm_source=";
     String userName = "";
+    int width;
 
     public NewAdapter(Context context, int resource, ArrayList<ChatData> list) {
         super(context, resource, list);
         con = context;
         alList = list;
+        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+        width = display.getWidth();
+        width = (width * 65) / 100;
+
     }
 
     @Override
@@ -154,6 +162,11 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         if(model.getAuthorType().equals("com")){
             comRL.setVisibility(View.VISIBLE);
             linear.setVisibility(View.GONE);
+            LinearLayout.LayoutParams rlParam = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
+        //    rlParam.gravity = Gravity.CENTER_HORIZONTAL;
+            tvComMsg1.setLayoutParams(rlParam);
+            tvComMsg1.setPadding(32, 10, 5, 10);
+            tvComMsg1.setGravity(Gravity.CENTER_VERTICAL);
         }else {
             linear.setVisibility(View.VISIBLE);
             comRL.setVisibility(View.GONE);

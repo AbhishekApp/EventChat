@@ -322,12 +322,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                     invitation = invitation.replace("invi","");
                                     UserProfile profile = new UserProfile();
                                     profile.update_house_party_invitations(MainActivity.this, invitation);
-                                   String invi = invitation.substring(0, 5);
-                                   MyUtill.subscribeUserForEvents(invi+"_hp");
+                                   if(invitation.length() > 5) {
+                                       String invi = invitation.substring(0, 5);
+                                       MyUtill.subscribeUserForEvents(invi + "_hp");
+                                   }else{
+                                       MyUtill.subscribeUserForEvents(invitation + "_hp");
+                                   }
                                }else{
                                    //invited from somewhere else
-                                   String invi = invitation.substring(0, 5);
-                                   MyUtill.subscribeUserForEvents(invi+"_stad");
+                                   if(invitation.length() > 5) {
+                                       String invi = invitation.substring(0, 5);
+                                       MyUtill.subscribeUserForEvents(invi + "_stad");
+                                   }else{
+                                       MyUtill.subscribeUserForEvents(invitation + "_stad");
+                                   }
                                }
 
                            }catch (Exception ex){

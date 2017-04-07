@@ -204,8 +204,13 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     }
 
     private void housePartyStarted(){
-        String evntid = eventDetail.getEvent_id().substring(0, 5);
-        MyUtill.subscribeUserForEvents(evntid+"_hp");
+        if(eventDetail.getEvent_id().length() > 5){
+            String evntid = eventDetail.getEvent_id().substring(0, 5);
+            MyUtill.subscribeUserForEvents(evntid+"_hp");
+        }
+        else{
+            MyUtill.subscribeUserForEvents(eventDetail.getEvent_id()+"_hp");
+        }
         Intent ii = new Intent(getActivity(), InviteFriendActivity.class);
         ii.putExtra("EventName", eventDetail.getCatergory_id());
         ii.putExtra("EventID", eventDetail.getEvent_id());

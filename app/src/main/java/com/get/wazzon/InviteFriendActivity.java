@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -181,16 +182,18 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             //System.out.println("JSON RESP:" + s);
             String response=s;
             try {
-                JSONObject jsonObject=new JSONObject(response);
-                String id=jsonObject.getString("id");
-                shortLinkURL = id;
-                msg =msg.replace("event",eventName).replace("DeepLink",shortLinkURL);
-                Intent intent2 = new Intent();
-                intent2.setAction(Intent.ACTION_SEND);
-                intent2.setType("text/plain");
-                intent2.putExtra(Intent.EXTRA_TEXT, msg );
-                startActivity(Intent.createChooser(intent2, "Share "));
-                pd.setVisibility(View.GONE);
+                if(!TextUtils.isEmpty(response)) {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String id = jsonObject.optString("id");
+                    shortLinkURL = id;
+                    msg = msg.replace("event", eventName).replace("DeepLink", shortLinkURL);
+                    Intent intent2 = new Intent();
+                    intent2.setAction(Intent.ACTION_SEND);
+                    intent2.setType("text/plain");
+                    intent2.putExtra(Intent.EXTRA_TEXT, msg);
+                    startActivity(Intent.createChooser(intent2, "Share "));
+                    pd.setVisibility(View.GONE);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
