@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Google Inc. All Rights Reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
+
     /**
      * Called when message is received.
      *
@@ -75,7 +76,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
                 key = entry.getKey();
                 value = entry.getValue();
-                Log.d(TAG, "key, '" + key + "' value '" + value+"'");
+                Log.d(TAG, "key, '" + key + "' value '" + value + "'");
             }
 
             Log.d(TAG, "getTitle" + remoteMessage.getNotification().getTitle());
@@ -90,7 +91,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //This is where you get your click_action
             Log.d(TAG, "Notification Click Action: " + remoteMessage.getNotification().getClickAction());  //commented as not working
             //put code here to navigate based on click_action
-            sendNotification(remoteMessage.getNotification().getBody(),key,value);
+            sendNotification(remoteMessage.getNotification().getBody(), key, value);
 
 
         }
@@ -104,36 +105,62 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody , String key, String value) {
-        if (messageBody.contains("$$")) {
+    private void sendNotification(String messageBody, String key, String value) {
+        Intent intent = new Intent(this, MainActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("title", messageBody);
+        intent.putExtra(key, value);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.icon_admin)
+                .setContentTitle("WazzNow")
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        //   if (messageBody.contains("$$")) {
+        /*    String msg = "";
             Intent intent = new Intent(this, MainActivity.class);
             //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             //value = messageBody.split("$$")[1];
             //messageBody = messageBody.split("$$")[0];
-            Log.i("Notification", " messageBody [0] "+ messageBody.split(Pattern.quote("$$"))[0]);
-            Log.i("Notification", " messageBody [1] "+ messageBody.split(Pattern.quote("$$"))[1]);
-            intent.putExtra("title", messageBody.split(Pattern.quote("$$"))[0]);
-            intent.putExtra("eventID", messageBody.split(Pattern.quote("$$"))[1]);
+            if (messageBody.contains("$$")) {
+                Log.i("Notification", " messageBody [0] " + messageBody.split(Pattern.quote("$$"))[0]);
+                Log.i("Notification", " messageBody [1] " + messageBody.split(Pattern.quote("$$"))[1]);
+
+                intent.putExtra("eventID", messageBody.split(Pattern.quote("$$"))[1]);
+                msg =  messageBody.split(Pattern.quote("$$"))[0];
+            }else{
+                msg = messageBody;
+                intent.putExtra("eventID", value);
+            }
+
+            intent.putExtra("title", msg);
             Random random = new Random();
             int m = random.nextInt(9999 - 1000) + 1000;
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, m /* Request code */, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, m *//* Request code *//*, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.icon_admin)
-                    .setContentTitle("WazzOn")
-                    .setContentText(messageBody.split(Pattern.quote("$$"))[0])
-                    .setAutoCancel(true)
-                    .setSound(defaultSoundUri)
-                    .setContentIntent(pendingIntent);
+            .setSmallIcon(R.drawable.icon_admin)
+            .setContentTitle("WazzOn")
+            .setContentText(msg)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent);
 
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            notificationManager.notify(m /* ID of notification */, notificationBuilder.build());
-        }else{
-//            Toast.makeText(this, "invalid notification format", Toast.LENGTH_SHORT).show();
-        }
+            notificationManager.notify(m *//* ID of notification *//*, notificationBuilder.build());*/
+        /*  }else{
+            //            Toast.makeText(this, "invalid notification format", Toast.LENGTH_SHORT).show();
+            }*/
     }
 }
