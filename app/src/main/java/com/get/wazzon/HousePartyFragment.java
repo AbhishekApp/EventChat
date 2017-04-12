@@ -110,7 +110,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
                 //Toast.makeText(getActivity(), "no SubDomain : "+SubDomain, Toast.LENGTH_SHORT).show();
             }
             }
-        MyApp.CustomEventAnalytics("fragment_selected",  eventDetail.getEvent_id()+"_hp");
+        MyApp.CustomEventAnalytics("fragment_selected",  "hp");
     }
 
     @Override

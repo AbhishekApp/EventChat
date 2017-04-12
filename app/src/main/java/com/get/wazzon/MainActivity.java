@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //setIntent(intent);
 //        getEventDetail();
         if (intent != null && intent.getExtras()!=null) {
-            getInvited = true;
+        //    getInvited = true;
             Object value;
             for (String key : intent.getExtras().keySet()) {
                 value = intent.getExtras().get(key);
@@ -442,9 +442,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             arrayListEvent.add(eventDetail);
                         }
                     }
-                    eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
-                    listMain.setAdapter(eventAdapter);
-                    eventAdapter.notifyDataSetChanged();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            eventAdapter = new EventModelAdapter(MainActivity.this, arrayListEvent);
+                            listMain.setAdapter(eventAdapter);
+                            eventAdapter.notifyDataSetChanged();
+                        }
+                    });
                 }catch (Exception ex){
                     Log.e(TAG, "onChildChanged ERROR: "+ex.toString());
                 }
@@ -597,7 +603,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     editor.putString("jsonEventData", jsonObject.toString());
                     editor.commit();
                 }}
-                arrayListEvent.clear();
+                try {
+                    if(arrayListEvent != null)
+                        arrayListEvent.clear();
+                }catch (Exception ex){}
                 //System.out.println("EVENT DATA length : " + length);
                 for(int i = 0 ; i < length; i++){
                     JSONObject jSon = jsonObject.getJSONObject(i);

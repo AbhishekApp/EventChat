@@ -110,7 +110,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        MyApp.CustomEventAnalytics("fragment_selected", eventDetail.getEvent_id()+"_std");
+        MyApp.CustomEventAnalytics("fragment_selected", "std");
     }
 
     @Override
@@ -131,6 +131,22 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
         view = inflater.inflate(R.layout.stadium_chat, container, false);
         init(view);
+        try {
+            if (!preferences.getBoolean(eventDetail.getCatergory_id(), false)) {
+                if(eventDetail.getEvent_id().length() > 5){
+                    String evntid = eventDetail.getEvent_id().substring(0, 5);
+                    MyUtill.subscribeUserForEvents(evntid+"_stad");
+                }else{
+                    MyUtill.subscribeUserForEvents(eventDetail.getEvent_id()+"_stad");
+                }
+                MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name(),eventID);
+                editor = preferences.edit();
+                editor.putBoolean(eventDetail.getCatergory_id(), true);
+                editor.commit();
+                        /*  Update user, Subscribe this event */
+                getAdminSecondMessage();
+            }
+        }catch (Exception ex){ex.printStackTrace();}
 
         return view;
     }
@@ -240,7 +256,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onStart() {
         super.onStart();
         try {
-            if (!preferences.getBoolean(eventDetail.getCatergory_id(), false)) {
+        /*    if (!preferences.getBoolean(eventDetail.getCatergory_id(), false)) {
                 if(!addTuneFLAG){
                     addTuneFLAG = true;
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
@@ -294,12 +310,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         editor = preferences.edit();
                         editor.putBoolean(eventDetail.getCatergory_id(), true);
                         editor.commit();
-                        /*  Update user, Subscribe this event */
+//                          Update user, Subscribe this event
                         getAdminSecondMessage();
                         }
                     });
                 }
-            }else if(!preferences.getBoolean(eventID+"HouseParty", false) && !addHousePartyFLAG){
+            }else  */
+            if(!preferences.getBoolean(eventID+"HouseParty", false) && !addHousePartyFLAG){
                 getAdminSecondMessage();
             }else{
                 linearLayout.removeAllViews();
@@ -315,8 +332,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     }
 
     private void getAdminSecondMessage(){
-
-
         UserProfile profile = new UserProfile();
         profile.updateUserGroup(getActivity(), eventDetail.getCatergory_id());
         updateEventList();

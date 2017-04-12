@@ -183,19 +183,19 @@ public class MyApp extends MultiDexApplication {
         String eventName = "A";
         switch (EventLogName) {
             case CHAT_SENT:
-                eventName = "chat_sent_"+customEventMessage;
+                eventName = "chat_sent";
                 break;
             case CANNED_SENT:
-                eventName = "canned_sent_"+customEventMessage;
+                eventName = "canned_sent";
                 break;
             case FEATURED_SENT:
-                eventName = "featured_sent_"+customEventMessage;
+                eventName = "featured_sent";
                 break;
             case FRAGMENT_SELECTED:
                 eventName = "frg_"+customEventMessage;
                 break;
             case SIGNUP_ACTIVITY_LOADED:
-                eventName = "sup_"+customEventMessage;
+                eventName = "sign_up";
                 break;
             default:
                 throw new IllegalArgumentException("Invalid data: " +EventLogName );

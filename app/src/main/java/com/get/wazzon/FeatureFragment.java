@@ -110,7 +110,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
         }
         }
 
-        MyApp.CustomEventAnalytics("fragment_selected",eventDetail.getEvent_id());
+        MyApp.CustomEventAnalytics("fragment_selected","featured");
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
