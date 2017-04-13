@@ -26,6 +26,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.app.model.MyUtill;
 import com.get.wazzon.MainActivity;
 import com.get.wazzon.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -91,7 +92,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //This is where you get your click_action
             Log.d(TAG, "Notification Click Action: " + remoteMessage.getNotification().getClickAction());  //commented as not working
             //put code here to navigate based on click_action
-            sendNotification(remoteMessage.getNotification().getBody(), key, value);
+            MyUtill.sendNotification(this, remoteMessage.getNotification().getBody(), "WazzOn",  key, value);
 
 
         }
@@ -105,17 +106,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody, String key, String value) {
+    /*public void sendNotification(String messageBody, String key, String value) {
         Intent intent = new Intent(this, MainActivity.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("title", messageBody);
         intent.putExtra(key, value);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 *//* Request code *//*, intent, PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon_admin)
-                .setContentTitle("WazzNow")
+                .setContentTitle("WazzOn")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
@@ -123,7 +124,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(0 *//* ID of notification *//*, notificationBuilder.build());*/
         //   if (messageBody.contains("$$")) {
         /*    String msg = "";
             Intent intent = new Intent(this, MainActivity.class);
@@ -162,5 +163,5 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         /*  }else{
             //            Toast.makeText(this, "invalid notification format", Toast.LENGTH_SHORT).show();
             }*/
-    }
+  //  }
 }

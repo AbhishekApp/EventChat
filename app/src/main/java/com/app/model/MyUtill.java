@@ -3,10 +3,14 @@ package com.app.model;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.get.wazzon.EventChatActivity;
+import com.get.wazzon.MainActivity;
 import com.get.wazzon.MyApp;
 import com.get.wazzon.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -153,7 +158,7 @@ public class MyUtill {
                         long months = days / 30;
                         diff = "More than "+months + " Months to go";
                     } else {
-                        if (days > 1 && days <= 30) {
+                        if (days >= 1 && days <= 30) {
                             if(days == 30){
                                 long months = days / 30;
                                 diff = months + " Month to go";
@@ -164,6 +169,10 @@ public class MyUtill {
                                 if (days < 1) {
                                     long hours = TimeUnit.SECONDS.toHours(seconds) - (days * 24);
                                     diff = hours + " Hours to go";
+                                    if(hours < 1) {
+                                        long min = TimeUnit.SECONDS.toMinutes(seconds) - (days * 24 * 60);
+                                        diff = min + " Min to go";
+                                    }
                                 }
                             }
                         }
@@ -263,5 +272,27 @@ public class MyUtill {
                 }
             });
         alertDialog.show();
+    }
+
+    public static void sendNotification(Context con, String messageBody, String title, String key, String value) {
+        Intent intent = new Intent(con, MainActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("title", messageBody);
+        intent.putExtra(key, value);
+        PendingIntent pendingIntent = PendingIntent.getActivity(con, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(con)
+                .setSmallIcon(R.drawable.icon_admin)
+                .setContentTitle(title)
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) con.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+
     }
 }

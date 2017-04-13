@@ -77,8 +77,8 @@ public class UserProfile {
         }else
         {
             userGroup = newGroup;
-            Toast.makeText(con, "Tuned in successfully", Toast.LENGTH_SHORT).show();
         }
+        Toast.makeText(con, "Tuned in successfully", Toast.LENGTH_SHORT).show();
         Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
         String deviceID = MyApp.getDeviveID(con);
         Firebase alanRef = usersRef.child("users/"+deviceID+"/0");

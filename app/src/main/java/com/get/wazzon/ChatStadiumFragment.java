@@ -1,11 +1,16 @@
 package com.get.wazzon;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,6 +40,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.mylist.adapters.CannedAdapter;
+import com.pushnotification.MyFirebaseMessagingService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -143,6 +149,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor = preferences.edit();
                 editor.putBoolean(eventDetail.getCatergory_id(), true);
                 editor.commit();
+                /* Sending Notification */
+                    MyUtill.sendNotification(getActivity(), "You are now Tuned in to "+eventDetail.getEvent_title(), "Welcome to WazzOn", "eventID", eventDetail.getEvent_id());
                         /*  Update user, Subscribe this event */
                 getAdminSecondMessage();
             }
