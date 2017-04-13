@@ -30,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.model.AdminMessage;
 import com.app.model.ChatData;
 import com.app.model.ConnectDetector;
 import com.app.model.MyUtill;
@@ -150,7 +151,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor.putBoolean(eventDetail.getCatergory_id(), true);
                 editor.commit();
                 /* Sending Notification */
-                    MyUtill.sendNotification(getActivity(), "You are now Tuned in to "+eventDetail.getEvent_title(), "Welcome to WazzOn", "eventID", eventDetail.getEvent_id());
+                AdminMessage tuneMsg = MyApp.alAdmMsg.get(6);
+                String adTuneMsg = tuneMsg.get_admin_message().replace("<event>","");
+                    MyUtill.sendNotification(getActivity(), adTuneMsg+eventDetail.getEvent_title(), "Welcome to WazzOn", "eventID", eventDetail.getEvent_id());
                         /*  Update user, Subscribe this event */
                 getAdminSecondMessage();
             }
