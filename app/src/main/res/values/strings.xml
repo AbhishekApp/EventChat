@@ -207,11 +207,12 @@
     <string name="update_msg">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.</string>
     --><string name="positive_btn">Update</string>
     <string name="negative_btn">Exit</string>
-
+    <string name="playon">Play On</string>
     <string name="about_text">Feel like you are in the Stadium as you Chat with All watching your Favorite Matches and Shows at the same time on WazzOn.
     Whats more you can invite your Friends and watch your Favorite Matches and Shows together and feel like you are in an House Party.
     Switch modes between Stadium(all watching) and HouseParty(just your friends).With WazzOn never watch Alone!\n\nFor any feedback drop us a line here: </string>
 
     <string name="user_disabled">Please contact us using the about screen.</string>
+    <string name="redeem_now">REDEEM NOW</string>
 
 </resources>

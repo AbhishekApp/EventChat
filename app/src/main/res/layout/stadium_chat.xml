@@ -31,7 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/linearlayChat"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:layout_marginBottom="1dp">
 
                 <ListView
                     android:id="@+id/listMain"
@@ -52,6 +53,7 @@
                 android:layout_alignParentBottom="true"
                 android:background="@color/white"
                 android:orientation="vertical"
+                android:layout_marginTop="2dp"
                 android:paddingBottom="2dp"
                 android:paddingTop="1dp">
 
@@ -76,7 +78,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.44"
                         android:padding="2dp"
-                        android:src="@mipmap/bulab" />
+                        android:src="@mipmap/bulab"
+                        android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/keyboard"
@@ -85,7 +88,7 @@
                         android:layout_weight="0.44"
                         android:padding="2dp"
                         android:src="@mipmap/keyboard"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
                     <EditText
                         android:id="@+id/etChatMsg"

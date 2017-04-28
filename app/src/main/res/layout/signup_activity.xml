@@ -10,6 +10,7 @@
         android:padding="12dp">
 
         <TextView
+            android:id="@+id/tvHeadSign"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/signupheading"
@@ -90,17 +91,35 @@
             android:textColor="@color/white"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tvNahGuestUser"
+    <LinearLayout
+        android:id="@+id/linearNahGuestUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:padding="10dp">
+
+    <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
             android:padding="10dp"
+            android:text="Nah! "
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+
+    <TextView
+            android:id="@+id/tvNahGuestUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/nosignupmsg"
             android:textSize="12sp"
             android:visibility="gone" />
 
+    </LinearLayout>
 
     </LinearLayout>
 

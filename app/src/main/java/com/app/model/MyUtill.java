@@ -28,6 +28,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,6 +58,34 @@ public class MyUtill {
     public static String popupMessage = "";
 
 
+    public JSONObject getJSONObjectFromServer(String urlStr){
+        JSONObject jsonObject = null;
+        try {
+            Log.e("MyUtill","getJSONFromServer URL : "+urlStr);
+            url = new URL(urlStr);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            urlConnection = (HttpURLConnection) url.openConnection();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            br.close();
+            //System.out.println(sb.toString());
+           jsonObject = new JSONObject(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();// for now eat exceptions
+        } catch (Exception ex){
+            Log.e("MyUtill", "Get Data From Server ERROR: "+ex.toString());
+        }
+        return jsonObject;
+    }
 
     public JSONArray getJSONFromServer(String urlStr){
         try {

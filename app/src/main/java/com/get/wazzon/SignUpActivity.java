@@ -2,7 +2,9 @@ package com.get.wazzon;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +40,7 @@ import static com.get.wazzon.EventChatActivity.eventID;
 import static com.get.wazzon.MyApp.FIREBASE_BASE_URL;
 import static com.get.wazzon.NewSignUpActivity.closeSignup;
 import static com.get.wazzon.R.id.progressBar2;
+import static com.get.wazzon.R.id.up;
 
 /**
  * Created by manish on 8/2/2016.
@@ -47,16 +51,22 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public ProgressBar progressBar;
     UserProfile userProfile;
     EditText etName, etLastName, etPhone, etEmail;
-    TextView tvNahGuestUser;
+    LinearLayout linearNahGuestUser;
     SharedPreferences.Editor editor;
     UserLoginSignupAction userSignup;
     Firebase myFirebaseSignup;
+    boolean wonFlag = false;
+    TextView tvHead;
+    String emailBody;
     //final static String firebaseURL = "https://wazznow-cd155.firebaseio.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_activity);
+        try{
+            wonFlag = getIntent().getBooleanExtra("WonSignup", false);
+        }catch (Exception ex){}
         init();
         myFirebaseSignup = new Firebase(FIREBASE_BASE_URL);
         myFirebaseSignup.child("UserDetail");
@@ -67,16 +77,26 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Sign Up");
+        linearNahGuestUser = (LinearLayout) findViewById(R.id.linearNahGuestUser);
+        tvHead = (TextView) findViewById(R.id.tvHeadSign);
+        if(wonFlag){
+            tvHead.setText("Please Provide the Below Info for Redemption");
+            linearNahGuestUser.setVisibility(View.GONE);
+        }
+        else
+        {
+            tvHead.setText(getResources().getString(R.string.signupheading));
+        }
         etName = (EditText) findViewById(R.id.input_name);
         etLastName = (EditText) findViewById(R.id.input_lastname);
         etEmail = (EditText) findViewById(R.id.input_email);
         etPhone = (EditText) findViewById(R.id.input_phone);
 
-        tvNahGuestUser = (TextView) findViewById(R.id.tvNahGuestUser);
+
         btnSign = (Button) findViewById(R.id.btnSignup);
         progressBar = (ProgressBar) findViewById(progressBar2);
         btnSign.setOnClickListener(this);
-        tvNahGuestUser.setOnClickListener(this);
+        linearNahGuestUser.setOnClickListener(this);
         try {
             MyApp.CustomEventAnalytics("signup_activity_loaded", eventDetail.getEvent_id());
         } catch (Exception e) {
@@ -97,14 +117,30 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             String uPhone = etPhone.getText().toString();
             boolean flag = validate(uName, uEmail, uPass, uPhone);
             if (flag) {
-                userSignup = new UserLoginSignupAction();
-                userSignup.userSignup(SignUpActivity.this, uName, uLastName, uPhone, uEmail, uPass);
+                if(wonFlag){
+                    emailBody = "Name : "+uName+" \n Last Name : "+uLastName+" \n Email : "+uEmail+" \n Phone no. : "+uPhone+" \n Total WON : "+MyApp.preferences.getInt("EarnedWon", 0);
+                    Intent i = new Intent(Intent.ACTION_SENDTO);
+                    i.setType("message/rfc822");
+//                    i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"wazzon.app@gmail.com"});
+                    i.setData(Uri.parse("mailto:wazzon.app@gmail.com"));
+                    i.putExtra(Intent.EXTRA_SUBJECT, "For Redemption WazzOn "+MyApp.preferences.getInt("EarnedWon", 0)+" WON");
+                    i.putExtra(Intent.EXTRA_TEXT   , emailBody);
+                    try {
+                        startActivity(Intent.createChooser(i, "Send mail..."));
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(SignUpActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                    }
+                    progressBar.setVisibility(View.GONE);
+                }else {
+                    userSignup = new UserLoginSignupAction();
+                    userSignup.userSignup(SignUpActivity.this, uName, uLastName, uPhone, uEmail, uPass);
+                }
             } else {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(this, "Credentials can't be validated", Toast.LENGTH_SHORT).show();
             }
 
-        } else if (id == R.id.tvNahGuestUser) {
+        } else if (id == R.id.linearNahGuestUser) {
             ChatStadiumFragment.nahClicked = true;
             editor = MyApp.preferences.edit();
             editor.putString(MyApp.USER_NAME, "Guest User");

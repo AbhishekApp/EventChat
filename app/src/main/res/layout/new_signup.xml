@@ -4,12 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="12dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/progressBar2"
+        android:layout_toEndOf="@+id/progressBar2">
 
 
         <TextView
@@ -31,16 +41,32 @@
             android:drawableLeft="@drawable/fr"
             android:textAllCaps="false"
             android:textColor="#fefefe"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:layout_marginBottom="10dp"/>
+
+
+
+        <Button
+            android:id="@+id/btnmySignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/btncolor"
+            android:drawableRight="@drawable/arrow"
+            android:text="\t\t\t\t\t\t\t\t\tSIGN UP WITH EMAIL"
+            android:textAllCaps="false"
+            android:textColor="#fefefe"
+            android:textSize="12sp"
+            android:layout_marginTop="10dp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:layout_marginTop="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="30dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -70,26 +96,45 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/btnmySignup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/btncolor"
-            android:drawableRight="@drawable/arrow"
-            android:text="\t\t\t\t\t\t\t\t\tSIGN UP WITH EMAIL"
-            android:textAllCaps="false"
-            android:textColor="#fefefe"
-            android:textSize="12sp" />
+        <!--<TextView-->
+            <!--android:id="@+id/tvNahGuestUser"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:text="Nah! I will use Predefined Message"-->
+            <!--android:textColor="#605f64"-->
+            <!--android:textStyle="normal" />-->
 
-        <TextView
-            android:id="@+id/tvNahGuestUser"
+        <LinearLayout
+            android:id="@+id/linearNahGuestUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp"
             android:gravity="center_horizontal"
-            android:text="Nah! I will use Predefined Message"
-            android:textColor="#605f64"
-            android:textStyle="normal" />
+            android:padding="10dp">
+
+          <!--  <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Nah! "
+                android:textSize="16sp"
+                android:textColor="#605f64"
+                android:visibility="visible" />-->
+
+
+            <TextView
+                android:id="@+id/tvNahGuestUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nosignupmsg"
+                android:textSize="16sp"
+                android:textColor="#605f64"
+                android:visibility="visible" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView"
@@ -100,12 +145,4 @@
 
 
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBar2"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
 </RelativeLayout>

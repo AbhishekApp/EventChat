@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,7 +65,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
     SharedPreferences.Editor editor;
     Firebase myFirebaseSignup;
     //final static String firebaseURL = "https://wazznow-cd155.firebaseio.com";
-    TextView tvNahGuestUser;
+    LinearLayout linearNahGuestUser;
     private List<String> permissionNeeds;
     private String userId;
     private AccessTokenTracker accessTokenTracker;
@@ -81,6 +82,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
     private static final String TAG = "FacebookLogin";
     UserLoginSignupAction userSignup;
     public static boolean closeSignup=false;
+
 
 
     private FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
@@ -114,6 +116,8 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         callbackManager = CallbackManager.Factory.create();
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        getIntent().getBooleanExtra("WonSignup", false);
 
 
         mAuthListener = new FirebaseAuth.AuthStateListener()  {
@@ -279,7 +283,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         actionBar.setDefaultDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Sign Up");
 
-        tvNahGuestUser = (TextView) findViewById(R.id.tvNahGuestUser);
+        linearNahGuestUser = (LinearLayout) findViewById(R.id.linearNahGuestUser);
         btnFb = (LoginButton) findViewById(R.id.btnFb);
 
         btnFb.setOnClickListener(new View.OnClickListener() {
@@ -325,7 +329,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
         textView = (TextView) findViewById(R.id.textView);
         btnSign.setOnClickListener(this);
         //btnFb.setOnClickListener(this);
-        tvNahGuestUser.setOnClickListener(this);
+        linearNahGuestUser.setOnClickListener(this);
 
         try {
             MyApp.CustomEventAnalytics("signup_activity_loaded", eventDetail.getEvent_id());
@@ -372,7 +376,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
             //progressBar.setVisibility(View.VISIBLE);
            // fbConnect();
         }*/
-        else if (id == R.id.tvNahGuestUser) {
+        else if (id == R.id.linearNahGuestUser) {
             ChatStadiumFragment.nahClicked =true;
             editor = MyApp.preferences.edit();
             editor.putString(MyApp.USER_NAME, "Guest User");

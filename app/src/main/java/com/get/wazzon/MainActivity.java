@@ -1,6 +1,9 @@
 package com.get.wazzon;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -99,7 +102,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Double VersionOnNet = 0.0;
     String invitedEevntID = "";
     SharedPreferences.Editor editor = MyApp.preferences.edit();
-
+    Firebase wonHistoryRef;
+    Firebase engagementRef;
 
 
     @Override
@@ -177,6 +181,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         pd = (ProgressBar) findViewById(R.id.pd);
         pd.setVisibility(View.VISIBLE);
+        wonHistoryRef = new Firebase(firebaseURL).child("WonHistory");
+        engagementRef = new Firebase(firebaseURL).child("Engagement");
 
         // If a notification message is tapped, any data accompanying the notification
         // message is available in the intent extras. In this sample the launcher
@@ -186,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // is used when no click_action is specified.
         // Handle possible data accompanying notification message.
         // [START handle_data_extras]
+
         if (getIntent().getExtras() != null) {
             Object value;
             for (String key : getIntent().getExtras().keySet()) {
@@ -593,7 +600,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         protected Void doInBackground(Void... params) {
             try {
                 JSONArray jsonObject = myUtill.getJSONFromServer(eventURL);
-                //System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
+             //   System.out.println("EVENT DATA jsonObject : " + jsonObject.toString());
                 int length = 0;
                 if (jsonObject!=null){
 
@@ -607,7 +614,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     if(arrayListEvent != null)
                         arrayListEvent.clear();
                 }catch (Exception ex){}
-                //System.out.println("EVENT DATA length : " + length);
+                System.out.println("EVENT DATA length : " + length);
                 for(int i = 0 ; i < length; i++){
                     JSONObject jSon = jsonObject.getJSONObject(i);
                     EventModel model = new EventModel();
@@ -627,6 +634,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         cannedArray.add(jArraycannedMessage.getString(k));
                     }
+                    ArrayList<String> localMsgArray = new ArrayList<String>();
+                    try {
+                        JSONArray jArrayLocalMsg = jSon.optJSONArray("OnBoarding");
+                        for (int k = 0; k < jArrayLocalMsg.length(); k++) {
+
+                            localMsgArray.add(jArrayLocalMsg.getString(k));
+                        }
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
 
                     JSONArray jArray = jSon.getJSONArray("Cate");
                     EventDetail detail = new EventDetail();
@@ -637,7 +654,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         String subCateID = jsonDetail.optString("event_sub_id");
                         String subscribedUser ="";/* jsonDetail.optString("subscribed_user");*/
                         JSONArray jsArr = jsonDetail.getJSONArray("Sub_cate");
-
+                        System.out.println("EVENT DATA SubCate Event length : " + jsArr.length());
                         for(int t = 0 ; t < jsArr.length(); t++ ){
                             detail = new EventDetail();
                             JSONObject jOBJ = jsArr.getJSONObject(t);
@@ -651,9 +668,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_start(jOBJ.optString("event_start"));
                             detail.setEvent_exp(jOBJ.optString("event_exp"));
                             detail.setEvent_visiblity(jOBJ.optString("visible"));
+                            detail.setPrediction(jOBJ.optString("prediction"));
+                            detail.setPredictionUpdateTill(jOBJ.optString("PredictionUpdateTill"));
                             detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
                             detail.setSubscribed_user(jOBJ.optString("subscribed_user"));
                             detail.setCannedMessage(cannedArray);
+                            detail.setLocalMsg(localMsgArray);
                             model.Cate.add(detail);
 
                             if(jOBJ.optString("visible").equals("true")) {
@@ -908,6 +928,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //CannedCricketMessage message;
         AdminMessage admessage;
         String local="";
+        String wonMsg, wonTitle;
 
         @Override
         protected void onPreExecute() {
@@ -950,6 +971,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 MyUtill.popupMessage = jsonObject.getString("PopupMessage");
                 //VersionOnNet =jsonObject.getString("AppVersionInfo");
                 local = jsonObject.getString("AppVersionInfo").replace("\n","").replaceAll("^\"|\"$", "");
+                wonMsg = jsonObject.optString("FirstWonMessage");
+                wonTitle = jsonObject.optString("WonTitle");
+                if(!TextUtils.isEmpty(wonMsg)){
+                    editor = MyApp.preferences.edit();
+                    editor.putString("WonFirstMessage", wonMsg);
+                    if(!TextUtils.isEmpty(wonTitle)){
+                        editor.putString("WonTitle", wonTitle);
+                    }
+                    editor.commit();
+                }
                 System.out.println("VERSION : "+sb.toString());
             } catch (MalformedURLException e) {
                 System.out.println("VERSION DATA MalfomedURL Exception : " + e.toString());
@@ -1010,10 +1041,166 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         Toast.makeText(MainActivity.this, "no", Toast.LENGTH_SHORT).show();
                     }
                 }
+                EngagementTask engTask = new EngagementTask();
+                engTask.execute();
             }catch (Exception ex){
                 ex.printStackTrace();
             }
         }
+    }
+
+
+    class EngagementTask extends AsyncTask<Void, Void, Void>{
+
+        MyUtill myUtill;
+        JSONObject jsonObject;
+        JSONObject burnJSON, earnJSON, msgJSON;
+        HttpURLConnection urlConnection;
+        URL url = null;
+        SharedPreferences.Editor editor;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myUtill = new MyUtill();
+            //message = new CannedCricketMessage();
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String urlStr = firebaseURL+"/Engagement.json";
+             try {
+                //System.out.println(sb.toString());
+                jsonObject = myUtill.getJSONObjectFromServer(urlStr);
+                burnJSON = jsonObject.optJSONObject("Burn");
+                earnJSON = jsonObject.optJSONObject("Earn");
+                editor = MyApp.preferences.edit();
+                editor.putInt("BurnPrediction", burnJSON.getInt("Prediction"));
+                editor.putInt("RedeemLimit", burnJSON.getInt("Redeem"));
+                editor.putInt("FirstLaunchBonus", earnJSON.getInt("FirstLaunch"));
+                editor.putInt("InviteFriendPoint", earnJSON.getInt("InviteFriend"));
+                editor.putInt("EarnPrediction", earnJSON.getInt("Prediction"));
+                msgJSON = earnJSON.optJSONObject("NiceMsg");
+                editor.putInt("CharLimit", msgJSON.getInt("Chars"));
+                editor.putInt("WonBonus", msgJSON.getInt("Won"));
+                editor.commit();
+            }  catch (JSONException e) {
+                e.printStackTrace();// for now eat exceptions
+            } catch (Exception ex){
+                Log.e("MyUtill", "Get Engagement Data From Server ERROR: "+ex.toString());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            WonHistoryTask task = new WonHistoryTask();
+            task.execute();
+
+        }
+    }
+    String wonMsg;
+    class WonHistoryTask extends AsyncTask<Void,Void,Void>{
+        MyUtill myUtill;
+        JSONObject wonHistoryJSON, userHistory, metaJSON;
+        String wonHistoryStr;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myUtill = new MyUtill();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String urlStr = firebaseURL+"/WonHistory.json";
+            wonHistoryJSON = myUtill.getJSONObjectFromServer(urlStr);
+            userHistory = wonHistoryJSON.optJSONObject(MyApp.getDeviveID(MainActivity.this));
+            wonHistoryStr = String.valueOf(userHistory);
+            Log.e("MainActivity", "Won History "+wonHistoryStr);
+            if(TextUtils.isEmpty(wonHistoryStr) || wonHistoryStr.equalsIgnoreCase("null")){
+                    try {
+                        Map<String, Object> userMap = new HashMap<String, Object>();
+                        Map<String, Object> meta = new HashMap<String, Object>();
+                        Map<String, Object> myObj = new HashMap<String, Object>();
+                        meta.put("Burned",0);
+                        meta.put("Earned",MyApp.preferences.getInt("FirstLaunchBonus", 30));
+                       // AdminMessage msg = new AdminMessage();
+                        wonMsg = MyApp.preferences.getString("WonFirstMessage",  "");
+                        if(TextUtils.isEmpty(wonMsg))
+                            wonMsg = "WooHoo! we have given you "+MyApp.preferences.getInt("FirstLaunchBonus", 30)+" won for joining in.";
+                        else{
+                            wonMsg = wonMsg.replace("<Amt>", String.valueOf(MyApp.preferences.getInt("FirstLaunchBonus", 30)));
+                            wonMsg = wonMsg.replace("<redeemamt>", String.valueOf(MyApp.preferences.getInt("RedeemLimit", 0)));
+                        }
+                     //   meta.put("Description", msg);
+
+                        myObj.put("Balance", MyApp.preferences.getInt("FirstLaunchBonus", 30));
+                        myObj.put("Meta", meta);
+                    //  jOBJ.put(MyApp.getDeviveID(this), jsonObject);
+                        userMap.put(MyApp.getDeviveID(MainActivity.this), myObj);
+                        wonHistoryRef.updateChildren(userMap);
+                        editor = MyApp.preferences.edit();
+                    //  editor.putBoolean("FirstOpen", true);
+                        editor.putInt("BalanceWon",  MyApp.preferences.getInt("FirstLaunchBonus", 30));
+                        editor.putInt("BurnWon", 0);
+                        editor.putInt("EarnWon", 0);
+                        editor.commit();
+                        wonHistoryRef.child( MyApp.getDeviveID(MainActivity.this)+ "/Meta/Description").push().setValue(wonMsg);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showAlertForWon(MainActivity.this);
+                            }
+                        });
+                    } catch (Exception exp) {
+                        exp.printStackTrace();
+                    }
+
+            }else {
+                int balance = userHistory.optInt("Balance");
+                metaJSON = userHistory.optJSONObject("Meta");
+                int burnedWon = metaJSON.optInt("Burned");
+                int earnedWon = metaJSON.optInt("Earned");
+                editor = MyApp.preferences.edit();
+                editor.putInt("BalanceWon", balance);
+                editor.putInt("EarnedWon", earnedWon);
+                editor.putInt("BurnedWon", burnedWon);
+                editor.commit();
+            }
+            return null;
+        }
+    }
+
+
+    public void showAlertForWon(final Context activity)
+    {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+        //alertDialog.setTitle(activity.getResources().getString(R.string.update_title));
+        alertDialog.setTitle(MyApp.preferences.getString("wonTitle", ""));
+        //alertDialog.setMessage(activity.getResources().getString(R.string.update_msg));
+        alertDialog.setMessage(wonMsg);
+        alertDialog.setPositiveButton(activity.getResources().getString(R.string.playon),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        // DO TASK
+//                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + activity.getPackageName())));
+                        EventDetail eventDetail = arrayListEvent.get(0);
+                        MyApp.PreDefinedEventAnalytics("select_content",eventDetail.getCategory_name(),eventDetail.getEvent_id());
+                        Intent iChat = new Intent(activity, EventChatActivity.class);
+                        iChat.putExtra("EventDetail", eventDetail);
+                        activity.startActivity(iChat);
+                    }
+                });
+        alertDialog.setNegativeButton(activity.getResources().getString(R.string.negative_btn),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        // DO TASK
+                    }
+                });
+        alertDialog.show();
     }
 
 

@@ -20,8 +20,14 @@ public class EventDetail implements Serializable {
     String event_exp = "";
     String event_start = "";
     String subscribed_user = "";
+    String prediction = "";
+    String predictionUpdateTill = "";
+
+
+
     String visibility = "";
     ArrayList<String> cannedMessage = new ArrayList<>();
+    ArrayList<String> localMsg = new ArrayList<>();
 
 
     public ArrayList<String> getCannedMessage() {
@@ -32,6 +38,13 @@ public class EventDetail implements Serializable {
         this.cannedMessage = cannedMessage;
     }
 
+    public ArrayList<String> getLocalMsg() {
+        return localMsg;
+    }
+
+    public void setLocalMsg(ArrayList<String> localMsg) {
+        this.localMsg = localMsg;
+    }
 
     public String getEvent_start() {
         return event_start;
@@ -128,5 +141,19 @@ public class EventDetail implements Serializable {
         return event_title;
     }
 
+    public String getPrediction() {
+        return prediction;
+    }
 
+    public void setPrediction(String prediction) {
+        this.prediction = prediction;
+    }
+
+    public String getPredictionUpdateTill() {
+        return predictionUpdateTill;
+    }
+
+    public void setPredictionUpdateTill(String predictionUpdateTill) {
+        this.predictionUpdateTill = predictionUpdateTill;
+    }
 }

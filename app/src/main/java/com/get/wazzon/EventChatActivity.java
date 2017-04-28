@@ -62,12 +62,14 @@ public class EventChatActivity extends AppCompatActivity {
     boolean moreThanDay=false;
     private String NotificationMessageToShow="";
     String toDisplay="";
+    static boolean localFlag = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_chat_fragment);
         connectDetector = new ConnectDetector(this);
+
         try {
             if (getIntent().hasExtra("EventDetail")) {
                 eventDetail = (EventDetail) getIntent().getSerializableExtra("EventDetail");
@@ -346,6 +348,7 @@ public class EventChatActivity extends AppCompatActivity {
         adapter.addFragment(new ChatStadiumFragment(), "STADIUM");
         adapter.addFragment(new FeatureFragment(), "FEATURED");
         adapter.addFragment(new HousePartyFragment(), "HOUSE PARTY");
+        adapter.addFragment(new WonHistory(), "WON's");
         viewPager.setAdapter(adapter);
     }
 
