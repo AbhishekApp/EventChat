@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -151,7 +152,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             public void onClick(View v) {
                 MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), eventID);
 
-                longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle()+"&utm_campaign="+eventID;
+                longDeepLink =longDeepLink+eventID+ "&utm_medium="+MyApp.getDeviveID(con)+"&utm_campaign="+eventID;
                 msg = model.getTitle();
                 new newShortAsync().execute();
 
@@ -223,6 +224,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             BufferedReader reader;
             StringBuffer buffer;
             String res = null;
+            Log.i("NewAdapter", "LongDeepURL+ "+longDeepLink);
             String json = "{\"longUrl\": \"" + longDeepLink.replace("$", con.getResources().getString(R.string.apk_link)) + "\"}";
             try {
                 URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key=" + con.getResources().getString(R.string.google_shortlink_api_key));

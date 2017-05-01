@@ -18,8 +18,14 @@ package com.pushnotification;
 
 import android.util.Log;
 
+import com.firebase.client.Firebase;
+import com.get.wazzon.MyApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     private static final String TAG = "MyFirebaseIIDService";
 
@@ -52,5 +58,11 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
      */
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
+        Firebase usersRef = new Firebase(MyApp.FIREBASE_BASE_URL);
+        String deviceID = MyApp.getDeviveID(this);
+        Firebase alanRef = usersRef.child("users/"+deviceID+"/0");
+        Map<String, Object> nickname = new HashMap<String, Object>();
+        nickname.put("fcm_id", FirebaseInstanceId.getInstance().getToken());
+        alanRef.updateChildren(nickname);
     }
 }

@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.get.wazzon.MyApp;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,6 +85,7 @@ public class UserProfile {
         Firebase alanRef = usersRef.child("users/"+deviceID+"/0");
         Map<String, Object> nickname = new HashMap<String, Object>();
         nickname.put("joined_group", userGroup);
+        nickname.put("fcm_id", FirebaseInstanceId.getInstance().getToken());
         alanRef.updateChildren(nickname);
      // Toast.makeText(con, "User group update successfully "+newGroup, Toast.LENGTH_SHORT).show();
         SharedPreferences.Editor editor = MyApp.preferences.edit();

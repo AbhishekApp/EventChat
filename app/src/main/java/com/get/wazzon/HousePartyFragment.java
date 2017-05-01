@@ -103,9 +103,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             if (SubDomain.length()>0){
                 alanRef = myFirebaseRef.child(EventChatActivity.SuperCateName+"/ " +eventDetail.getCategory_name()+"/HousepartyChat").child(""+ SubDomain+"/0");
                 alanRef.limitToFirst(mPageLimit).startAt(mPageEndOffset);
-
                 //Toast.makeText(getActivity(), "Waiting for your Friends to Join In. Invite some more. More the merrier.", Toast.LENGTH_SHORT).show();
-
             }else{
                 //Toast.makeText(getActivity(), "no SubDomain : "+SubDomain, Toast.LENGTH_SHORT).show();
             }

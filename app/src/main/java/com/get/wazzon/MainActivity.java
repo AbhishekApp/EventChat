@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     SharedPreferences.Editor editor = MyApp.preferences.edit();
     Firebase wonHistoryRef;
     Firebase engagementRef;
+    String inviterId;
+    String token;
 
 
     @Override
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     //Toast.makeText(MainActivity.this, "title: " + string_value.split(" $")[0], Toast.LENGTH_LONG).show();
                     //Toast.makeText(MainActivity.this, "message : " + string_value.split(" $")[1], Toast.LENGTH_LONG).show();
 
-                    System.out.println(key +":"+ string_value);
+                    System.out.println("Key:Value "+key +":"+ string_value);
                     //System.out.println(string_value.split(" $")[0]);
                     //xxxSystem.out.println(string_value.split(" $")[1]);
 
@@ -178,11 +180,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         pd = (ProgressBar) findViewById(R.id.pd);
         pd.setVisibility(View.VISIBLE);
-        wonHistoryRef = new Firebase(firebaseURL).child("WonHistory");
-        engagementRef = new Firebase(firebaseURL).child("Engagement");
+        connectDetector = new ConnectDetector(this);
+
+        if(connectDetector.getConnection()) {
+            wonHistoryRef = new Firebase(firebaseURL).child("WonHistory");
+            engagementRef = new Firebase(firebaseURL).child("Engagement");
+        }
 
         // If a notification message is tapped, any data accompanying the notification
         // message is available in the intent extras. In this sample the launcher
@@ -251,14 +258,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // [END handle_data_extras]
 
         // Get token
-        String token = FirebaseInstanceId.getInstance().getToken();
+        token = FirebaseInstanceId.getInstance().getToken();
 
         // Log and toast
         String msg = getString(R.string.msg_token_fmt, token);
         Log.d(TAG, msg);
         //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
 
-        connectDetector = new ConnectDetector(this);
+
         if(connectDetector.getConnection()) {
             if (!firstFlag) {
             /* Below code runs only first time. When app opens after that same data will be used. When you close and reopen app then below code will execute again */
@@ -294,9 +301,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             Uri uri = intent.getData();
                             //invitedEventid = uri.getQueryParameter("eventid");
 
-                            String myMessage = uri.getQueryParameter("utm_medium");
+                            inviterId = uri.getQueryParameter("utm_medium");
 
-                            Log.e("MainActivity", "get Deep link message "+myMessage);
+                            Log.e("MainActivity", "get Deep link inviterId "+inviterId);
 
                            try{
                                Log.e("MainActivity", "get Deep link URL "+deepLink);
@@ -775,6 +782,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alanisawesomeMap.put("phone", MyApp.preferences.getString(MyApp.USER_PHONE, ""));
         alanisawesomeMap.put("email", MyApp.preferences.getString(MyApp.USER_EMAIL, ""));
         alanisawesomeMap.put("userType", MyApp.preferences.getString(MyApp.USER_TYPE, ""));
+        alanisawesomeMap.put("fcm_id", token);
         //System.out.println("User Name " + MyApp.preferences.getString(MyApp.USER_NAME, null));
         //UserDetailTask task = new UserDetailTask();
         //task.execute();
@@ -1102,9 +1110,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
     String wonMsg;
+    JSONObject wonHistoryJSON;
     class WonHistoryTask extends AsyncTask<Void,Void,Void>{
         MyUtill myUtill;
-        JSONObject wonHistoryJSON, userHistory, metaJSON;
+        JSONObject userHistory, metaJSON;
         String wonHistoryStr;
 
         @Override
@@ -1126,11 +1135,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         Map<String, Object> meta = new HashMap<String, Object>();
                         Map<String, Object> myObj = new HashMap<String, Object>();
                         meta.put("Burned",0);
+                        meta.put("TimeStamp",HousePartyFragment.getCurrentTimeStamp());
                         meta.put("Earned",MyApp.preferences.getInt("FirstLaunchBonus", 30));
                        // AdminMessage msg = new AdminMessage();
                         wonMsg = MyApp.preferences.getString("WonFirstMessage",  "");
                         if(TextUtils.isEmpty(wonMsg))
-                            wonMsg = "WooHoo! we have given you "+MyApp.preferences.getInt("FirstLaunchBonus", 30)+" won for joining in.";
+                            wonMsg = "WooHoo! we have given you "+MyApp.preferences.getInt("FirstLaunchBonus", 30)+" won for joining in. Your balance : "+MyApp.preferences.getInt("FirstLaunchBonus", 30);
                         else{
                             wonMsg = wonMsg.replace("<Amt>", String.valueOf(MyApp.preferences.getInt("FirstLaunchBonus", 30)));
                             wonMsg = wonMsg.replace("<redeemamt>", String.valueOf(MyApp.preferences.getInt("RedeemLimit", 0)));
@@ -1146,8 +1156,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     //  editor.putBoolean("FirstOpen", true);
                         editor.putInt("BalanceWon",  MyApp.preferences.getInt("FirstLaunchBonus", 30));
                         editor.putInt("BurnWon", 0);
-                        editor.putInt("EarnWon", 0);
+                        editor.putInt("EarnWon", MyApp.preferences.getInt("FirstLaunchBonus", 30));
                         editor.commit();
+                        inviterGetWon();
                         wonHistoryRef.child( MyApp.getDeviveID(MainActivity.this)+ "/Meta/Description").push().setValue(wonMsg);
                         runOnUiThread(new Runnable() {
                             @Override
@@ -1179,7 +1190,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
         //alertDialog.setTitle(activity.getResources().getString(R.string.update_title));
-        alertDialog.setTitle(MyApp.preferences.getString("wonTitle", ""));
+        alertDialog.setTitle(MyApp.preferences.getString("WonTitle", ""));
         //alertDialog.setMessage(activity.getResources().getString(R.string.update_msg));
         alertDialog.setMessage(wonMsg);
         alertDialog.setPositiveButton(activity.getResources().getString(R.string.playon),
@@ -1201,6 +1212,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                 });
         alertDialog.show();
+    }
+
+
+    public void inviterGetWon(){
+        try {
+            if (!TextUtils.isEmpty(inviterId)) {
+                JSONObject jsonObj = wonHistoryJSON.optJSONObject(inviterId);
+                int inviterBalance = jsonObj.optInt("Balance");
+                JSONObject inviterMeta = jsonObj.optJSONObject("Meta");
+                int inviterEarn = inviterMeta.optInt("Earned");
+                int inviterBurn = inviterMeta.optInt("Burned");
+                Map<String, Object> inMeta = new HashMap<String, Object>();
+                inviterEarn = inviterEarn + MyApp.preferences.getInt("InviteFriendPoint", 0);
+                inviterBalance = inviterBalance + inviterEarn;
+                wonHistoryRef.child(inviterId + "/Balance").setValue(inviterBalance);
+                wonHistoryRef.child(inviterId + "/Meta/Earned").setValue(inviterEarn);
+                wonHistoryRef.child(inviterId + "/Meta/TimeStamp").setValue(HousePartyFragment.getCurrentTimeStamp());
+                String inviterMsg = "Your invitee joins group. You earn " + MyApp.preferences.getInt("InviteFriendPoint", 0) + " won.";
+                wonHistoryRef.child(inviterId + "/Meta/Description").push().setValue(inviterMsg);
+
+            }
+        }catch (Exception ex){
+            Log.e("MainActivity", "inviterGetWon ERROR: "+ex.toString());
+        }
     }
 
 

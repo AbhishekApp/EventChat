@@ -136,6 +136,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
             BufferedReader reader;
             StringBuffer buffer;
             String res=null;
+            Log.i("InviteFriendActivity", "LongDeepURL+ "+longDeepLink);
             String json = "{\"longUrl\": \""+longDeepLink.replace("$",getResources().getString(R.string.apk_link))+"\"}";
             try {
                 URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key="+getResources().getString(R.string.google_shortlink_api_key));
@@ -214,7 +215,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                             SubDomain = j;
                         }
                     }
-                    longDeepLink = longDeepLink +"invi"+SubDomain+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventID;
+                    longDeepLink = longDeepLink +"invi"+SubDomain+"&utm_medium="+MyApp.getDeviveID(this)+"&utm_campaign="+eventID;
                 }
                 //abhishek
                 if (shortLinkURL.length()<=0 ){
@@ -272,7 +273,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         protected void onPostExecute(String feed) {
             //onPost
             //Toast.makeText(getApplicationContext(), "key is blank inserted :"+myRandom + CatID, Toast.LENGTH_SHORT).show();
-            longDeepLink = longDeepLink +"invi"+myRandom+ eventCategory+"&utm_medium="+getIntent().getStringExtra("message")+"&utm_campaign="+eventID;
+            longDeepLink = longDeepLink +"invi"+myRandom+ eventCategory+"&utm_medium="+MyApp.getDeviveID(InviteFriendActivity.this)+"&utm_campaign="+eventID;
             //abhishek
             if (shortLinkURL.length()<=0 ){
                 new newShortAsync().execute();
@@ -308,6 +309,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                 .path("/")
                 .appendQueryParameter("link", deepLink.toString())
                 .appendQueryParameter("apn", packageName)
+                .appendQueryParameter("inviterid", MyApp.getDeviveID(this))
                 .appendQueryParameter("eventid", eventID);
 
         // Minimum version is optional.

@@ -76,15 +76,21 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private void init() {
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Sign Up");
+
         linearNahGuestUser = (LinearLayout) findViewById(R.id.linearNahGuestUser);
         tvHead = (TextView) findViewById(R.id.tvHeadSign);
+        btnSign = (Button) findViewById(R.id.btnSignup);
+
         if(wonFlag){
             tvHead.setText("Please Provide the Below Info for Redemption");
+            actionBar.setTitle("Redeem Now");
+            btnSign.setText("Redeem Now");
             linearNahGuestUser.setVisibility(View.GONE);
         }
         else
         {
+            actionBar.setTitle("Sign Up");
+            btnSign.setText(R.string.signupbtn);
             tvHead.setText(getResources().getString(R.string.signupheading));
         }
         etName = (EditText) findViewById(R.id.input_name);
@@ -93,7 +99,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         etPhone = (EditText) findViewById(R.id.input_phone);
 
 
-        btnSign = (Button) findViewById(R.id.btnSignup);
+
         progressBar = (ProgressBar) findViewById(progressBar2);
         btnSign.setOnClickListener(this);
         linearNahGuestUser.setOnClickListener(this);
@@ -118,7 +124,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             boolean flag = validate(uName, uEmail, uPass, uPhone);
             if (flag) {
                 if(wonFlag){
-                    emailBody = "Name : "+uName+" \n Last Name : "+uLastName+" \n Email : "+uEmail+" \n Phone no. : "+uPhone+" \n Total WON : "+MyApp.preferences.getInt("EarnedWon", 0);
+                    emailBody = "Name : "+uName+" \n Last Name : "+uLastName+" \n Email : "+uEmail+" \n Phone no. : "+uPhone+" \n Total WON : "+MyApp.preferences.getInt("EarnedWon", 0)+" \n User Id : "+MyApp.getDeviveID(this);
                     Intent i = new Intent(Intent.ACTION_SENDTO);
                     i.setType("message/rfc822");
 //                    i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"wazzon.app@gmail.com"});
