@@ -32,6 +32,7 @@ import com.app.model.EventSubCateList;
 import com.app.model.MyUtill;
 import com.app.model.Sub_cate;
 import com.app.model.UserProfile;
+import com.app.model.WonData;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -336,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                     invitation = invitation.replace("invi","");
                                     UserProfile profile = new UserProfile();
                                     profile.update_house_party_invitations(MainActivity.this, invitation);
+                                   MyUtill.subscribeUserForEvents(invitation);
                                    if(invitation.length() > 5) {
                                        String invi = invitation.substring(0, 5);
                                        MyUtill.subscribeUserForEvents(invi + "_hp");
@@ -1134,10 +1136,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         Map<String, Object> userMap = new HashMap<String, Object>();
                         Map<String, Object> meta = new HashMap<String, Object>();
                         Map<String, Object> myObj = new HashMap<String, Object>();
-                        meta.put("Burned",0);
-                        meta.put("TimeStamp",HousePartyFragment.getCurrentTimeStamp());
-                        meta.put("Earned",MyApp.preferences.getInt("FirstLaunchBonus", 30));
+//                        meta.put("Burned",0);
+//                        meta.put("TimeStamp",HousePartyFragment.getCurrentTimeStamp());
+//                        meta.put("Earned",MyApp.preferences.getInt("FirstLaunchBonus", 30));
                        // AdminMessage msg = new AdminMessage();
+                        WonData wonData = new WonData();
+                        wonData.setEarned(MyApp.preferences.getInt("FirstLaunchBonus", 30));
+                        wonData.setBurned(0);
+                        wonData.setTimeStamp(HousePartyFragment.getCurrentTimeStamp());
                         wonMsg = MyApp.preferences.getString("WonFirstMessage",  "");
                         if(TextUtils.isEmpty(wonMsg))
                             wonMsg = "WooHoo! we have given you "+MyApp.preferences.getInt("FirstLaunchBonus", 30)+" won for joining in. Your balance : "+MyApp.preferences.getInt("FirstLaunchBonus", 30);
@@ -1146,20 +1152,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             wonMsg = wonMsg.replace("<redeemamt>", String.valueOf(MyApp.preferences.getInt("RedeemLimit", 0)));
                         }
                      //   meta.put("Description", msg);
-
+                        wonData.setMsg(wonMsg);
                         myObj.put("Balance", MyApp.preferences.getInt("FirstLaunchBonus", 30));
                         myObj.put("Meta", meta);
-                    //  jOBJ.put(MyApp.getDeviveID(this), jsonObject);
                         userMap.put(MyApp.getDeviveID(MainActivity.this), myObj);
                         wonHistoryRef.updateChildren(userMap);
                         editor = MyApp.preferences.edit();
-                    //  editor.putBoolean("FirstOpen", true);
                         editor.putInt("BalanceWon",  MyApp.preferences.getInt("FirstLaunchBonus", 30));
-                        editor.putInt("BurnWon", 0);
-                        editor.putInt("EarnWon", MyApp.preferences.getInt("FirstLaunchBonus", 30));
                         editor.commit();
                         inviterGetWon();
-                        wonHistoryRef.child( MyApp.getDeviveID(MainActivity.this)+ "/Meta/Description").push().setValue(wonMsg);
+                        wonHistoryRef.child( MyApp.getDeviveID(MainActivity.this)+ "/Meta").push().setValue(wonData);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -1172,13 +1174,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }else {
                 int balance = userHistory.optInt("Balance");
-                metaJSON = userHistory.optJSONObject("Meta");
-                int burnedWon = metaJSON.optInt("Burned");
-                int earnedWon = metaJSON.optInt("Earned");
+//                metaJSON = userHistory.optJSONObject("Meta");
+//                int burnedWon = metaJSON.optInt("Burned");
+//                int earnedWon = metaJSON.optInt("Earned");
+
                 editor = MyApp.preferences.edit();
                 editor.putInt("BalanceWon", balance);
-                editor.putInt("EarnedWon", earnedWon);
-                editor.putInt("BurnedWon", burnedWon);
                 editor.commit();
             }
             return null;
@@ -1189,9 +1190,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void showAlertForWon(final Context activity)
     {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
-        //alertDialog.setTitle(activity.getResources().getString(R.string.update_title));
         alertDialog.setTitle(MyApp.preferences.getString("WonTitle", ""));
-        //alertDialog.setMessage(activity.getResources().getString(R.string.update_msg));
         alertDialog.setMessage(wonMsg);
         alertDialog.setPositiveButton(activity.getResources().getString(R.string.playon),
                 new DialogInterface.OnClickListener() {
@@ -1221,16 +1220,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 JSONObject jsonObj = wonHistoryJSON.optJSONObject(inviterId);
                 int inviterBalance = jsonObj.optInt("Balance");
                 JSONObject inviterMeta = jsonObj.optJSONObject("Meta");
-                int inviterEarn = inviterMeta.optInt("Earned");
-                int inviterBurn = inviterMeta.optInt("Burned");
-                Map<String, Object> inMeta = new HashMap<String, Object>();
-                inviterEarn = inviterEarn + MyApp.preferences.getInt("InviteFriendPoint", 0);
-                inviterBalance = inviterBalance + inviterEarn;
+//                int inviterEarn = inviterMeta.optInt("Earned");
+//                int inviterBurn = inviterMeta.optInt("Burned");
+                WonData wonData = new WonData();
+                wonData.setEarned(MyApp.preferences.getInt("InviteFriendPoint", 0));
+                wonData.setBurned(0);
+//                Map<String, Object> inMeta = new HashMap<String, Object>();
+//                inviterEarn = inviterEarn + MyApp.preferences.getInt("InviteFriendPoint", 0);
+                inviterBalance = inviterBalance + MyApp.preferences.getInt("InviteFriendPoint", 0);
                 wonHistoryRef.child(inviterId + "/Balance").setValue(inviterBalance);
-                wonHistoryRef.child(inviterId + "/Meta/Earned").setValue(inviterEarn);
-                wonHistoryRef.child(inviterId + "/Meta/TimeStamp").setValue(HousePartyFragment.getCurrentTimeStamp());
+//                wonHistoryRef.child(inviterId + "/Meta/Earned").setValue(inviterEarn);
+//                wonHistoryRef.child(inviterId + "/Meta/TimeStamp").setValue(HousePartyFragment.getCurrentTimeStamp());
                 String inviterMsg = "Your invitee joins group. You earn " + MyApp.preferences.getInt("InviteFriendPoint", 0) + " won.";
-                wonHistoryRef.child(inviterId + "/Meta/Description").push().setValue(inviterMsg);
+                wonData.setMsg(inviterMsg);
+                wonHistoryRef.child(inviterId + "/Meta/").push().setValue(wonData);
 
             }
         }catch (Exception ex){
