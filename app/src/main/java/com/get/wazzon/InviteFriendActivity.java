@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.model.MyUtill;
 import com.firebase.client.Firebase;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -215,6 +216,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
                             SubDomain = j;
                         }
                     }
+                    MyUtill.subscribeUserForEvents(SubDomain);
                     longDeepLink = longDeepLink +"invi"+SubDomain+"&utm_medium="+MyApp.getDeviveID(this)+"&utm_campaign="+eventID;
                 }
                 //abhishek
@@ -273,6 +275,7 @@ public class InviteFriendActivity extends AppCompatActivity implements View.OnCl
         protected void onPostExecute(String feed) {
             //onPost
             //Toast.makeText(getApplicationContext(), "key is blank inserted :"+myRandom + CatID, Toast.LENGTH_SHORT).show();
+            MyUtill.subscribeUserForEvents(myRandom+ eventCategory);
             longDeepLink = longDeepLink +"invi"+myRandom+ eventCategory+"&utm_medium="+MyApp.getDeviveID(InviteFriendActivity.this)+"&utm_campaign="+eventID;
             //abhishek
             if (shortLinkURL.length()<=0 ){

@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -357,7 +358,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             alanisawesomeMap.put("commentator_privilege", "" + commentator_privilege);
             alanisawesomeMap.put("user_enabled", "true");
             alanisawesomeMap.put("joined_group", UserJoinedGroup);
-
+            alanisawesomeMap.put("fcm_id", FirebaseInstanceId.getInstance().getToken());
             //by default this flag will be false when admin approve then that user will be treated as commentator and can post commnets in the specific group's event
             final Map<String, Map<String, String>> users = new HashMap<String, Map<String, String>>();
             //System.out.println("USER List new length : " );

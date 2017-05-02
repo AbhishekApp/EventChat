@@ -643,14 +643,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 imgEmoji.setVisibility(View.GONE);
                 keyboard.setVisibility(View.VISIBLE);
 
-                //Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
-                /*if (viewLay.getVisibility() == View.VISIBLE) {
-                    viewLay.setVisibility(View.GONE);
-                } else {
-                    viewLay.setVisibility(View.VISIBLE);
-                    Toast.makeText(getActivity(), "Emoji will be shown soon", Toast.LENGTH_SHORT).show();
-                }*/
-
             } else if (id == etChatMsg) {
                 linearCanMsg.setVisibility(View.GONE);
                 imgEmoji.setVisibility(View.GONE);
@@ -674,7 +666,11 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                               }else{
                                   MyUtill.subscribeUserForEvents(eventDetail.getEvent_id() + "_stad");
                               }
-                              sendMsg(msg, "normal");
+                              if(msg.contains("#prediction"))
+                                    sendMsg(msg, "prediction");
+                              else
+                                    sendMsg(msg, "normal");
+
                               etMsg.setText("");
                               if (preferences.getString(MyApp.USER_TYPE, "").equals("com")) {
                                   System.out.println("com");
@@ -753,7 +749,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         if (preferences.getString("user_enabled", "").length() == 0 || preferences.getString("user_enabled", "").equals("true")) {
             //StadiumMsgLimit+=2;
             String msg = eventDetail.getCannedMessage().get(position);
-            sendMsg(msg, "canned"); //cannned message click
+            if(msg.contains("#prediction"))
+                sendMsg(msg, "prediction"); //cannned message click
+            else
+                sendMsg(msg, "canned"); //cannned message click
 
 
             etMsg.setText("");
@@ -811,6 +810,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 else if (messageType.equals("canned")){
                     MyApp.CustomEventAnalytics("canned_sent", eventDetail.getEvent_id()+"_stadium");
                 }
+                else if(messageType.equals("prediction")){
+                    MyApp.CustomEventAnalytics("canned_sent", eventDetail.getEvent_id()+"_stadium");
+                }
                 if (msg.contains("#featured")||msg.contains("#Featured")||msg.contains("#FEATURED")){
                     MyUtill.addMsgtoFeatured(getActivity(),msg);
                 }
@@ -841,6 +843,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     if (messageType.equals("normal")) {
                         MyApp.CustomEventAnalytics("chat_sent", eventDetail.getEvent_id()+"_stadium");
                     } else if (messageType.equals("canned")) {
+                        MyApp.CustomEventAnalytics("canned_sent", eventDetail.getEvent_id()+"_stadium");
+                    } else if(messageType.equals("prediction")){
                         MyApp.CustomEventAnalytics("canned_sent", eventDetail.getEvent_id()+"_stadium");
                     }
                 }

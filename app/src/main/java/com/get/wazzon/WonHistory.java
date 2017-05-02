@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.app.model.AdminMessage;
+import com.app.model.WonData;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -35,10 +36,10 @@ public class WonHistory extends Fragment implements View.OnClickListener {
     Button btnRedeem;
     ListView listView;
     Firebase alanRef;
-    Query alanQuery;
+ //   Query alanQuery;
     ChildEventListener childEventListener;
     int WonHistoryLimit = 20;
-    ArrayList<String> arrayList;
+    ArrayList<WonData> arrayList;
     WonAdapter adapter;
 
     @Override
@@ -50,8 +51,9 @@ public class WonHistory extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        alanRef = new Firebase(MyApp.FIREBASE_BASE_URL + "/WonHistory" + "/" + MyApp.getDeviveID(getActivity())+ "/Meta").child("Description");
-        alanQuery = alanRef.limitToLast(WonHistoryLimit);
+        alanRef = new Firebase(MyApp.FIREBASE_BASE_URL + "/WonHistory" + "/" + MyApp.getDeviveID(getActivity())).child("Meta");
+       // alanQuery = alanRef.limitToLast(WonHistoryLimit);
+        alanRef.keepSynced(true);
         View view = inflater.inflate(R.layout.won_history, container, false);
         init(view);
         return view;
@@ -63,14 +65,14 @@ public class WonHistory extends Fragment implements View.OnClickListener {
         listView = (ListView) view.findViewById(R.id.listWon);
 
         btnRedeem.setOnClickListener(this);
-        arrayList = new ArrayList<String>();
+        arrayList = new ArrayList<WonData>();
         adapter = new WonAdapter(getActivity(), arrayList);
         listView.setAdapter(adapter);
 
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String msg = dataSnapshot.getValue(String.class);
+                WonData msg = dataSnapshot.getValue(WonData.class);
                 Log.i("WonHistory", "Description : "+ msg);
                 arrayList.add(msg);
                 adapter.notifyDataSetChanged();
@@ -96,7 +98,7 @@ public class WonHistory extends Fragment implements View.OnClickListener {
 
             }
         };
-        alanQuery.addChildEventListener(childEventListener);
+        alanRef.addChildEventListener(childEventListener);
     }
 
     @Override
