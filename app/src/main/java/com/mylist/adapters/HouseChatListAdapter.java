@@ -95,7 +95,7 @@ public class HouseChatListAdapter extends FirebaseListAdapter<ChatData> {
             public void onClick(View v) {
                 MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), eventID);
                 //openShareScreen
-                longDeepLink =longDeepLink+ "&utm_medium="+model.getTitle()+"&utm_campaign="+eventID;
+                longDeepLink =longDeepLink+ "&utm_medium="+MyApp.getDeviveID(activity)+"&utm_campaign="+eventID;
                 msg = model.getTitle();
                 new newShortAsync().execute();
             }

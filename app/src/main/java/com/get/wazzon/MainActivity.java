@@ -301,7 +301,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             //String inviterDeviceID = intent.getStringExtra("UserDeviceID");
                             Uri uri = intent.getData();
                             //invitedEventid = uri.getQueryParameter("eventid");
-
                             inviterId = uri.getQueryParameter("utm_medium");
 
                             Log.e("MainActivity", "get Deep link inviterId "+inviterId);
@@ -678,7 +677,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             detail.setEvent_exp(jOBJ.optString("event_exp"));
                             detail.setEvent_visiblity(jOBJ.optString("visible"));
                             detail.setPrediction(jOBJ.optString("prediction"));
-                            detail.setPredictionUpdateTill(jOBJ.optString("PredictionUpdateTill"));
+                            detail.setPredictionUpdateTill(jOBJ.optString("prediction_till"));
                             detail.setEvent_image_url(MyApp.FIREBASE_IMAGE_URL+jOBJ.optString("event_id"));
                             detail.setSubscribed_user(jOBJ.optString("subscribed_user"));
                             detail.setCannedMessage(cannedArray);

@@ -400,7 +400,7 @@ public class FeatureFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 public void onClick(View v) {
                     //Toast.makeText(getActivity(), "whatsapp", Toast.LENGTH_SHORT).show();
                     MyApp.PreDefinedEventAnalytics("share",eventDetail.getCategory_name(),eventID); //no message ID as all will be in same sub-category
-                    longDeepLink =longDeepLink+eventID+ "&utm_medium="+model.getTitle()+"&utm_campaign="+eventID;
+                    longDeepLink =longDeepLink+eventID+ "&utm_medium="+MyApp.getDeviveID(con)+"&utm_campaign="+eventID;
                     msg = model.getTitle();
                     new newShortAsync().execute();
                 }
