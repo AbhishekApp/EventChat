@@ -560,9 +560,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }else if(id == R.id.menu_info){
             Intent ii = new Intent(this, InfoActivity.class);
             startActivity(ii);
-        }/*else if(id == R.id.menu_more){
-            Toast.makeText(this,"More is coming soon", Toast.LENGTH_SHORT).show();
-        }*/
+        }else if(id == R.id.menu_faq){
+            Intent ii = new Intent(this, FaqActivity.class);
+            startActivity(ii);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -660,6 +661,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         JSONObject jsonDetail = jArray.getJSONObject(j);
                         String subCateName = jsonDetail.optString("event_category");
                         String subCateID = jsonDetail.optString("event_sub_id");
+                        String subCateVisible = jsonDetail.optString("subcate_visible");
+                        if(subCateVisible.equals("false")){
+                            continue;
+                        }
                         String subscribedUser ="";/* jsonDetail.optString("subscribed_user");*/
                         JSONArray jsArr = jsonDetail.getJSONArray("Sub_cate");
                         System.out.println("EVENT DATA SubCate Event length : " + jsArr.length());
@@ -1230,7 +1235,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 wonHistoryRef.child(inviterId + "/balance").setValue(inviterBalance);
 //                wonHistoryRef.child(inviterId + "/Meta/Earned").setValue(inviterEarn);
 //                wonHistoryRef.child(inviterId + "/Meta/TimeStamp").setValue(HousePartyFragment.getCurrentTimeStamp());
-                String inviterMsg = "Your invitee joins group. You earn " + MyApp.preferences.getInt("InviteFriendPoint", 0) + " won.";
+                String inviterMsg = "WooHoo! Friend that you invited has Joined In. We have added " + MyApp.preferences.getInt("InviteFriendPoint", 0) + " WONs to your balance.";
                 wonData.setDesc(inviterMsg);
                 wonHistoryRef.child(inviterId + "/Meta/").push().setValue(wonData);
 

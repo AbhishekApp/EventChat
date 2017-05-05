@@ -749,8 +749,15 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         if (preferences.getString("user_enabled", "").length() == 0 || preferences.getString("user_enabled", "").equals("true")) {
             //StadiumMsgLimit+=2;
             String msg = eventDetail.getCannedMessage().get(position);
-            if(msg.contains("#prediction"))
-                sendMsg(msg, "prediction"); //cannned message click
+            if(msg.contains("#prediction")) {
+                String dateLimit = eventDetail.getPredictionUpdateTill();
+                String status = MyUtill.getTimeDifference(dateLimit);
+                if(status.contains("Ago")){
+                    Toast.makeText(getActivity(), "We are not taking Predictions any Longer", Toast.LENGTH_SHORT).show();
+                }else {
+                    sendMsg(msg, "prediction"); //cannned message click
+                }
+            }
             else
                 sendMsg(msg, "canned"); //cannned message click
 

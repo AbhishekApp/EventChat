@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.app.model.AdminMessage;
+import com.app.model.ChatData;
 import com.app.model.WonData;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 
 import static com.get.wazzon.EventChatActivity.eventDetail;
 import static com.get.wazzon.EventChatActivity.eventID;
+import static com.get.wazzon.MyApp.FeaturedMsgLimit;
 import static com.get.wazzon.MyApp.StadiumMsgLimit;
 
 /**
@@ -40,6 +42,7 @@ public class WonHistory extends Fragment implements View.OnClickListener {
     ChildEventListener childEventListener;
     int WonHistoryLimit = 20;
     ArrayList<WonData> arrayList;
+    ArrayList<String> mKeys;
     WonAdapter adapter;
 
     @Override
@@ -65,16 +68,37 @@ public class WonHistory extends Fragment implements View.OnClickListener {
         listView = (ListView) view.findViewById(R.id.listWon);
 
         btnRedeem.setOnClickListener(this);
+        mKeys = new ArrayList<String>();
         arrayList = new ArrayList<WonData>();
         adapter = new WonAdapter(getActivity(), arrayList);
+        listView.invalidate();
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         childEventListener = new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 WonData msg = dataSnapshot.getValue(WonData.class);
                 Log.i("WonHistory", "Description : "+ msg);
-                arrayList.add(msg);
+//                arrayList.add(msg);
+                String key = dataSnapshot.getKey();
+                // Insert into the correct location, based on previousChildName
+                if (previousChildName == null) {
+                    arrayList.add(0, msg);
+                    mKeys.add(0, key);
+
+                } else {
+                    int previousIndex = mKeys.indexOf(previousChildName);
+                    int nextIndex = previousIndex + 1;
+                    if (nextIndex == arrayList.size()) {
+                        arrayList.add(msg);
+                        mKeys.add(key);
+                    } else {
+                        arrayList.add(nextIndex, msg);
+                        mKeys.add(nextIndex, key);
+                    }
+
+                }
                 adapter.notifyDataSetChanged();
             }
 

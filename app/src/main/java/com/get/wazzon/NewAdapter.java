@@ -166,7 +166,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             LinearLayout.LayoutParams rlParam = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT);
         //    rlParam.gravity = Gravity.CENTER_HORIZONTAL;
             tvComMsg1.setLayoutParams(rlParam);
-            tvComMsg1.setPadding(32, 10, 5, 10);
+            tvComMsg1.setPadding(40, 10, 5, 10);
             tvComMsg1.setGravity(Gravity.CENTER_VERTICAL);
         }else {
             linear.setVisibility(View.VISIBLE);
@@ -174,7 +174,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             if((fromUser.equals(MyApp.getDeviveID(con)))) {
                 tvMsg.setTextColor(con.getResources().getColor(R.color.white));
                 tvMsg.setLinkTextColor(con.getResources().getColor(R.color.white));
-                tvMsg.setPadding(25,15,70,15);
+                tvMsg.setPadding(25,5,70,5);
                 tvUser.setGravity(Gravity.RIGHT);
                 tvUser.setVisibility(View.GONE);
                 linear.setGravity(Gravity.RIGHT);
@@ -187,18 +187,21 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             else{
                 tvMsg.setGravity(Gravity.LEFT);
                 tvMsg.setLinkTextColor(Color.parseColor("#8884f6"));
-                tvMsg.setPadding(40,5,10,15);
+                tvMsg.setPadding(40,5,10,5);
                 tvMsg.setTextColor(con.getResources().getColor(R.color.chat_text_color));
                 tvUser.setGravity(Gravity.LEFT);
 
                 if(tvUser.getText().toString().length()>0){
                     tvUser.setPadding(35,5,10,5);
                     tvUser.setVisibility(View.VISIBLE);
+                }else{
+                    tvUser.setVisibility(View.GONE);
                 }
                 relativeParam.addRule(Gravity.LEFT);
                 linear.setGravity(Gravity.LEFT);
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                relativeParam.setMargins(40,5,0,5);
+                relativeParam.addRule(RelativeLayout.RIGHT_OF,R.id.imgIcon);
+                relativeParam.setMargins(30,5,0,5);
                 linear.setLayoutParams(relativeParam);
                 linear.setBackgroundResource(R.drawable.incoming_message_bg);
                 //linear.setPadding(35,5,80,5);

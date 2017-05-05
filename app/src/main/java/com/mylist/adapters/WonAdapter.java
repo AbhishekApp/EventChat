@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,7 +49,7 @@ import static com.get.wazzon.MyApp.DEEPLINK_BASE_URL;
 
 public class WonAdapter extends BaseAdapter {
 
-    Activity con;
+    Context con;
     ArrayList<WonData> alList;
     ViewHolder viewHolder;
     int width;
@@ -63,14 +65,15 @@ public class WonAdapter extends BaseAdapter {
     String msg;
     ProgressDialog progressDialog;
 
-    public WonAdapter(Activity context, ArrayList<WonData> arrayList){
+    public WonAdapter(Context context, ArrayList<WonData> arrayList){
         con = context;
         alList = arrayList;
         viewHolder = new ViewHolder();
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        context.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        width = displayMetrics.widthPixels;
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        width = display.getWidth();
         width = width * 85 / 100;
+
     }
 
     @Override
