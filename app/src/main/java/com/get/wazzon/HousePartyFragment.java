@@ -79,7 +79,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         myFirebaseRef = new Firebase(firebaseURL);
 
         String SubDomain = "";
@@ -224,10 +224,10 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
         super.onResume();
 
         if(nahClicked){
-            etMsg.setText("");
+//            etMsg.setText("");
             viewLay.setAdapter(cannedAdapter);
             linearCanMsg.setVisibility(View.VISIBLE);
-            MyUtill.hideKeyBoard(getActivity(),linearCanMsg,true);
+//            MyUtill.hideKeyBoard(getActivity(),linearCanMsg,true);
             imgEmoji.setVisibility(View.GONE);
             keyboard.setVisibility(View.VISIBLE);
 
@@ -255,7 +255,7 @@ public class HousePartyFragment extends Fragment implements View.OnClickListener
             }
         }
         try {
-            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+//            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             listView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }catch (Exception e){}

@@ -2,6 +2,7 @@ package com.get.wazzon;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -12,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,12 +25,14 @@ import com.app.model.ActionItem;
 import com.app.model.ChatData;
 import com.app.model.ConnectDetector;
 import com.app.model.EventDetail;
+import com.app.model.MyUtill;
 import com.app.model.QuickAction;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
 import java.text.SimpleDateFormat;
@@ -36,7 +40,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -63,13 +69,16 @@ public class EventChatActivity extends AppCompatActivity {
     private String NotificationMessageToShow="";
     String toDisplay="";
     static boolean localFlag = true;
+    private String androidId;
+    int updateTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_chat_fragment);
         connectDetector = new ConnectDetector(this);
-
+        androidId = MyApp.getDeviveID(this);
+        localFlag = true;
         try {
             if (getIntent().hasExtra("EventDetail")) {
                 eventDetail = (EventDetail) getIntent().getSerializableExtra("EventDetail");
@@ -80,7 +89,8 @@ public class EventChatActivity extends AppCompatActivity {
                 NotificationMessageToShow = getIntent().getStringExtra("NotificationMessageToShow");
 
                 MyApp.PreDefinedEventAnalytics("view_item_list",eventDetail.getCategory_name(),eventID);
-
+                TweetsData tweetTask = new TweetsData();
+                tweetTask.execute();
             }
         } catch (Exception e) {
              e.printStackTrace(); // for now eat exceptions
@@ -476,6 +486,109 @@ public class EventChatActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
+        }
+    }
+
+    class TweetsData extends AsyncTask<Void,Void,Void>{
+        MyUtill myUtill;
+        JSONObject tweetsRule;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myUtill = new MyUtill();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+//            new Firebase(MyApp.FIREBASE_BASE_URL).child("Timeline/"+androidId+"/"+CateName);
+            String urlStr = MyApp.FIREBASE_BASE_URL+"/tweetsRule.json";
+            tweetsRule = myUtill.getJSONObjectFromServer(urlStr);
+            updateTime = Integer.parseInt(tweetsRule.optString("userUpdateTime"));
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            UpdateUserTime updateTask = new UpdateUserTime();
+            updateTask.execute();
+        }
+    }
+
+    class UpdateUserTime extends AsyncTask<Void,Void,Void>{
+        MyUtill myUtill;
+        JSONObject userDetail;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myUtill = new MyUtill();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            String urlStr = MyApp.FIREBASE_BASE_URL+"/Timeline/"+androidId+".json";
+            userDetail = myUtill.getJSONObjectFromServer(urlStr);
+            if(!(TextUtils.isEmpty(String.valueOf(userDetail)) || String.valueOf(userDetail).equalsIgnoreCase("null"))) {
+
+                JSONObject user = userDetail.optJSONObject(MyApp.getDeviveID(EventChatActivity.this));
+                String userDt = String.valueOf(user);
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                String curDtTm = sdf.format(new Date());
+
+                if (TextUtils.isEmpty(userDt) || userDt.equalsIgnoreCase("null")) {
+                    updateUserDetail();
+                } else {
+                    if (connectDetector.getConnection()) {
+                        try{
+                        String lastUpdatedTime = user.optString("time_stamp");
+                        Date lastDate = sdf.parse(lastUpdatedTime);
+                        Date currentDate = sdf.parse(curDtTm);
+                        long diff = currentDate.getTime() - lastDate.getTime();
+
+//                        String diff = myUtill.getTimeDifference(lastUpdatedTime);
+                        if(diff > updateTime * 1000) {
+                            Firebase tweetTime = new Firebase(MyApp.FIREBASE_BASE_URL + "/Timeline/" + androidId).child("time_stamp");
+                            tweetTime.setValue(curDtTm);
+                        }
+                        }catch (Exception ex){ex.printStackTrace();}
+                    }
+                }
+            }
+            else{
+                updateUserDetail();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        private void updateUserDetail(){
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            String curDtTm = sdf.format(new Date());
+                try {
+
+                    String chatpath = EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name() + "/ " + eventDetail.getEvent_title() + "/ " + eventID+"/StadiumChat";
+//                    Map<String, Object> userDetail = new HashMap<String, Object>();
+                    Map<String, Object> eventTitle = new HashMap<String, Object>();
+                    Map<String, Object> eventNode = new HashMap<String, Object>();
+                    eventTitle.put("event_title", CateName);
+                    eventTitle.put("chat_path", chatpath);
+                    eventTitle.put("time_stamp", curDtTm);
+                    eventNode.put(CateName, eventTitle);
+//                    userDetail.put(androidId, eventNode);
+                    if (connectDetector.getConnection()) {
+                        Firebase timeLine = new Firebase(MyApp.FIREBASE_BASE_URL).child("Timeline").child(androidId);
+                        timeLine.updateChildren(eventNode);
+                    }
+
+                } catch (Exception ex) {
+            }
         }
     }
 }

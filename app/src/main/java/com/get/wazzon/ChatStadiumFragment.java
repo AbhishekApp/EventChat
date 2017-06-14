@@ -17,8 +17,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -56,7 +58,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.get.wazzon.EventChatActivity.CateName;
 import static com.get.wazzon.EventChatActivity.eventDetail;
 import static com.get.wazzon.EventChatActivity.eventID;
@@ -96,6 +98,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     ArrayList<String> mKeys;
     Handler handler;
     String prediction;
+    InputMethodManager imm;
 
     NewAdapter chatAdapter;
     String longDeepLink = DEEPLINK_BASE_URL+"?link=$" +
@@ -146,6 +149,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         try {
             if (!preferences.getBoolean(eventDetail.getCatergory_id(), false)) {
                 EventChatActivity.localFlag = true;
+                handler = new Handler();
+                handler.postDelayed(runn, 4 * 1000);
                 if(eventDetail.getEvent_id().length() > 5){
                     String evntid = eventDetail.getEvent_id().substring(0, 5);
                     MyUtill.subscribeUserForEvents(evntid+"_stad");
@@ -162,8 +167,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     MyUtill.sendNotification(getActivity(), adTuneMsg+eventDetail.getEvent_title(), "Welcome to WazzOn", "eventID", eventDetail.getEvent_id());
                         /*  Update user, Subscribe this event */
                 getAdminSecondMessage();
+
             }else{
-                EventChatActivity.localFlag = false;
+//                EventChatActivity.localFlag = false;
             }
         }catch (Exception ex){ex.printStackTrace();}
 
@@ -175,6 +181,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         public void run() {
             if(EventChatActivity.localFlag) {
                 ArrayList<String> localData = eventDetail.getLocalMsg();
+                Log.e("ChatStadiumFragment", "localData.size() : "+localData.size());
                 while(i < localData.size()) {
                     ChatData chatData = new ChatData();
                     chatData.setAuthor("");
@@ -196,14 +203,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     EventChatActivity.localFlag = false;
                 }
                 chatAdapter.notifyDataSetChanged();
-           //     EventChatActivity.localFlag = false;
+//                EventChatActivity.localFlag = false;
             }
-          //  handler.removeCallbacks(runn);
-
+//            handler.removeCallbacks(runn);
+            chatAdapter.notifyDataSetChanged();
         }
     };
 
+
     private void init(final View v) {
+        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         pd = (ProgressBar) v.findViewById(R.id.pd);
         pd.setVisibility(View.VISIBLE);
         linearLayout = (LinearLayout) v.findViewById(R.id.linearTopChat);
@@ -212,7 +221,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
         keyboard = (ImageView) v.findViewById(R.id.keyboard);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
-        etMsg = (EditText) v.findViewById(etChatMsg);
+        etMsg = (EditText) v.findViewById(R.id.etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         linearCanMsg = (LinearLayout) v.findViewById(R.id.linearCanMsg);
         viewLay = (GridView) v.findViewById(R.id.viewLay);
@@ -236,11 +245,45 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         keyboard.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
+
+       /* etMsg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+//                viewLay.setVisibility(View.GONE);
+                linearCanMsg.setVisibility(View.GONE);
+                imgEmoji.setVisibility(View.VISIBLE);
+                keyboard.setVisibility(View.GONE);
+                etMsg.setFocusable(true);
+                final View view = getActivity().getCurrentFocus();
+                if (view != null && flagKey) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    etMsg.requestFocus();
+                    flagKey = false;
+                }
+                return true;
+            }
+        });*/
+
+        etMsg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus)
+                {
+                    viewLay.setVisibility(View.GONE);
+                    linearCanMsg.setVisibility(View.GONE);
+                    imgEmoji.setVisibility(View.VISIBLE);
+                    keyboard.setVisibility(View.GONE);
+                }
+
+            }
+        });
+
         viewLay.setOnItemClickListener(this);
         alList = new ArrayList<ChatData>();
         mKeys = new ArrayList<String>();
-        handler = new Handler();
-        handler.postDelayed(runn, 4 * 1000);
+//        handler = new Handler();
+//        handler.postDelayed(runn, 4 * 1000);
         chatAdapter = new NewAdapter(getActivity(),R.layout.chat_layout, alList);
         longDeepLink = longDeepLink + eventDetail.getEvent_id()+"&utm_medium=Whatsapp&utm_campaign="+ eventDetail.getEvent_title();
 
@@ -327,66 +370,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onStart() {
         super.onStart();
         try {
-        /*    if (!preferences.getBoolean(eventDetail.getCatergory_id(), false)) {
-                if(!addTuneFLAG){
-                    addTuneFLAG = true;
-                    LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-                    v = inflater.inflate(R.layout.admin_msg,null);
-                    listView.addHeaderView(v);
-                    listView.setAdapter(null);
-                    LinearLayout linearAdminLay = (LinearLayout) v.findViewById(R.id.linearAdmin);
 
-                    TextView tvAdminMsg = (TextView) v.findViewById(tvAdminMsg1);
-                    tvAdminMsg.setBackgroundResource(R.drawable.chat_head_);
-
-                    LinearLayout linearAdminBtn = (LinearLayout) v.findViewById(R.id.linearAdminBtn);
-                    linearAdminBtn.setBackgroundResource(R.drawable.admin_bg);
-
-                    TextView btnYes = (TextView) v.findViewById(R.id.btnAdminMsgYes);
-                    TextView btnNo = (TextView) v.findViewById(R.id.btnAdminMsgNo);
-
-                    ImageView like = (ImageView) v.findViewById(R.id.like);
-                    ImageView dislike = (ImageView) v.findViewById(R.id.dislike);
-
-                    like.setImageResource(R.drawable.like);
-                    dislike.setImageResource(R.drawable.dislike);
-
-                    btnYes.setText("Yes I want to tune In");
-                    btnNo.setText("No, I don't want to tune In");
-                    //tvAdminMsg.setText("Congrats now you are part of "+ eventDetail.getSubscribed_user()+"+ in stadium following the match");
-
-                    tvAdminMsg.setText(MyApp.alAdmMsg.get(0).get_admin_message().replace("<Event>",CateName));
-
-                    btnNo.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            getActivity().finish();
-                        }
-                    });
-
-                    btnYes.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                       // MyUtill.subscribeUserForEvents(eventID)
-                            if(eventDetail.getEvent_id().length() > 5){
-                                String evntid = eventDetail.getEvent_id().substring(0, 5);
-                                MyUtill.subscribeUserForEvents(evntid+"_stad");
-                             }else{
-                                MyUtill.subscribeUserForEvents(eventDetail.getEvent_id()+"_stad");
-                            }
-
-
-                        MyApp.PreDefinedEventAnalytics("join_group",eventDetail.getCategory_name(),eventID);
-                        editor = preferences.edit();
-                        editor.putBoolean(eventDetail.getCatergory_id(), true);
-                        editor.commit();
-//                          Update user, Subscribe this event
-                        getAdminSecondMessage();
-                        }
-                    });
-                }
-            }else  */
             if(!preferences.getBoolean(eventID+"HouseParty", false) && !addHousePartyFLAG){
                 getAdminSecondMessage();
             }else{
@@ -550,19 +534,19 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         super.onResume();
 
         if(nahClicked || EventChatActivity.localFlag){
-            etMsg.setText("");
+//            etMsg.setText("");
+//            etMsg.setFocusable(false);
             viewLay.setAdapter(cannedAdapter);
             linearCanMsg.setVisibility(View.VISIBLE);
-            MyUtill.hideKeyBoard(getActivity(),linearCanMsg,true);
+            MyUtill.hideKeyBoard(getActivity(),linearCanMsg, true);
 
             imgEmoji.setVisibility(View.GONE);
             keyboard.setVisibility(View.VISIBLE);
 
-            //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }else{
-            imgEmoji.setVisibility(View.VISIBLE);
-            keyboard.setVisibility(View.GONE);
-
+            imgEmoji.setVisibility(View.GONE);
+            keyboard.setVisibility(View.VISIBLE);
             /*etMsg.setText("");
             viewLay.setAdapter(cannedAdapter);
             linearCanMsg.setVisibility(View.VISIBLE);
@@ -604,6 +588,8 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     public void onPause() {
         super.onPause();
         System.out.println("onPause");
+        EventChatActivity.localFlag = false;
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 
@@ -619,7 +605,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                         new Runnable() {
                             public void run() {*/
                 if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInputFromWindow(etMsg.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
                     etMsg.requestFocus();
                 }
@@ -633,7 +618,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
             if (id == R.id.imgEmoji) {
                 if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
 
@@ -645,8 +629,12 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
             } else if (id == etChatMsg) {
                 linearCanMsg.setVisibility(View.GONE);
-                imgEmoji.setVisibility(View.GONE);
-                keyboard.setVisibility(View.VISIBLE);
+//                imgEmoji.setVisibility(View.GONE);
+//                keyboard.setVisibility(View.VISIBLE);
+                viewLay.setVisibility(View.GONE);
+                linearCanMsg.setVisibility(View.GONE);
+                imgEmoji.setVisibility(View.VISIBLE);
+                keyboard.setVisibility(View.GONE);
 
             } else if (id == R.id.imgSendChat) {
                 if(!TextUtils.isEmpty(userName)) {

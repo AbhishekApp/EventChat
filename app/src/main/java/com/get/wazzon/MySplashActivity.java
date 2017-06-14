@@ -60,7 +60,7 @@ public class MySplashActivity extends Activity{
                 e.printStackTrace();
             }
         }
-        //System.out.println("HASHKEY:::::::: "+getHashKey(getPackageName(),MySplashActivity.this));
+        System.out.println("HASHKEY:::::::: "+getHashKey(getPackageName(),MySplashActivity.this));
 
         handler = new Handler();
         handler.postDelayed(runn, 3 * 1000);
@@ -122,7 +122,7 @@ public class MySplashActivity extends Activity{
             e.printStackTrace();
         }
 
-        System.out.println("Hask Key Value=="+str);
+        System.out.println("Hask Key Value== "+str);
 
         return str;
     }

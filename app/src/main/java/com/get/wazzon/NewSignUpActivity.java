@@ -290,9 +290,7 @@ public class NewSignUpActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onClick(View v) {
                 //Toast.makeText(NewSignUpActivity.this, "hi", Toast.LENGTH_SHORT).show();
-
                 MyApp.PreDefinedEventAnalytics("signUp_fb", "" , "");
-
             }
         });
 

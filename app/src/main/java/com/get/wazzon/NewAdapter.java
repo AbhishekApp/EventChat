@@ -117,7 +117,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     protected void populateView(final View v, final ChatData model) {
         tvUser.setTypeface(MyApp.authorFont);
         tvMsg.setTypeface(MyApp.authorMsg);
-        if (model.getTitle().contains("http")){
+        if (model.getTitle().contains("http") && !model.getTitle().contains("t.co")){
             tvComMsg1.setText(Html.fromHtml(model.getTitle()));
             tvMsg.setText(Html.fromHtml(model.getTitle()));
             //tvMsg.setMovementMethod(LinkMovementMethod.getInstance());

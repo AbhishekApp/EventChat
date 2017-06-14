@@ -59,6 +59,7 @@ public class WonHistory extends Fragment implements View.OnClickListener {
         alanRef.keepSynced(true);
         View view = inflater.inflate(R.layout.won_history, container, false);
         init(view);
+        MyApp.CustomEventAnalytics("fragment_selected",  "won");
         return view;
 
     }
