@@ -214,5 +214,6 @@
 
     <string name="user_disabled">Please contact us using the about screen.</string>
     <string name="redeem_now">REDEEM NOW</string>
+    <string name="faq">FAQ</string>
 
 </resources>

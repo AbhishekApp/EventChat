@@ -6,6 +6,14 @@
         android:icon="@android:drawable/title_bar"
         android:orderInCategory="1"
         android:title="@string/info" />
+
+    <item
+        android:id="@+id/menu_faq"
+        android:icon="@android:drawable/title_bar"
+        android:orderInCategory="1"
+        android:title="@string/faq" />
+
+
     <item
         android:id="@+id/menu_signup"
         android:icon="@android:drawable/title_bar"

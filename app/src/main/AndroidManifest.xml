@@ -84,6 +84,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoTitleTheme" />
 
+        <activity android:name=".FaqActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"  />
+
         <!-- [START firebase_service] -->
         <service
             android:name="com.pushnotification.MyFirebaseMessagingService">

@@ -32,6 +32,15 @@
             android:textSize="20dp"
             android:textStyle="bold" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="What's More Get 20 WONs on Sign Up!"
+            android:layout_marginTop="5dp"/>
+
         <com.facebook.login.widget.LoginButton
             android:id="@+id/btnFb"
             android:layout_width="match_parent"
@@ -57,6 +66,8 @@
             android:textColor="#fefefe"
             android:textSize="12sp"
             android:layout_marginTop="10dp"/>
+
+
 
         <RelativeLayout
             android:layout_width="match_parent"
