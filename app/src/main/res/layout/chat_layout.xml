@@ -56,6 +56,17 @@
             android:text=""
             android:textColor="#595959"
             android:textSize="@dimen/text_mid_size" />
+
+        <ImageView
+            android:id="@+id/tvChatImg"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="left"
+            android:ellipsize="end"
+            android:focusable="false"
+            android:maxWidth="300dp"
+            android:scaleType="fitCenter"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <include layout="@layout/commentator" />

@@ -1,17 +1,26 @@
 package com.get.wazzon;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -43,6 +52,12 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mylist.adapters.CannedAdapter;
 import com.pushnotification.MyFirebaseMessagingService;
 
@@ -51,11 +66,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -75,7 +97,7 @@ import static com.get.wazzon.R.id.tvAdminMsg1;
 public class ChatStadiumFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
     ConnectDetector connectDetector;
     ListView listView;
-    ImageView imgEmoji,keyboard;
+    ImageView imgEmoji,keyboard, selectImage;
     ImageView send;
     EditText etMsg;
     static LinearLayout linearCanMsg;
@@ -99,6 +121,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     Handler handler;
     String prediction;
     InputMethodManager imm;
+    private static int PICK_PHOTO_FOR_AVATAR = 1101;
+    private static int PREVIEW_CHECKED = 1015;
+    Uri mFileUri;
+    private static int REQUEST_CAMERA = 1123;
 
     NewAdapter chatAdapter;
     String longDeepLink = DEEPLINK_BASE_URL+"?link=$" +
@@ -220,6 +246,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         listView = (ListView) v.findViewById(R.id.listMain);
         imgEmoji = (ImageView) v.findViewById(R.id.imgEmoji);
         keyboard = (ImageView) v.findViewById(R.id.keyboard);
+        selectImage = (ImageView) v.findViewById(R.id.imgSelectImage);
         send = (ImageView) v.findViewById(R.id.imgSendChat);
         etMsg = (EditText) v.findViewById(R.id.etChatMsg);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
@@ -245,6 +272,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         keyboard.setOnClickListener(this);
         send.setOnClickListener(this);
         etMsg.setOnClickListener(this);
+        selectImage.setOnClickListener(this);
 
        /* etMsg.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -688,12 +716,19 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
                 }
             }
+            else if(id == R.id.imgSelectImage){
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("image/*");
+//                startActivityForResult(intent, PICK_PHOTO_FOR_AVATAR);
+
+                selectImage();
+            }
         }catch (Exception ex){
             Log.e("StadiumFrament", "On Click Exception : "+ex.toString());
         }
     }
 
-
+    String imageName;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -710,16 +745,44 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 if(noSend < 3) {
                     linearCanMsg.setVisibility(View.VISIBLE);
                 }else{
-                    //Toast.makeText(getActivity(), "You have already send free messages.", Toast.LENGTH_SHORT).show();
-
-                    Toast.makeText(getActivity(), "Let's put a Name to the message, Please Register",Toast.LENGTH_LONG).show();
+                   Toast.makeText(getActivity(), "Let's put a Name to the message, Please Register",Toast.LENGTH_LONG).show();
                 }
             }
             else if(resultCode == 102){
                 getAdminSecondMessage();
             }
         }
+        if (requestCode == PICK_PHOTO_FOR_AVATAR && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                Toast.makeText(getActivity(), "Image Not Found", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                mFileUri = data.getData();
+                Log.i("ChatStadiumFragment", "Path : "+mFileUri);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("FileURI", mFileUri);
+                Intent ii = new Intent(getActivity(), PreviewImage.class);
+                ii.putExtra("FileData", bundle);
+                startActivityForResult(ii, PREVIEW_CHECKED);
+            }
+            catch (Exception ex){
+                Toast.makeText(getActivity(), "File Not Found..", Toast.LENGTH_SHORT).show();
+            }
+        }else if(requestCode == PREVIEW_CHECKED && resultCode == Activity.RESULT_OK){
+            uploadImage();
+        }
+        else if (requestCode == REQUEST_CAMERA) {
+            File file = new File(mCurrentPhotoPath);
+            Bundle bundle = new Bundle();
+            mFileUri = Uri.fromFile(file);
+            bundle.putParcelable("FileURI", mFileUri);
+            Intent ii = new Intent(getActivity(), PreviewImage.class);
+            ii.putExtra("FileData", bundle);
+            startActivityForResult(ii, PREVIEW_CHECKED);
+        }
     }
+
 
     @Override
     public void onRefresh() {
@@ -812,7 +875,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     MyUtill.addMsgtoFeatured(getActivity(),msg);
                 }
             } else {
-                //Toast.makeText(getActivity(), "For send more messages you have to register", Toast.LENGTH_SHORT).show();
                 Toast.makeText(getActivity(), "Let's put a Name to the message, Please Register", Toast.LENGTH_SHORT).show();
                 Intent ii = new Intent(getActivity(), NewSignUpActivity.class);
                 startActivityForResult(ii, 111);
@@ -880,6 +942,191 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             return "";
         }
     }
+
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+//                boolean result=Utility.checkPermission(getActivity());
+                if (items[item].equals("Take Photo")) {
+                    dispatchTakePictureIntent();
+                } else if (items[item].equals("Choose from Library")) {
+                        galleryIntent();
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void galleryIntent()
+    {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_PHOTO_FOR_AVATAR);
+    }
+
+   /* private void SaveImage(Bitmap finalBitmap) {
+
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/wazzon/saved_images");
+        myDir.mkdirs();
+        Random generator = new Random();
+        int n = 10000;
+        n = generator.nextInt(n);
+        String fname = "Image-"+ n +".jpg";
+        File file = new File (myDir, fname);
+        if (file.exists ()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Uri imageURI = Uri.fromFile(new File(root + "/wazzon/saved_images/"+fname+".jpg"));
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoRef = storageReference.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child(imageURI.getLastPathSegment());
+        photoRef.putFile(imageURI ).addOnProgressListener(progressListener)
+                .addOnSuccessListener(onSuccessListener)
+                .addOnFailureListener(onFailureListener);
+    }*/
+
+
+   /* private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+        Uri imageURI = Uri.fromFile(destination);
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        String realPath = getRealPathFromURI(imageURI );
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("FileURI", imageURI );
+//        Intent ii = new Intent(getActivity(), PreviewImage.class);
+//        ii.putExtra("image_real_path", realPath );
+//        ii.putExtra("FileData", bundle);
+//        startActivityForResult(ii, PREVIEW_CHECKED);
+
+//        ivImage.setImageBitmap(thumbnail);
+        SaveImage(thumbnail);
+
+    }*/
+
+
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+//    static final int REQUEST_TAKE_PHOTO = 1;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = Uri.fromFile(photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_CAMERA);
+            }
+        }
+    }
+
+
+
+    void uploadImage(){
+        try{
+//            InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
+            Toast.makeText(getActivity(), "Image selected..", Toast.LENGTH_SHORT).show();
+
+            File f = new File(mFileUri.getLastPathSegment());
+            imageName = f.getName();
+            Log.e("ChatStadiumFragment", "imageName "+imageName);
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            StorageReference photoRef = storageReference.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child(mFileUri.getLastPathSegment());
+            photoRef.putFile(mFileUri).addOnProgressListener(progressListener)
+                                      .addOnSuccessListener(onSuccessListener)
+                                      .addOnFailureListener(onFailureListener);
+
+
+        }catch (Exception ex){
+            Toast.makeText(getActivity(), "File Not Found", Toast.LENGTH_SHORT).show();
+            ex.printStackTrace();
+        }
+    }
+
+    OnProgressListener progressListener =  new OnProgressListener<UploadTask.TaskSnapshot>() {
+        @Override
+        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                         /*   showProgressNotification(getString(R.string.progress_uploading),
+                                    taskSnapshot.getBytesTransferred(),
+                                    taskSnapshot.getTotalByteCount());*/
+//            Toast.makeText(getActivity(), "Image Loading....", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    OnSuccessListener onSuccessListener = new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        @Override
+        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            // Upload succeeded
+//            Toast.makeText(getActivity(), "Image Successful Loaded....", Toast.LENGTH_SHORT).show();
+            sendMsg(imageName, "image");
+        }
+    };
+
+
+    OnFailureListener onFailureListener = new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception exception) {
+            // Upload failed
+            Toast.makeText(getActivity(), "Image Loading Failed....", Toast.LENGTH_SHORT).show();
+            Log.e("ChatStadiumFragment", "Image Loading Failed ERROR : "+exception.toString());
+            // [END_EXCLUDE]
+        }
+    };
 
 }
 

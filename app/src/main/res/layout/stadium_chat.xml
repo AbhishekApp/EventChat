@@ -65,11 +65,21 @@
                     android:background="@color/chat_btn_back" />
 
                 <LinearLayout
+                    android:id="@+id/linearChatParent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+
+                <LinearLayout
                     android:id="@+id/linearChat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:orientation="horizontal"
+                    android:layout_weight="0.1"
                     android:weightSum="1">
 
                     <ImageView
@@ -104,13 +114,26 @@
                     </EditText>
 
                     <ImageView
+                        android:id="@+id/imgSelectImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="0.44"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/attach_img" />
+
+                </LinearLayout>
+
+                    <ImageView
                         android:id="@+id/imgSendChat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight="0.44"
+                        android:layout_weight="0.9"
                         android:scaleType="center"
                         android:src="@drawable/ic_send" />
+
+
 
                 </LinearLayout>
 

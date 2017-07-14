@@ -21,6 +21,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.model.ChatData;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.mylist.adapters.FirebaseImageLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +58,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     TextView tvUser,tvMsg,tvComMsg1;
     LinearLayout linear;//, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
-    ImageView imgIcon;
+    ImageView imgIcon, imgMsg;
     String shortLinkURL = "";
     String msg;
     String longDeepLink = DEEPLINK_BASE_URL+"?link=$" +
@@ -87,6 +92,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             tvUser = (TextView) view.findViewById(R.id.tvChatUser);
             tvMsg = (TextView) view.findViewById(R.id.tvChat);
             linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
+            imgMsg = (ImageView) view.findViewById(R.id.tvChatImg);
         }else{
             imgIcon = (ImageView) view.findViewById(R.id.imgIcon);
             tvUser = (TextView) view.findViewById(R.id.tvChatUser);
@@ -94,6 +100,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
             comRL = (RelativeLayout)view.findViewById(R.id.comRL);
             tvComMsg1 = (TextView)comRL.findViewById(R.id.tvComMsg1);
+            imgMsg = (ImageView) view.findViewById(R.id.tvChatImg);
         }
 
 
@@ -127,8 +134,27 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
 
         }else
         {
-            tvComMsg1.setText(model.getTitle());
-            tvMsg.setText(model.getTitle());
+            if(model.getMessageType().equals("image")){
+
+                tvComMsg1.setVisibility(View.GONE);
+                tvMsg.setVisibility(View.GONE);
+                imgMsg.setVisibility(View.VISIBLE);
+                StorageReference storageRef =  FirebaseStorage.getInstance().getReference();
+                StorageReference photoRef = storageRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child(model.getTitle());
+                Glide.with(con)
+                        .using(new FirebaseImageLoader())
+                        .load(photoRef)
+                        .placeholder(R.drawable.def_orig_)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .into(imgMsg);
+
+            }else {
+                tvComMsg1.setVisibility(View.VISIBLE);
+                tvMsg.setVisibility(View.VISIBLE);
+                imgMsg.setVisibility(View.GONE);
+                tvComMsg1.setText(model.getTitle());
+                tvMsg.setText(model.getTitle());
+            }
         }
         relativeParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         String sender = model.getAuthor();
