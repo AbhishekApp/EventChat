@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.text.util.Linkify;
@@ -56,9 +55,10 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     ArrayList<ChatData> alList;
     RelativeLayout comRL;
     TextView tvUser,tvMsg,tvComMsg1;
-    LinearLayout linear;//, linearBtn;
+    LinearLayout linear,ltvChatImg;//, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
     ImageView imgIcon, imgMsg;
+
     String shortLinkURL = "";
     String msg;
     String longDeepLink = DEEPLINK_BASE_URL+"?link=$" +
@@ -93,6 +93,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             tvMsg = (TextView) view.findViewById(R.id.tvChat);
             linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
             imgMsg = (ImageView) view.findViewById(R.id.tvChatImg);
+            ltvChatImg = (LinearLayout) view.findViewById(R.id.ltvChatImg);
         }else{
             imgIcon = (ImageView) view.findViewById(R.id.imgIcon);
             tvUser = (TextView) view.findViewById(R.id.tvChatUser);
@@ -101,6 +102,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             comRL = (RelativeLayout)view.findViewById(R.id.comRL);
             tvComMsg1 = (TextView)comRL.findViewById(R.id.tvComMsg1);
             imgMsg = (ImageView) view.findViewById(R.id.tvChatImg);
+            ltvChatImg = (LinearLayout) view.findViewById(R.id.ltvChatImg);
         }
 
 
@@ -135,23 +137,23 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         }else
         {
             if(model.getMessageType().equals("image")){
-
                 tvComMsg1.setVisibility(View.GONE);
                 tvMsg.setVisibility(View.GONE);
                 imgMsg.setVisibility(View.VISIBLE);
+                ltvChatImg.setVisibility(View.VISIBLE);
                 StorageReference storageRef =  FirebaseStorage.getInstance().getReference();
-                StorageReference photoRef = storageRef.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child(model.getTitle());
+                StorageReference photoRef = storageRef.child(EventChatActivity.SuperCateName + "/" + eventDetail.getCategory_name()).child(model.getTitle());
                 Glide.with(con)
-                        .using(new FirebaseImageLoader())
-                        .load(photoRef)
-                        .placeholder(R.drawable.def_orig_)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .into(imgMsg);
-
+                    .using(new FirebaseImageLoader())
+                    .load(photoRef)
+                    .placeholder(R.drawable.def_orig_)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .into(imgMsg);
             }else {
                 tvComMsg1.setVisibility(View.VISIBLE);
                 tvMsg.setVisibility(View.VISIBLE);
                 imgMsg.setVisibility(View.GONE);
+                ltvChatImg.setVisibility(View.GONE);
                 tvComMsg1.setText(model.getTitle());
                 tvMsg.setText(model.getTitle());
             }
@@ -161,7 +163,6 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         String fromUser = model.getToUser();
         String userName = MyApp.preferences.getString(MyApp.USER_NAME, "");
         boolean isEqual = sender.equalsIgnoreCase(userName);
-
 
         if (model.getAuthor().equals("Guest User"))
         {
@@ -177,14 +178,11 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             @Override
             public void onClick(View v) {
                 MyApp.PreDefinedEventAnalytics("share",eventDetail.getEvent_title(), eventID);
-
                 longDeepLink =longDeepLink+eventID+ "&utm_medium="+MyApp.getDeviveID(con)+"&utm_campaign="+eventID;
                 msg = model.getTitle();
                 new newShortAsync().execute();
-
             }
         });
-
 
         if(model.getAuthorType().equals("com")){
             comRL.setVisibility(View.VISIBLE);
@@ -208,7 +206,11 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 relativeParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 relativeParam.setMargins(0,5,40,5);
                 linear.setLayoutParams(relativeParam);
-                linear.setBackgroundResource(R.drawable.chat_out);
+                if(!model.getMessageType().equals("image")) {
+                    linear.setBackgroundResource(R.drawable.chat_out);
+                }else{
+                    linear.setBackgroundResource(R.drawable.image_border);
+                }
             }
             else{
                 tvMsg.setGravity(Gravity.LEFT);
@@ -223,13 +225,18 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 }else{
                     tvUser.setVisibility(View.GONE);
                 }
-                relativeParam.addRule(Gravity.LEFT);
-                linear.setGravity(Gravity.LEFT);
-                relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                relativeParam.addRule(RelativeLayout.RIGHT_OF,R.id.imgIcon);
-                relativeParam.setMargins(30,5,0,5);
-                linear.setLayoutParams(relativeParam);
-                linear.setBackgroundResource(R.drawable.incoming_message_bg);
+
+                if(!model.getMessageType().equals("image")) {
+                    linear.setBackgroundResource(R.drawable.incoming_message_bg);
+                    relativeParam.addRule(Gravity.LEFT);
+                    linear.setGravity(Gravity.LEFT);
+                    relativeParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                    relativeParam.addRule(RelativeLayout.RIGHT_OF,R.id.imgIcon);
+                    relativeParam.setMargins(30,5,0,5);
+                    linear.setLayoutParams(relativeParam);
+                }else{
+                    linear.setBackgroundResource(R.drawable.image_border);
+            }
                 //linear.setPadding(35,5,80,5);
             }
             if(model.getAuthor().equalsIgnoreCase("Admin")) {

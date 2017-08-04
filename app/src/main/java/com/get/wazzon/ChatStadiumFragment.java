@@ -2,15 +2,10 @@ package com.get.wazzon;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,17 +14,13 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -59,28 +50,20 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylist.adapters.CannedAdapter;
-import com.pushnotification.MyFirebaseMessagingService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.get.wazzon.EventChatActivity.CateName;
 import static com.get.wazzon.EventChatActivity.eventDetail;
 import static com.get.wazzon.EventChatActivity.eventID;
@@ -1080,13 +1063,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     void uploadImage(){
         try{
 //            InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
-            Toast.makeText(getActivity(), "Image selected..", Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(getActivity(), "Image selected..", Toast.LENGTH_SHORT).show();
 
             File f = new File(mFileUri.getLastPathSegment());
             imageName = f.getName();
             Log.e("ChatStadiumFragment", "imageName "+imageName);
             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-            StorageReference photoRef = storageReference.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child(mFileUri.getLastPathSegment());
+            StorageReference photoRef = storageReference.child(EventChatActivity.SuperCateName + "/" + eventDetail.getCategory_name()).child(mFileUri.getLastPathSegment());
             photoRef.putFile(mFileUri).addOnProgressListener(progressListener)
                                       .addOnSuccessListener(onSuccessListener)
                                       .addOnFailureListener(onFailureListener);
