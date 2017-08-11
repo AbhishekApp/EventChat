@@ -2,15 +2,10 @@ package com.get.wazzon;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,17 +14,14 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.FileProvider;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -59,28 +51,20 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mylist.adapters.CannedAdapter;
-import com.pushnotification.MyFirebaseMessagingService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Comment;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.get.wazzon.EventChatActivity.CateName;
 import static com.get.wazzon.EventChatActivity.eventDetail;
 import static com.get.wazzon.EventChatActivity.eventID;
@@ -496,6 +480,28 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 }
             });
         }
+
+        if(MyUtill.isTimeBetweenTwoTime(eventDetail.getEvent_start(),eventDetail.getEvent_exp())){
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+            View vi = inflater.inflate(R.layout.watching_test, null);
+            TextView tvMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
+            TextView tvSubMsg = (TextView) vi.findViewById(R.id.tvSubMsg);
+            tvMsg.setTextColor(ContextCompat.getColor(getActivity(),R.color.white));
+            tvSubMsg.setTextColor(ContextCompat.getColor(getActivity(),R.color.white));
+//            tvSubMsg.setTextColor(getActivity().getColor(R.color.white));
+            LinearLayout linearBtn = (LinearLayout) vi.findViewById(R.id.linearBtn);
+            linearBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectImage();
+                }
+            });
+            tvMsg.setText("Watching "+eventDetail.getEvent_title()+" on TV?");
+            tvSubMsg.setText("Take a selfie with your TV and share Get 20 Won");
+
+            listView.addHeaderView(vi);
+        }
+
         if(alList.size() > 0) {
             listView.setAdapter(chatAdapter);
             chatAdapter.notifyDataSetChanged();
@@ -759,7 +765,26 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
             try {
                 mFileUri = data.getData();
-                Log.i("ChatStadiumFragment", "Path : "+mFileUri);
+                //ExifInterface exif = new ExifInterface(new File(mFileUri.getPath()).toString());
+                //exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+                //Log.i("ChatStadiumFragment", "Path : "+mFileUri + " orientation "+exif.getAttribute(ExifInterface.TAG_ORIENTATION));
+                /*if(resultCode == Activity.RESULT_OK && data != null){
+                    String realPath;
+                    // SDK < API11
+                    if (Build.VERSION.SDK_INT < 11)
+                        realPath = RealPathUtil.getRealPathFromURI_BelowAPI11(getActivity(), data.getData());
+
+                        // SDK >= 11 && SDK < 19
+                    else if (Build.VERSION.SDK_INT < 19)
+                        realPath = RealPathUtil.getRealPathFromURI_API11to18(getActivity(), data.getData());
+
+                        // SDK > 19 (Android 4.4)
+                    else
+                        realPath = RealPathUtil.getRealPathFromURI_API19(getActivity(), data.getData());
+                    System.out.println(realPath);
+                }*/
+
+
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("FileURI", mFileUri);
                 Intent ii = new Intent(getActivity(), PreviewImage.class);
@@ -786,7 +811,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onRefresh() {
-
         StadiumMsgLimit = StadiumMsgLimit+5;
         swipeRefreshLayout.setRefreshing(false);
         alList = new ArrayList<ChatData>();
@@ -796,7 +820,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
         if (preferences.getString("user_enabled", "").length() == 0 || preferences.getString("user_enabled", "").equals("true")) {
             //StadiumMsgLimit+=2;
             String msg = eventDetail.getCannedMessage().get(position);
@@ -811,12 +834,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
             else
                 sendMsg(msg, "canned"); //cannned message click
-
-
-            etMsg.setText("");
+                etMsg.setText("");
         }else
         {
-
             Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.user_disabled), Toast.LENGTH_SHORT).show();
         }
     }
@@ -847,12 +867,10 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 editor.putString("SendTime: " + eventID, String.valueOf(noSend));
                 editor.putBoolean(eventID, true);
                 editor.commit();
-
                 String commentator_privilege = preferences.getString("commentator_privilege", "");
                 ChatData alan;
                 if (commentator_privilege.contains(eventDetail.getCatergory_id())){
                     alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),"com",messageType);
-
                     if(msg.contains("#notifier")){
                         MyUtill.addMsgToCommentatorNotifier(getActivity(), msg);
                     }
@@ -881,7 +899,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }
          }
         }else{
-
             String commentator_privilege = preferences.getString("commentator_privilege", "");
             ChatData alan;
             if (commentator_privilege.contains(eventDetail.getCatergory_id())){
@@ -892,7 +909,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             }else{
                 alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(), preferences.getString(MyApp.USER_TYPE, ""),messageType);
             }
-
             //ChatData alan = new ChatData(sender, msg, deviceID, getCurrentTimeStamp(),MyApp.preferences.getString(MyApp.USER_TYPE, ""),messageType);
             alanRef.push().setValue(alan);
             alanNotiNode.push().setValue(alan);
@@ -914,7 +930,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 MyUtill.addMsgtoFeatured(getActivity(),msg);
             }
         }
-
         chatAdapter.notifyDataSetChanged();
     }
 
@@ -929,7 +944,6 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         editor.commit();
         //PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(eventDetail.getEvent_id(),""+StadiumMsgLimit).commit();
         nahClicked= false;
-
     }
 
     public String getCurrentTimeStamp(){
@@ -944,21 +958,20 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     }
 
     private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-                "Cancel" };
+        final CharSequence[] items = { "Take Photo", "Choose from Library","Cancel" };
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-//                boolean result=Utility.checkPermission(getActivity());
-                if (items[item].equals("Take Photo")) {
-                    dispatchTakePictureIntent();
-                } else if (items[item].equals("Choose from Library")) {
-                        galleryIntent();
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
+//          boolean result=Utility.checkPermission(getActivity());
+            if (items[item].equals("Take Photo")) {
+                dispatchTakePictureIntent();
+            } else if (items[item].equals("Choose from Library")) {
+                    galleryIntent();
+            } else if (items[item].equals("Cancel")) {
+                dialog.dismiss();
+            }
             }
         });
         builder.show();
@@ -972,67 +985,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_PHOTO_FOR_AVATAR);
     }
 
-   /* private void SaveImage(Bitmap finalBitmap) {
 
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/wazzon/saved_images");
-        myDir.mkdirs();
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Image-"+ n +".jpg";
-        File file = new File (myDir, fname);
-        if (file.exists ()) file.delete ();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Uri imageURI = Uri.fromFile(new File(root + "/wazzon/saved_images/"+fname+".jpg"));
-
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoRef = storageReference.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child(imageURI.getLastPathSegment());
-        photoRef.putFile(imageURI ).addOnProgressListener(progressListener)
-                .addOnSuccessListener(onSuccessListener)
-                .addOnFailureListener(onFailureListener);
-    }*/
-
-
-   /* private void onCaptureImageResult(Intent data) {
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
-        Uri imageURI = Uri.fromFile(destination);
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        String realPath = getRealPathFromURI(imageURI );
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable("FileURI", imageURI );
-//        Intent ii = new Intent(getActivity(), PreviewImage.class);
-//        ii.putExtra("image_real_path", realPath );
-//        ii.putExtra("FileData", bundle);
-//        startActivityForResult(ii, PREVIEW_CHECKED);
-
-//        ivImage.setImageBitmap(thumbnail);
-        SaveImage(thumbnail);
-
-    }*/
 
 
     String mCurrentPhotoPath;
@@ -1080,13 +1033,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     void uploadImage(){
         try{
 //            InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
-            Toast.makeText(getActivity(), "Image selected..", Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(getActivity(), "Image selected..", Toast.LENGTH_SHORT).show();
 
             File f = new File(mFileUri.getLastPathSegment());
             imageName = f.getName();
             Log.e("ChatStadiumFragment", "imageName "+imageName);
             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-            StorageReference photoRef = storageReference.child(EventChatActivity.SuperCateName + "/ " + eventDetail.getCategory_name()).child(mFileUri.getLastPathSegment());
+            StorageReference photoRef = storageReference.child(EventChatActivity.SuperCateName + "/" + eventDetail.getCategory_name()).child(mFileUri.getLastPathSegment());
             photoRef.putFile(mFileUri).addOnProgressListener(progressListener)
                                       .addOnSuccessListener(onSuccessListener)
                                       .addOnFailureListener(onFailureListener);

@@ -1,23 +1,12 @@
 package com.get.wazzon;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by admin on 6/28/2017.
@@ -25,8 +14,8 @@ import java.io.IOException;
 
 public class PreviewImage extends Activity implements View.OnClickListener/*, View.OnTouchListener*/{
 
-    Button btnSelect, btnCancel;
-    ImageView imgPreview;
+    Button  btnCancel;
+    ImageView imgPreview,btnSelect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +23,7 @@ public class PreviewImage extends Activity implements View.OnClickListener/*, Vi
         setContentView(R.layout.preview_image);
 
         imgPreview = (ImageView) findViewById(R.id.imgPreview);
-        btnSelect = (Button) findViewById(R.id.btnSelect);
+        btnSelect = (ImageView) findViewById(R.id.btnSelect);
         btnCancel = (Button) findViewById(R.id.btnCancel);
         Uri fileUri = getIntent().getBundleExtra("FileData").getParcelable("FileURI");
         try {
