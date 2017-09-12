@@ -7,11 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -39,6 +41,7 @@ import com.app.model.ChatData;
 import com.app.model.ConnectDetector;
 import com.app.model.MyUtill;
 import com.app.model.UserProfile;
+import com.app.model.WonData;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -72,6 +75,7 @@ import static com.get.wazzon.MyApp.DEEPLINK_BASE_URL;
 import static com.get.wazzon.MyApp.StadiumMsgLimit;
 import static com.get.wazzon.MyApp.preferences;
 import static com.get.wazzon.R.id.etChatMsg;
+import static com.get.wazzon.R.id.recyclerView;
 import static com.get.wazzon.R.id.tvAdminMsg1;
 
 
@@ -130,12 +134,15 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     View view;
     ChildEventListener childEventListener;
     public static boolean nahClicked=false;
+    boolean wonImgFlag;
+//    FloatingActionButton fabScroll;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         MyApp.CustomEventAnalytics("fragment_selected", "std");
+        wonImgFlag = false;
     }
 
     @Override
@@ -174,7 +181,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 /* Sending Notification */
                 AdminMessage tuneMsg = MyApp.alAdmMsg.get(6);
                 String adTuneMsg = tuneMsg.get_admin_message().replace("<event>","");
-                    MyUtill.sendNotification(getActivity(), adTuneMsg+eventDetail.getEvent_title(), "Welcome to WazzOn", "eventID", eventDetail.getEvent_id());
+                MyUtill.sendNotification(getActivity(), adTuneMsg+eventDetail.getEvent_title(), "Welcome to WazzOn", "eventID", eventDetail.getEvent_id());
                         /*  Update user, Subscribe this event */
                 getAdminSecondMessage();
 
@@ -185,6 +192,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
         return view;
     }
+
     int i = 0;
     Runnable runn = new Runnable() {
         @Override
@@ -225,6 +233,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         pd = (ProgressBar) v.findViewById(R.id.pd);
         pd.setVisibility(View.VISIBLE);
+//        fabScroll = (FloatingActionButton) v.findViewById(R.id.fabScroll);
         linearLayout = (LinearLayout) v.findViewById(R.id.linearTopChat);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         listView = (ListView) v.findViewById(R.id.listMain);
@@ -247,7 +256,9 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                     }
                 }
             }
-        }catch (Exception ex){}
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
         cannedAdapter = new CannedAdapter(getActivity(), eventDetail.getCannedMessage());
         viewLay.setAdapter(cannedAdapter);
         linearCanMsg.setVisibility(View.GONE);
@@ -375,14 +386,13 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 
         pd.setVisibility(View.GONE);
 
-
     }
+
 
     @Override
     public void onStart() {
         super.onStart();
         try {
-
             if(!preferences.getBoolean(eventID+"HouseParty", false) && !addHousePartyFLAG){
                 getAdminSecondMessage();
             }else{
@@ -392,6 +402,29 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
                 chatAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
             //}
+            if(MyUtill.isTimeBetweenTwoTime(eventDetail.getEvent_start(),eventDetail.getEvent_exp())){
+                if(!preferences.getBoolean("SendImage"+eventDetail.getEvent_id(), false)) {
+                    LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+                    View vi = inflater.inflate(R.layout.watching_test, null);
+                    TextView tvMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
+                    TextView tvSubMsg = (TextView) vi.findViewById(R.id.tvSubMsg);
+                    tvMsg.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+                    tvSubMsg.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+//              tvSubMsg.setTextColor(getActivity().getColor(R.color.white));
+                    LinearLayout linearBtn = (LinearLayout) vi.findViewById(R.id.linearBtn);
+                    linearBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            wonImgFlag = true;
+                            selectImage();
+                        }
+                    });
+                    tvMsg.setText("Watching " + eventDetail.getEvent_title() + " on TV?");
+                    tvSubMsg.setText("Take a selfie with your TV and share Get 20 Won");
+
+                    linearLayout.addView(vi);
+                }
+            }
 
         }catch (Exception ex){
             Log.e("StadiumFragment", "onStart method ERROR: " + ex.toString());
@@ -476,31 +509,12 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             btnNo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    linearLayout.removeAllViews();
+//                    linearLayout.removeAllViews();
                 }
             });
         }
 
-        if(MyUtill.isTimeBetweenTwoTime(eventDetail.getEvent_start(),eventDetail.getEvent_exp())){
-            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
-            View vi = inflater.inflate(R.layout.watching_test, null);
-            TextView tvMsg = (TextView) vi.findViewById(R.id.tvAdminMsg1);
-            TextView tvSubMsg = (TextView) vi.findViewById(R.id.tvSubMsg);
-            tvMsg.setTextColor(ContextCompat.getColor(getActivity(),R.color.white));
-            tvSubMsg.setTextColor(ContextCompat.getColor(getActivity(),R.color.white));
-//            tvSubMsg.setTextColor(getActivity().getColor(R.color.white));
-            LinearLayout linearBtn = (LinearLayout) vi.findViewById(R.id.linearBtn);
-            linearBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectImage();
-                }
-            });
-            tvMsg.setText("Watching "+eventDetail.getEvent_title()+" on TV?");
-            tvSubMsg.setText("Take a selfie with your TV and share Get 20 Won");
 
-            listView.addHeaderView(vi);
-        }
 
         if(alList.size() > 0) {
             listView.setAdapter(chatAdapter);
@@ -726,7 +740,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
 //                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //                intent.setType("image/*");
 //                startActivityForResult(intent, PICK_PHOTO_FOR_AVATAR);
-
+                wonImgFlag = false;
                 selectImage();
             }
         }catch (Exception ex){
@@ -958,16 +972,16 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     }
 
     private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library","Cancel" };
+        final CharSequence[] items = { "Camera", "Gallery" };
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Add Photo!");
+        builder.setTitle("Send Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
 //          boolean result=Utility.checkPermission(getActivity());
-            if (items[item].equals("Take Photo")) {
+            if (items[item].equals("Camera")) {
                 dispatchTakePictureIntent();
-            } else if (items[item].equals("Choose from Library")) {
+            } else if (items[item].equals("Gallery")) {
                     galleryIntent();
             } else if (items[item].equals("Cancel")) {
                 dialog.dismiss();
@@ -1033,7 +1047,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     void uploadImage(){
         try{
 //            InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
-        //    Toast.makeText(getActivity(), "Image selected..", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Image selected..", Toast.LENGTH_SHORT).show();
 
             File f = new File(mFileUri.getLastPathSegment());
             imageName = f.getName();
@@ -1043,6 +1057,7 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             photoRef.putFile(mFileUri).addOnProgressListener(progressListener)
                                       .addOnSuccessListener(onSuccessListener)
                                       .addOnFailureListener(onFailureListener);
+
 
 
         }catch (Exception ex){
@@ -1064,9 +1079,30 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
     OnSuccessListener onSuccessListener = new OnSuccessListener<UploadTask.TaskSnapshot>() {
         @Override
         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-            // Upload succeeded
+    //        Upload succeeded
 //            Toast.makeText(getActivity(), "Image Successful Loaded....", Toast.LENGTH_SHORT).show();
             sendMsg(imageName, "image");
+            ChatData alan = new ChatData("", "You have got 20 WONs",  "com", getCurrentTimeStamp(), "com","normal");
+            alanRef.push().setValue(alan);
+            if(wonImgFlag){
+//                fabScroll.setVisibility(View.VISIBLE);
+//                fabScroll.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        fabScroll.setVisibility(View.GONE);
+//                        listView.smoothScrollToPosition(chatAdapter.getCount() -1);
+//                    }
+//                });
+                editor = preferences.edit();
+                editor.putBoolean("SendImage"+eventDetail.getEvent_id(), true);
+                editor.commit();
+            }
+            if(preferences.getBoolean("SendImage"+eventDetail.getEvent_id(), false)) {
+                updateWonData();
+                linearLayout.removeAllViews();
+            }else{
+//                Toast.makeText(getActivity(), "Image Already Send", Toast.LENGTH_SHORT).show();
+            }
         }
     };
 
@@ -1080,6 +1116,35 @@ public class ChatStadiumFragment extends Fragment implements View.OnClickListene
             // [END_EXCLUDE]
         }
     };
+
+
+   private void updateWonData(){
+       int balance = MyApp.preferences.getInt("BalanceWon", 30);
+       balance = balance + 20;
+
+       Firebase wonHistoryRef = new Firebase(firebaseURL+"/WonHistory/"+MyApp.getDeviveID(getActivity()));
+
+       Map<String, Object> userMap = new HashMap<String, Object>();
+       Map<String, Object> myObj = new HashMap<String, Object>();
+
+       WonData wonData = new WonData();
+       wonData.setEarned(String.valueOf(20));
+       wonData.setBurned("0");
+       wonData.setTimeStamp(HousePartyFragment.getCurrentTimeStamp());
+       wonData.setDesc("Congratulations!! you have got 20 Won on sending image.");
+
+       myObj.put("balance", balance);
+
+       userMap.put(MyApp.getDeviveID(getActivity()), myObj);
+       wonHistoryRef.updateChildren(myObj);
+//            wonHistoryRef.child(MyApp.getDeviveID(getActivity())+"/Meta/").push().setValue(wonData);
+//            Firebase wonDt = new Firebase(firebaseURL+"/WonHistory/Meta/");
+       Firebase wonDt = wonHistoryRef.child("/Meta/");
+       wonDt.push().setValue(wonData);
+       SharedPreferences.Editor editor = MyApp.preferences.edit();
+       editor.putInt("BalanceWon", balance);
+       editor.commit();
+   }
 
 }
 

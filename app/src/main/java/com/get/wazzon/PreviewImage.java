@@ -14,8 +14,9 @@ import android.widget.ImageView;
 
 public class PreviewImage extends Activity implements View.OnClickListener/*, View.OnTouchListener*/{
 
-    Button  btnCancel;
+//    Button  btnCancel;
     ImageView imgPreview,btnSelect;
+    ImageView imgBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,9 @@ public class PreviewImage extends Activity implements View.OnClickListener/*, Vi
 
         imgPreview = (ImageView) findViewById(R.id.imgPreview);
         btnSelect = (ImageView) findViewById(R.id.btnSelect);
-        btnCancel = (Button) findViewById(R.id.btnCancel);
+        imgBack = (ImageView) findViewById(R.id.img_back);
+        imgBack.setOnClickListener(this);
+//        btnCancel = (Button) findViewById(R.id.btnCancel);
         Uri fileUri = getIntent().getBundleExtra("FileData").getParcelable("FileURI");
         try {
             imgPreview.setImageURI(fileUri);
@@ -32,7 +35,7 @@ public class PreviewImage extends Activity implements View.OnClickListener/*, Vi
             Log.e("PreviewImage", "Path ERROR : "+ex.toString());
         }
         btnSelect.setOnClickListener(this);
-        btnCancel.setOnClickListener(this);
+//        btnCancel.setOnClickListener(this);
 //        imgPreview.setOnTouchListener(this);
     }
 
@@ -41,6 +44,8 @@ public class PreviewImage extends Activity implements View.OnClickListener/*, Vi
         int id = v.getId();
         if(id == R.id.btnSelect){
             setResult(Activity.RESULT_OK);
+        }else if(id == R.id.img_back){
+            finish();
         }else{
             setResult(Activity.RESULT_CANCELED);
         }

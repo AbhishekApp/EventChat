@@ -16,12 +16,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.model.ChatData;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mylist.adapters.FirebaseImageLoader;
@@ -58,6 +62,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
     LinearLayout linear,ltvChatImg;//, linearBtn;
     RelativeLayout.LayoutParams relativeParam;
     ImageView imgIcon, imgMsg;
+    ProgressBar progressBar;
 
     String shortLinkURL = "";
     String msg;
@@ -94,6 +99,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             linear = (LinearLayout) view.findViewById(R.id.linearMsgChat);
             imgMsg = (ImageView) view.findViewById(R.id.tvChatImg);
             ltvChatImg = (LinearLayout) view.findViewById(R.id.ltvChatImg);
+            progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         }else{
             imgIcon = (ImageView) view.findViewById(R.id.imgIcon);
             tvUser = (TextView) view.findViewById(R.id.tvChatUser);
@@ -103,6 +109,7 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
             tvComMsg1 = (TextView)comRL.findViewById(R.id.tvComMsg1);
             imgMsg = (ImageView) view.findViewById(R.id.tvChatImg);
             ltvChatImg = (LinearLayout) view.findViewById(R.id.ltvChatImg);
+            progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         }
 
 
@@ -137,18 +144,58 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
         }else
         {
             if(model.getMessageType().equals("image")){
+                progressBar.setVisibility(View.VISIBLE);
                 tvComMsg1.setVisibility(View.GONE);
                 tvMsg.setVisibility(View.GONE);
                 imgMsg.setVisibility(View.VISIBLE);
                 ltvChatImg.setVisibility(View.VISIBLE);
                 StorageReference storageRef =  FirebaseStorage.getInstance().getReference();
                 StorageReference photoRef = storageRef.child(EventChatActivity.SuperCateName + "/" + eventDetail.getCategory_name()).child(model.getTitle());
+//                Glide.with(con)
+//                    .using(new FirebaseImageLoader())
+//                    .load(photoRef)
+//                    .placeholder(R.drawable.def_orig_)
+//                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+//                    .into(imgMsg);
+
                 Glide.with(con)
-                    .using(new FirebaseImageLoader())
-                    .load(photoRef)
-                    .placeholder(R.drawable.def_orig_)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(imgMsg);
+                        .using(new FirebaseImageLoader())
+                        .load(photoRef)
+                        .placeholder(R.drawable.def_orig_)
+                        .listener(new RequestListener() {
+                            @Override
+                            public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+                                progressBar.setVisibility(View.INVISIBLE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                progressBar.setVisibility(View.INVISIBLE);
+                                return false;
+                            }
+                        })
+                        .into(imgMsg);
+
+//                Glide.with(con)
+//                        .using(new FirebaseImageLoader())
+//                        .load(photoRef)
+//                        .listener(new RequestListener<StorageReference, GlideDrawable>() {
+//                            @Override
+//                            public boolean onException(Exception e, StorageReference model, Target<GlideDrawable> target, boolean isFirstResource) {
+//                                Log.d("NewAdapter", "exception " + e.getMessage());
+//                                progressBar.setVisibility(View.INVISIBLE);
+//                                e.printStackTrace();
+//                                return false;
+//                            }
+//
+//                            @Override
+//                            public boolean onResourceReady(GlideDrawable resource, StorageReference model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+//                                progressBar.setVisibility(View.INVISIBLE);
+//                                return false;
+//                            }
+//                        }).into(imgMsg);
+
             }else {
                 tvComMsg1.setVisibility(View.VISIBLE);
                 tvMsg.setVisibility(View.VISIBLE);
@@ -209,7 +256,11 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                 if(!model.getMessageType().equals("image")) {
                     linear.setBackgroundResource(R.drawable.chat_out);
                 }else{
-                    ltvChatImg.setBackgroundResource(R.drawable.image_border);
+                    ltvChatImg.setBackgroundResource(R.drawable.chat_outgoing_background);
+                    ltvChatImg.setPadding(10,5,30,5);
+                    LinearLayout.LayoutParams imgParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    imgParam.setMargins(4,4,20,4);
+                    imgMsg.setPadding(10,5,50,5);
                     linear.setBackgroundResource(android.R.color.transparent);
                 }
             }
@@ -236,7 +287,11 @@ public class NewAdapter extends ArrayAdapter<ChatData> {
                     relativeParam.setMargins(30,5,0,5);
                     linear.setLayoutParams(relativeParam);
                 }else{
-                    ltvChatImg.setBackgroundResource(R.drawable.image_border);
+                    ltvChatImg.setBackgroundResource(R.drawable.chat_incomin_background);
+                    ltvChatImg.setPadding(20,5,10,5);
+                    LinearLayout.LayoutParams imgParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    imgParam.setMargins(20,4,4,4);
+                    imgMsg.setPadding(50,5,10,5);
                     linear.setBackgroundResource(android.R.color.transparent);
                 }
                 //linear.setPadding(35,5,80,5);

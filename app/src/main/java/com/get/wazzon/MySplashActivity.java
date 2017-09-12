@@ -106,6 +106,7 @@ public class MySplashActivity extends Activity{
             System.out.println("false");
         }
     }
+
     public static String getHashKey(String packageName, Context context) {
         String str = null;
         try {

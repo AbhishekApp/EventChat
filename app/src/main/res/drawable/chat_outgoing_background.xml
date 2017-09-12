@@ -3,7 +3,7 @@
     <item>
         <rotate
             android:fromDegrees="-55"
-            android:pivotX="110%"
+            android:pivotX="132%"
             android:pivotY="90%"
             android:toDegrees="0" >
             <shape android:shape="rectangle" >

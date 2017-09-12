@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // is used when no click_action is specified.
         // Handle possible data accompanying notification message.
         // [START handle_data_extras]
+        Log.i("MainActivity", "Device Id : "+MyApp.getDeviveID(this));
 
         if (getIntent().getExtras() != null) {
             Object value;
